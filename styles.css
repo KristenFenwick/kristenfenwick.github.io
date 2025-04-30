@@ -67,3 +67,15 @@ footer {
     padding: 20px;
     background-color: #eee;
 }
+.badges figure {
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+}
+
+.badges figcaption {
+    font-size: 0.9em;
+    color: #444;
+    margin-top: 6px;
+}
+
