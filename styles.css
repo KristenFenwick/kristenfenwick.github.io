@@ -44,6 +44,23 @@ section {
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+.badges {
+    text-align: center;
+    padding-top: 10px;
+}
+
+.badges img.badge {
+    width: 140px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease;
+}
+
+.badges img.badge:hover {
+    transform: scale(1.05);
+}
+
 
 footer {
     text-align: center;
