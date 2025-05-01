@@ -143,4 +143,7 @@ nav ul li a {
 nav ul li a:hover {
   color: #ffd700; /* soft gold for hover effect */
 }
+html {
+  scroll-behavior: smooth;
+}
 
