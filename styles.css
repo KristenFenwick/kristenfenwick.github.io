@@ -146,7 +146,7 @@ nav ul li a:hover {
 html {
   scroll-behavior: smooth;
 }
-# sticky nav 
+
 nav {
   background-color: #3c0d0d;
   padding: 12px 0;
@@ -154,4 +154,7 @@ nav {
   position: sticky;
   top: 0;
   z-index: 1000;
+}
+section {
+  scroll-margin-top: 80px;
 }
