@@ -220,15 +220,8 @@ section {
   font-size: 1.05em;
 }
 
-.contact-list a {
-  color: #3c0d0d;
-  text-decoration: none;
-  font-weight: bold;
-}
 
-.contact-list a:hover {
-  text-decoration: underline;
-}
+
 .contact-list a {
   color: #3c0d0d;
   text-decoration: none;
