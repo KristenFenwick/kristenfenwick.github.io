@@ -191,3 +191,52 @@ section {
 .badges {
   margin-top: 40px;
 }
+
+.contact-card {
+  background-color: #fff;
+  padding: 25px;
+  margin-top: 40px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.contact-card h2 {
+  text-align: center;
+  color: #3c0d0d;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-list li {
+  margin-bottom: 15px;
+  font-size: 1.05em;
+}
+
+.contact-list a {
+  color: #3c0d0d;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.contact-list a:hover {
+  text-decoration: underline;
+}
+.contact-list a {
+  color: #3c0d0d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.contact-list a:hover {
+  color: #7e2d2d; /* a warmer maroon on hover */
+  text-decoration: underline;
+}
