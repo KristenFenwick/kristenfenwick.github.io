@@ -208,6 +208,10 @@ section {
   text-align: center;
   color: #3c0d0d;
 }
+#recognition h2 {
+  text-align: center;
+  color: #3c0d0d; /* deep red */
+}
 
 .contact-list {
   list-style: none;
