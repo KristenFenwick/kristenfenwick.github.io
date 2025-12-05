@@ -306,7 +306,14 @@ nav {
 
 /* (5) Optional: reduce motion + crisper header text */
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { 
+    transition: none !important;
+    animation: none !important;
+  }
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    transform: none !important;
+  }
 }
 header {
   -webkit-font-smoothing: antialiased;
