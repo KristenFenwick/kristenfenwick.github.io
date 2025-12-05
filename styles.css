@@ -116,6 +116,54 @@ footer {
   color: #0066cc;
   font-weight: bold;
 }
+
+/* Recognition section card layout */
+.recognition-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.recognition-card {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  width: 260px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.recognition-card:hover {
+  transform: translateY(-5px);
+}
+
+.recognition-card h4 {
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.recognition-card p {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Recognition link styling - black text, no underline by default, underline on hover */
+.recognition-link {
+  color: #000;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.recognition-link:hover {
+  text-decoration: underline;
+}
+
 nav {
   background-color: #3c0d0d; /* matches your deep red theme */
   padding: 10px 0;
