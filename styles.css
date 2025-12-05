@@ -312,3 +312,80 @@ header {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Portfolio Section Styles */
+.portfolio-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.portfolio-card {
+  background: linear-gradient(135deg, #650000 0%, #3c0d0d 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.portfolio-card h3 {
+  margin: 0 0 15px;
+  font-size: 1.8em;
+  color: white;
+}
+
+.portfolio-card p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.portfolio-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background-color: white;
+  color: #650000;
+  border-color: white;
+}
+
+.btn-primary:hover {
+  background-color: #ffd700;
+  color: #3c0d0d;
+  border-color: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: white;
+  border-color: white;
+}
+
+.btn-secondary:hover {
+  background-color: white;
+  color: #650000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
