@@ -444,3 +444,60 @@ header {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
+#mission-control {
+  background:
+    radial-gradient(circle at top right, rgba(255, 148, 190, 0.28), transparent 35%),
+    linear-gradient(135deg, #17121c 0%, #241520 55%, #120f17 100%);
+  color: #fff7fb;
+  border: 1px solid rgba(255, 199, 222, 0.22);
+}
+
+#mission-control h2 {
+  color: #ffd6e8;
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+}
+
+#mission-control > p {
+  color: #f5dce8;
+  max-width: 720px;
+  line-height: 1.7;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.mission-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 199, 222, 0.25);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.mission-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 151, 197, 0.75);
+}
+
+.mission-card span {
+  color: #ff9fc7;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.mission-card h3 {
+  color: #ffffff;
+  margin: 12px 0 8px;
+}
+
+.mission-card p {
+  color: #efd6e1;
+  line-height: 1.6;
+}
