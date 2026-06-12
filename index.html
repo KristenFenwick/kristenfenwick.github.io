@@ -272,6 +272,65 @@ BLOC 166"></textarea>
         </div>
     </section>
     <script src="schedule-parser.js"></script>
+    <script>
+function runPortfolioParser() {
+  const raw = document.getElementById('parser-input').value.trim();
+  if (!raw || !window.ScheduleParser) return;
+  const { events } = window.ScheduleParser.parseScheduleText(raw);
+  const list = document.getElementById('parser-results-list');
+  list.innerHTML = '';
+  const grouped = window.ScheduleParser.groupByDate(events);
+  const colors = { exam: '#ff6b6b', class: '#a5b4fc', deadline: '#fbbf24', personal: '#34d399' };
+
+  Object.keys(grouped).sort().forEach(date => {
+    const day = document.createElement('div');
+    day.innerHTML = `<div style="font-size:0.8rem; color:#ff9fc7; margin:8px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">${window.ScheduleParser.formatDate(date)}</div>`;
+    grouped[date].forEach(ev => {
+      const el = document.createElement('div');
+      el.className = 'parser-event';
+      const c = colors[ev.category] || '#f5dce8';
+      el.innerHTML = `
+        <div class="dot" style="background:${c}"></div>
+        <div class="content">
+          <div class="title">${ev.title}</div>
+          <div class="meta">
+            ${ev.startTime ? window.ScheduleParser.formatTime(ev.startTime) : ''}${ev.endTime ? ' – ' + window.ScheduleParser.formatTime(ev.endTime) : ''}
+            ${ev.location ? ' • ' + ev.location : ''}
+          </div>
+          <span class="cat" style="background:${c}22; color:${c};">${ev.category}</span>
+        </div>`;
+      day.appendChild(el);
+    });
+    list.appendChild(day);
+  });
+  document.getElementById('parser-results').style.display = 'block';
+}
+
+function clearPortfolioParser() {
+  document.getElementById('parser-input').value = '';
+  document.getElementById('parser-results').style.display = 'none';
+  document.getElementById('parser-results-list').innerHTML = '';
+}
+
+function loadPortfolioExample() {
+  document.getElementById('parser-input').value = `Monday, January 20, 2025
+
+CSCE 121
+10:20 AM - 11:10 AM
+Zachry 860
+Lecture
+
+MATH 152
+11:30 AM - 12:45 PM
+BLOC 860
+
+Wednesday, January 22, 2025
+CSCE 312
+2:00 PM - 3:15 PM
+ZACH 860`;
+  runPortfolioParser();
+}
+</script>
     <!-- Tidio Chatbot -->
     <script src="//code.tidio.co/wf6negrt0zca6dbii4ilfydtfsjlfze0.js" async></script>
     <footer>
