@@ -190,7 +190,7 @@
     <div class="mission-card">
       <span>01</span>
       <h3>Schedule Parser</h3>
-      <p>Convert pasted class or event text into structured calendar blocks.</p>
+      <p>Convert pasted class or event text into structured calendar blocks. <strong>Live demo below.</strong></p>
     </div>
 
     <div class="mission-card">
@@ -203,6 +203,38 @@
       <span>03</span>
       <h3>Systems Dashboard</h3>
       <p>Track projects, deadlines, certifications, and technical milestones.</p>
+    </div>
+  </div>
+
+  <!-- Live Schedule Parser Demo -->
+  <div class="parser-demo">
+    <div class="parser-header">
+      <strong>Live Schedule Parser</strong>
+      <span class="parser-hint">Paste raw text from a syllabus or PDF export</span>
+    </div>
+
+    <textarea id="parser-input" class="parser-input" rows="6"
+      placeholder="Example:
+Monday, January 20, 2025
+
+CSCE 121
+10:20 AM - 11:10 AM
+Zachry 860
+Lecture
+
+MATH 152
+11:30 AM - 12:45 PM
+BLOC 166"></textarea>
+
+    <div class="parser-actions">
+      <button onclick="runPortfolioParser()" class="parser-btn primary">Parse Text</button>
+      <button onclick="clearPortfolioParser()" class="parser-btn">Clear</button>
+      <button onclick="loadPortfolioExample()" class="parser-btn ghost">Load Example</button>
+    </div>
+
+    <div id="parser-results" class="parser-results" style="display:none;">
+      <div class="parser-results-header">Parsed Events</div>
+      <div id="parser-results-list" class="parser-results-list"></div>
     </div>
   </div>
 </section>
@@ -239,6 +271,7 @@
           </ul>
         </div>
     </section>
+    <script src="schedule-parser.js"></script>
     <!-- Tidio Chatbot -->
     <script src="//code.tidio.co/wf6negrt0zca6dbii4ilfydtfsjlfze0.js" async></script>
     <footer>
