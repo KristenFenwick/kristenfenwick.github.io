@@ -19,7 +19,48 @@
  * This is a portable extraction of the core parsing logic. Keep this file in sync
  * with any refinements made to the primary implementation.
  */
+  /**
+   * General-purpose boilerplate cleaner.
+   * Removes common noise that appears across many digital syllabi, PDF exports,
+   * Canvas pages, and copy-pasted text (URLs, page artifacts, timestamps,
+   * generic section headers, excessive whitespace). This keeps the parser
+   * format-agnostic instead of being tuned to any single syllabus layout.
+   */
+  function cleanBoilerplate(text) {
+    return text
+      // Strip URLs and web artifacts (very common in LMS exports and PDFs)
+      .replace(/https?:\/\/\S+/g, ' ')
+      .replace(/www\.\S+/g, ' ')
 
+      // Strip page / export artifacts (e.g. "1/15_", "tools/123 4/15_")
+      .replace(/\b\d{1,3}\/\d{1,3}_?\b/g, ' ')
+      .replace(/tools\/\d+\s+\d+\/\d+/g, ' ')
+
+      // Strip common copy-paste timestamps that browsers/LMS often include
+      .replace(/\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}\s*(AM|PM)?/gi, ' ')
+
+      // Remove generic syllabus section headers that are never events themselves
+      .replace(/\b(Course Information|Instructor Details|Office Hours|Grading Policy|Course Schedule|University Policies|AI Statement|Technology Support|Canvas LMS Technical Support|University Attendance Policy|Notice of Nondiscrimination|Americans with Disabilities Act|Statement on Mental Health|FERPA|Free Speech and Civil Discourse|Catalog Description|Course Prerequisites|Course Learning Outcomes|Textbook and\/or Resource Materials|Late Work Policy|Course Specific Late Work Policy|Tentative Course Schedule|Special Course Designation|Preferred Contact Method|Biography|Publication Date)\b/gi, ' ')
+
+      // Collapse repeated whitespace and blank lines
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
+  /**
+   * Main entry point. Parses raw schedule text into structured events.
+   * @param {string} text - Raw schedule text.
+   * @returns {{ events: Array<{title: string, date: string, startTime: string, endTime?: string, location?: string, category: string}> }}
+   */
+  function parseScheduleText(text) {
+    text = cleanBoilerplate(text);
+
+    const events = [];
+    const seenEvents = new Set();
+
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const fullText = lines.join(' ');
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory();
@@ -226,11 +267,19 @@
         }
       }
 
-      title = title
+        title = title
         .replace(/^(exam|test|quiz|midterm|final)\s*(\d+)?\s*[:–—-]\s*/i, '')
         .replace(/^\d+\.\s*/, '')
         .replace(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*/i, '')
+        // General course-code stripping (works for any university: MATH 304, CSCE 121, etc.)
+        .replace(/\b[A-Z]{2,5}\s*\d{3,4}[A-Z]?\b/g, '')
+        // Drop trailing long policy-like text after the core title
+        .replace(/\s{2,}.*$/, '')
         .trim();
+
+      // General junk filter (format-agnostic)
+      if (!title || title.length < 2 || title.length > 90) continue;
+      if (/^\d+$/.test(title) || /tools|canvas|https|\/external/i.test(title)) continue;
 
       if (!title || title.length < 2) continue;
 
