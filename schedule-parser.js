@@ -19,48 +19,7 @@
  * This is a portable extraction of the core parsing logic. Keep this file in sync
  * with any refinements made to the primary implementation.
  */
-  /**
-   * General-purpose boilerplate cleaner.
-   * Removes common noise that appears across many digital syllabi, PDF exports,
-   * Canvas pages, and copy-pasted text (URLs, page artifacts, timestamps,
-   * generic section headers, excessive whitespace). This keeps the parser
-   * format-agnostic instead of being tuned to any single syllabus layout.
-   */
-  function cleanBoilerplate(text) {
-    return text
-      // Strip URLs and web artifacts (very common in LMS exports and PDFs)
-      .replace(/https?:\/\/\S+/g, ' ')
-      .replace(/www\.\S+/g, ' ')
 
-      // Strip page / export artifacts (e.g. "1/15_", "tools/123 4/15_")
-      .replace(/\b\d{1,3}\/\d{1,3}_?\b/g, ' ')
-      .replace(/tools\/\d+\s+\d+\/\d+/g, ' ')
-
-      // Strip common copy-paste timestamps that browsers/LMS often include
-      .replace(/\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}\s*(AM|PM)?/gi, ' ')
-
-      // Remove generic syllabus section headers that are never events themselves
-      .replace(/\b(Course Information|Instructor Details|Office Hours|Grading Policy|Course Schedule|University Policies|AI Statement|Technology Support|Canvas LMS Technical Support|University Attendance Policy|Notice of Nondiscrimination|Americans with Disabilities Act|Statement on Mental Health|FERPA|Free Speech and Civil Discourse|Catalog Description|Course Prerequisites|Course Learning Outcomes|Textbook and\/or Resource Materials|Late Work Policy|Course Specific Late Work Policy|Tentative Course Schedule|Special Course Designation|Preferred Contact Method|Biography|Publication Date)\b/gi, ' ')
-
-      // Collapse repeated whitespace and blank lines
-      .replace(/[ \t]+/g, ' ')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim();
-  }
-
-  /**
-   * Main entry point. Parses raw schedule text into structured events.
-   * @param {string} text - Raw schedule text.
-   * @returns {{ events: Array<{title: string, date: string, startTime: string, endTime?: string, location?: string, category: string}> }}
-   */
-  function parseScheduleText(text) {
-    text = cleanBoilerplate(text);
-
-    const events = [];
-    const seenEvents = new Set();
-
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    const fullText = lines.join(' ');
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory();
@@ -69,6 +28,35 @@
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
+
+  /**
+   * General-purpose boilerplate cleaner.
+   * Removes common noise that appears across many digital syllabi, PDF exports,
+   * Canvas pages, and copy-pasted text (URLs, page artifacts, timestamps,
+   * generic section headers, excessive whitespace). This keeps the parser
+   * format-agnostic.
+   */
+  function cleanBoilerplate(text) {
+    return text
+      // Strip URLs and web artifacts
+      .replace(/https?:\/\/\S+/g, ' ')
+      .replace(/www\.\S+/g, ' ')
+
+      // Strip page / export artifacts (e.g. "1/15_", "tools/123 4/15_")
+      .replace(/\b\d{1,3}\/\d{1,3}_?\b/g, ' ')
+      .replace(/tools\/\d+\s+\d+\/\d+/g, ' ')
+
+      // Strip common copy-paste timestamps
+      .replace(/\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}\s*(AM|PM)?/gi, ' ')
+
+      // Remove generic syllabus section headers (works for almost any syllabus)
+      .replace(/\b(Course Information|Instructor Details|Office Hours|Grading Policy|Course Schedule|University Policies|AI Statement|Technology Support|Canvas LMS Technical Support|University Attendance Policy|Notice of Nondiscrimination|Americans with Disabilities Act|Statement on Mental Health|FERPA|Free Speech and Civil Discourse|Catalog Description|Course Prerequisites|Course Learning Outcomes|Textbook and\/or Resource Materials|Late Work Policy|Course Specific Late Work Policy|Tentative Course Schedule|Special Course Designation|Preferred Contact Method|Biography|Publication Date)\b/gi, ' ')
+
+      // Collapse repeated whitespace and blank lines
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
 
   function to12HourTime(time) {
     if (!time) return '';
@@ -94,7 +82,6 @@
       july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
       jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
     };
-    // Month DD, YYYY
     const monthMatch = dateStr.match(/(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?\s+(\d{1,2}),?\s+(\d{4})/i);
     if (monthMatch) {
       const month = months[monthMatch[1].toLowerCase()];
@@ -102,7 +89,6 @@
       const year = monthMatch[3];
       return `${year}-${String(month).padStart(2, '0')}-${day}`;
     }
-    // MM/DD/YYYY or MM/DD/YY
     const slashMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
     if (slashMatch) {
       const month = slashMatch[1].padStart(2, '0');
@@ -110,7 +96,6 @@
       const year = slashMatch[3].length === 2 ? `20${slashMatch[3]}` : slashMatch[3];
       return `${year}-${month}-${day}`;
     }
-    // YYYY-MM-DD
     const isoMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
     if (isoMatch) {
       return dateStr;
@@ -154,7 +139,6 @@
     let startTime = '';
     let endTime = '';
 
-    // Time range
     const rangeMatch = text.match(/(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*[–—-]\s*(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?/i);
     if (rangeMatch) {
       startTime = rangeMatch[1];
@@ -180,7 +164,6 @@
       return { startTime: to12HourTime(startTime), endTime: to12HourTime(endTime) };
     }
 
-    // Single time
     const singleMatch = text.match(/(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?/i);
     if (singleMatch) {
       startTime = singleMatch[1];
@@ -201,10 +184,10 @@
 
   /**
    * Main entry point. Parses raw schedule text into structured events.
-   * @param {string} text - Raw schedule text.
-   * @returns {{ events: Array<{title: string, date: string, startTime: string, endTime?: string, location?: string, category: string}> }}
    */
   function parseScheduleText(text) {
+    text = cleanBoilerplate(text);
+
     const events = [];
     const seenEvents = new Set();
 
@@ -267,21 +250,16 @@
         }
       }
 
-        title = title
+      title = title
         .replace(/^(exam|test|quiz|midterm|final)\s*(\d+)?\s*[:–—-]\s*/i, '')
         .replace(/^\d+\.\s*/, '')
         .replace(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*/i, '')
-        // General course-code stripping (works for any university: MATH 304, CSCE 121, etc.)
         .replace(/\b[A-Z]{2,5}\s*\d{3,4}[A-Z]?\b/g, '')
-        // Drop trailing long policy-like text after the core title
         .replace(/\s{2,}.*$/, '')
         .trim();
 
-      // General junk filter (format-agnostic)
       if (!title || title.length < 2 || title.length > 90) continue;
       if (/^\d+$/.test(title) || /tools|canvas|https|\/external/i.test(title)) continue;
-
-      if (!title || title.length < 2) continue;
 
       const location = extractLocation(contextWindow);
       const category = detectCategory(title + ' ' + contextWindow);
@@ -300,7 +278,7 @@
       });
     }
 
-    // Secondary keyword-driven strategy for exams, deadlines, etc.
+    // Secondary keyword-driven strategy
     const keywordPatterns = [
       { pattern: /(Midterm\s*(?:Exam\s*)?[\dIV]*)/gi, category: 'exam' },
       { pattern: /(Final\s*Exam)/gi, category: 'exam' },
@@ -359,7 +337,7 @@
     return { events: events };
   }
 
-  // Utility helpers for presentation (optional but convenient for website use)
+  // Utility helpers
   function groupByDate(items) {
     return items.reduce((acc, item) => {
       const date = item.date;
@@ -412,7 +390,6 @@
     formatDate: formatDate,
     formatTime: formatTime,
     getCategoryColor: getCategoryColor,
-    // Internal helpers exposed for advanced use or testing
     _normalizeDate: normalizeDate,
     _parseTime: parseTime,
     _detectCategory: detectCategory,
