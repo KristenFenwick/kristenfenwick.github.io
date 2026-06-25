@@ -662,3 +662,46 @@ header {
   margin-bottom: 16px;
   line-height: 1.35;
 }
+
+#cad-projects h2 {
+  color: #3c0d0d;
+}
+
+#cad-projects > p {
+  line-height: 1.65;
+  color: #444;
+}
+
+.cad-grid .cad-card {
+  width: auto;
+  max-width: 320px;
+}
+
+.cad-thumb {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  margin-bottom: 12px;
+  background: #fafafa;
+}
+
+.cad-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cad-links a {
+  color: #3c0d0d;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.cad-links a:hover {
+  text-decoration: underline;
+  color: #7e2d2d;
+}

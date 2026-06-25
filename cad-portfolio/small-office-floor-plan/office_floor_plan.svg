@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="850" viewBox="0 0 1100 850">
+  <rect width="1100" height="850" fill="#ffffff"/>
+  <text x="40" y="40" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#111">Small Office Layout — AEC Drafting Sample</text>
+  <text x="40" y="68" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#444">Kristen Fenwick | Scale 1:50 | Units: meters</text>
+
+  <!-- Title block -->
+  <rect x="760" y="620" width="300" height="200" fill="none" stroke="#111" stroke-width="2"/>
+  <line x1="760" y1="660" x2="1060" y2="660" stroke="#111" stroke-width="1"/>
+  <line x1="760" y1="700" x2="1060" y2="700" stroke="#111" stroke-width="1"/>
+  <line x1="910" y1="620" x2="910" y2="820" stroke="#111" stroke-width="1"/>
+  <text x="770" y="645" font-family="Arial" font-size="13" fill="#111">PROJECT</text>
+  <text x="920" y="645" font-family="Arial" font-size="13" fill="#111">Studio Office</text>
+  <text x="770" y="685" font-family="Arial" font-size="13" fill="#111">AREA</text>
+  <text x="920" y="685" font-family="Arial" font-size="13" fill="#111">12.0 m²</text>
+  <text x="770" y="725" font-family="Arial" font-size="13" fill="#111">DRAWN BY</text>
+  <text x="920" y="725" font-family="Arial" font-size="13" fill="#111">K. Fenwick</text>
+  <text x="770" y="765" font-family="Arial" font-size="13" fill="#111">DATE</text>
+  <text x="920" y="765" font-family="Arial" font-size="13" fill="#111">Jun 2026</text>
+
+  <g transform="translate(120,120)">
+    <!-- Exterior walls -->
+    <rect x="0" y="0" width="480" height="360" fill="#f7f7f7" stroke="#111" stroke-width="8"/>
+    <!-- Interior partition -->
+    <line x1="300" y1="0" x2="300" y2="220" stroke="#111" stroke-width="6"/>
+    <!-- Door opening -->
+    <line x1="300" y1="220" x2="300" y2="300" stroke="#fff" stroke-width="8"/>
+    <path d="M300,220 A80,80 0 0 1 380,300" fill="none" stroke="#555" stroke-width="2"/>
+    <!-- Window -->
+    <line x1="120" y1="0" x2="220" y2="0" stroke="#4a90d9" stroke-width="6"/>
+    <text x="145" y="-15" font-family="Arial" font-size="12" fill="#4a90d9">WINDOW</text>
+
+    <!-- Furniture -->
+    <rect x="40" y="60" width="180" height="80" fill="#ddd" stroke="#666" stroke-width="2"/>
+    <text x="95" y="108" font-family="Arial" font-size="14" fill="#333">DESK</text>
+    <rect x="40" y="170" width="70" height="70" fill="#ddd" stroke="#666" stroke-width="2"/>
+    <text x="52" y="212" font-family="Arial" font-size="12" fill="#333">CHAIR</text>
+    <rect x="340" y="60" width="100" height="40" fill="#ddd" stroke="#666" stroke-width="2"/>
+    <text x="360" y="86" font-family="Arial" font-size="12" fill="#333">SHELF</text>
+
+    <!-- Room labels -->
+    <text x="90" y="300" font-family="Arial" font-size="18" font-weight="600" fill="#111">WORK AREA</text>
+    <text x="350" y="170" font-family="Arial" font-size="18" font-weight="600" fill="#111">CLOSET</text>
+    <text x="350" y="330" font-family="Arial" font-size="14" fill="#555">DOOR</text>
+
+    <!-- Dimensions -->
+    <line x1="0" y1="390" x2="480" y2="390" stroke="#111" stroke-width="1"/>
+    <text x="220" y="415" font-family="Arial" font-size="14" fill="#111">4.0 m</text>
+    <line x1="500" y1="0" x2="500" y2="360" stroke="#111" stroke-width="1"/>
+    <text x="515" y="185" font-family="Arial" font-size="14" fill="#111">3.0 m</text>
+    <line x1="0" y1="430" x2="300" y2="430" stroke="#111" stroke-width="1"/>
+    <text x="130" y="455" font-family="Arial" font-size="14" fill="#111">2.5 m</text>
+  </g>
+</svg>
