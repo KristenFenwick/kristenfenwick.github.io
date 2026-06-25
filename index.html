@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
     <header>
@@ -17,21 +17,26 @@
         <p> Data Engineering Student | Former NASA L'SPACE LEAP Intern | Team-Oriented with a Business Foundation</p>
     </header>
 
-    <nav>
-
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#portfolio">Portfolio</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#cad-projects">CAD Samples</a></li>
-            <li><a href="#space-selfie">Space Selfie</a></li>
-            <li><a href="#mission-control">Mission Control</a></li>
-            <li><a href="#certifications">Certifications</a></li>
-            <li><a href="#recognition">Recognition</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-
-
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="#about" class="nav-logo" aria-label="Kristen Fenwick home">
+                <span class="nav-logo-mark">KF</span>
+                <span class="nav-logo-name">Kristen Fenwick</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+                <li><a href="#portfolio" class="nav-link" data-section="portfolio">Portfolio</a></li>
+                <li><a href="#projects" class="nav-link" data-section="projects">Projects</a></li>
+                <li><a href="#cad-projects" class="nav-link" data-section="cad-projects">CAD Samples</a></li>
+                <li><a href="#space-selfie" class="nav-link" data-section="space-selfie">Space Selfie</a></li>
+                <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+            </ul>
+        </div>
     </nav>
 
     <section id="about">
@@ -397,6 +402,15 @@ BLOC 860"></textarea>
           </ul>
         </div>
     </section>
+
+    <section id="resources" class="resources-section">
+        <h2>Resources &amp; Inspiration</h2>
+        <p>
+            Color palette used on this site is from <strong>346eur</strong> — author of Colors for Designers.<br>
+            Check out more palettes: <a href="https://346kit.com/CFD" target="_blank" rel="noopener">346kit.com/CFD</a>
+        </p>
+    </section>
+
     <script src="schedule-parser.js"></script>
     <script>
 function runPortfolioParser() {
@@ -456,6 +470,44 @@ CSCE 312
 ZACH 860`;
   runPortfolioParser();
 }
+</script>
+    <script>
+(function () {
+  const nav = document.getElementById('site-nav');
+  const menu = document.getElementById('nav-menu');
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelectorAll('.nav-link[data-section]');
+  const sections = [...links].map((link) => document.getElementById(link.dataset.section)).filter(Boolean);
+
+  function setActiveSection(id) {
+    links.forEach((link) => {
+      link.classList.toggle('is-active', link.dataset.section === id);
+    });
+  }
+
+  function closeMenu() {
+    menu.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  links.forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) setActiveSection(entry.target.id);
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+
+  sections.forEach((section) => observer.observe(section));
+  if (sections.length) setActiveSection(sections[0].id);
+})();
 </script>
     <!-- Tidio Chatbot -->
     <script src="//code.tidio.co/wf6negrt0zca6dbii4ilfydtfsjlfze0.js" async></script>
