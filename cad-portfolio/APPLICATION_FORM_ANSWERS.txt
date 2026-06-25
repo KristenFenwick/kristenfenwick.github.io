@@ -15,7 +15,7 @@ https://kristenfenwick.github.io/#cad-projects
 
 PORTFOLIO TEXT (if free-text box)
 https://kristenfenwick.github.io/#cad-projects
-I have approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad. My portfolio includes NASA L'SPACE engineering work, mechanical design analysis, and CAD work samples covering 2D mechanical drafting, parametric OpenSCAD modeling, and AEC-style layout drafting.
+I have approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad. My portfolio includes NASA L'SPACE engineering work, mechanical design analysis, a 3D-printed iPhone-fit speaker enclosure, and CAD work samples covering 2D mechanical drafting, parametric OpenSCAD modeling, and AEC-style layout drafting.
 
 EXPERIENCE SURVEY ANSWERS
 OpenSCAD / CadQuery / SolveSpace / OpenJSCAD          -> 0-1 years (after today's OpenSCAD sample)
