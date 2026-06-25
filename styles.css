@@ -7,20 +7,49 @@ body {
     color: #1e2a3a;
 }
 
-header {
+.site-header {
     text-align: center;
-    padding: 40px 20px;
-    background-color: #650000;
-    color: white;
+    padding: 56px 24px 48px;
+    background: linear-gradient(175deg, #fdd5df 0%, #F9A8BB 48%, #f59bb0 100%);
+    color: #1a2433;
+    border-bottom: 1px solid rgba(26, 36, 51, 0.06);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.site-header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.site-header h1 {
+    margin: 0 0 14px;
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    font-size: clamp(2rem, 5vw, 2.65rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+    color: #1a2433;
+}
+
+.site-header-tagline {
+    margin: 0 auto;
+    max-width: 580px;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #2a3648;
 }
 
 .profile-pic {
-    width: 160px;
-    height: 160px;
+    width: 152px;
+    height: 152px;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 20px;
-    border: 4px solid white;
+    margin-bottom: 26px;
+    border: 4px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 32px rgba(26, 36, 51, 0.14);
 }
 
 
@@ -272,7 +301,7 @@ section {
 
 .nav-link.is-active {
   color: #1a2433;
-  background: rgba(249, 168, 187, 0.28);
+  background: rgba(249, 168, 187, 0.52);
   font-weight: 600;
 }
 
@@ -532,11 +561,6 @@ section {
   }
 
 }
-header {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 /* Portfolio Section — integrated dark band, no card */
 #portfolio {
   position: relative;
