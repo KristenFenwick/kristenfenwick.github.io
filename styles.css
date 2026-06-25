@@ -832,9 +832,7 @@ header {
   .space-selfie-patch {
     max-width: 160px;
   }
-}
 
-@media (max-width: 640px) {
   .cad-thumb-pair {
     grid-template-columns: 1fr;
   }
