@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frost Bank Tower Study — Sources &amp; Uncertainty | Kristen Fenwick</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css?v=7">
+    <style>
+        .method-page { padding: clamp(48px, 8vw, 96px) clamp(24px, 5vw, 48px); max-width: 720px; margin: 0 auto; }
+        .method-page h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 12px; }
+        .method-page .lead { color: var(--text-muted); margin-bottom: 48px; line-height: 1.8; }
+        .method-page h2 { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 400; margin: 40px 0 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+        .method-page p, .method-page li { color: var(--text-muted); font-size: 0.9rem; line-height: 1.8; }
+        .method-page ul { padding-left: 1.2em; }
+        .method-page a { border-bottom: 1px solid var(--line-strong); transition: border-color 0.3s var(--ease); }
+        .method-page a:hover { border-color: var(--accent); }
+        .status-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 16px 0; }
+        .status-table th, .status-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+        .status-table th { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); font-weight: 400; }
+        .tag { display: inline-block; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--line-strong); }
+        .tag-verified { color: var(--text); }
+        .tag-est { color: var(--text-muted); }
+        .tag-uncertain { color: var(--text-light); }
+        .geology-figure { margin: 24px 0; padding: 20px; background: var(--bg-alt); border: 1px solid var(--line); }
+        .geology-figure img { max-width: 320px; margin: 0 auto 16px; border: 1px solid var(--line); }
+        .geology-figure figcaption { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
+        .layer-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 16px; }
+        .layer-legend span { font-size: 0.7rem; letter-spacing: 0.06em; color: var(--text-muted); }
+        .layer-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: middle; border: 1px solid var(--line-strong); }
+        .layer-blue::before { background: #6B9BD1; }
+        .layer-green::before { background: #7CB87C; }
+        .layer-purple::before { background: #9B7BB8; }
+        .layer-orange::before { background: #D4A574; }
+        .layer-pink::before { background: #C98BA8; }
+        .back-link { display: inline-block; margin-bottom: 32px; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+        .source-list { list-style: none; padding: 0; margin: 0; }
+        .source-list li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+        .source-list strong { display: block; font-weight: 400; color: var(--text); font-size: 0.85rem; margin-bottom: 4px; }
+        .consideration-box { padding: 20px 0; border-top: 1px solid var(--line); }
+        .consideration-box h3 { margin: 0 0 8px; font-size: 0.8rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="../../index.html#cad-projects" class="nav-logo">Kristen Fenwick</a>
+            <ul class="nav-menu">
+                <li><a href="../../index.html#cad-projects" class="nav-link">CAD</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="method-page">
+        <a href="../../index.html#cad-projects" class="back-link text-link">← Back to portfolio</a>
+
+        <h1>Frost Bank Tower Study</h1>
+        <p class="lead">This page documents measurement uncertainty, reference sources, and site considerations for the parametric CAD study. This is an architectural research model — not construction documentation.</p>
+
+        <h2>Dimension confidence</h2>
+        <p>Values are classified by how they were obtained. Anything marked <span class="tag tag-est">Estimated</span> should be verified against survey data, as-built drawings, or architect-of-record documents before use in professional work.</p>
+
+        <table class="status-table">
+            <thead>
+                <tr><th>Parameter</th><th>Value</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Total height</td><td>515 ft (157 m)</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Roof height</td><td>400 ft (122 m)</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Crown height</td><td>99 ft (30 m)</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Floor count</td><td>33</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Leasable area</td><td>~525,000 sf</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Site area</td><td>1.7 acres (Block 42)</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Footprint (186′ × 128′)</td><td>Rectangular base</td><td><span class="tag tag-est">Estimated</span></td></tr>
+                <tr><td>Crown setback schedule</td><td>7 step increments</td><td><span class="tag tag-est">Estimated</span></td></tr>
+                <tr><td>Typical floor plate</td><td>~126 ft equivalent</td><td><span class="tag tag-est">Derived</span></td></tr>
+                <tr><td>Parking levels</td><td>11</td><td><span class="tag tag-verified">Published</span></td></tr>
+                <tr><td>Subsurface / foundation depths</td><td>Not modeled</td><td><span class="tag tag-uncertain">Not available</span></td></tr>
+            </tbody>
+        </table>
+
+        <h2>Sources</h2>
+        <ul class="source-list">
+            <li>
+                <strong>Duda|Paine Architects — Frost Bank Tower</strong>
+                Design narrative: rectangular base transitioning to a square crown; folded glass planes; limestone podium with stately aesthetic for parking levels.
+                <br><a href="https://www.dudapaine.com/featured-projects/workplace/frost-bank-tower/" target="_blank" rel="noopener">dudapaine.com/featured-projects/workplace/frost-bank-tower</a>
+            </li>
+            <li>
+                <strong>Wikipedia — Frost Bank Tower</strong>
+                Height, floor count, crown dimensions, site history (Block 42 consolidation 1998–2001), architects (Duda/Paine + HKS), groundbreaking November 2001.
+                <br><a href="https://en.wikipedia.org/wiki/Frost_Bank_Tower" target="_blank" rel="noopener">en.wikipedia.org/wiki/Frost_Bank_Tower</a>
+            </li>
+            <li>
+                <strong>Site address &amp; coordinates</strong>
+                401 Congress Avenue, Austin, TX · 30.266489°N, 97.742689°W
+            </li>
+            <li>
+                <strong>Parametric model file</strong>
+                <a href="frost_tower_dimensions.py">frost_tower_dimensions.py</a> — editable dimension registry for this study
+            </li>
+        </ul>
+
+        <h2>Site &amp; ground considerations</h2>
+        <p>Downtown Austin sits on the Colorado River floodplain terrace. The Frost Bank Tower site at Congress Avenue and 4th Street is roughly six to eight blocks north of the river channel. Proximity to a major water source influences subsurface conditions, groundwater behavior, and long-term settlement considerations — none of which are modeled in this study but should inform any foundation-level CAD or BIM work.</p>
+
+        <div class="consideration-box">
+            <h3>Water proximity</h3>
+            <p>The Colorado River and Lady Bird Lake lie south of the central business district. Downtown sites commonly encounter variable water table depths, alluvial soils, and clay-rich formations. Exact borings for Block 42 are not cited in this portfolio study.</p>
+        </div>
+        <div class="consideration-box">
+            <h3>Age of ground &amp; redevelopment</h3>
+            <p>Prior to construction (2001–2003), Block 42 held older brick commercial buildings and the Mexic-Arte Museum lease area. Demolition and regrading of prior fill layers means the tower bears on engineered foundations placed after site clearing — not pristine native strata. Published history notes land consolidation beginning in 1998 and clearing in November 2001.</p>
+        </div>
+        <div class="consideration-box">
+            <h3>Capitol view corridor constraints</h3>
+            <p>Municipal height limits along Congress Avenue were set to preserve views of the Texas State Capitol. The built height (515 ft) reflects those zoning envelopes; early proposals were lower (27 stories / ~352 ft) before the Cousins Properties design.</p>
+        </div>
+
+        <h2>Layering reference sketch</h2>
+        <figure class="geology-figure">
+            <img src="site_geology_reference.jpg" alt="Hand-drawn color-coded sketch of folded and layered site planes, marked NOT SCALED">
+            <figcaption>
+                Field sketch — <em>not scaled</em>. Color-coded layering concept for folded planes (crown geometry) and horizontal stratification (podium, tower, parking, subsurface). Dashed lines indicate internal layer boundaries; arrows show plane relationships. This diagram informs how crown setbacks and site strata are interpreted in the study — not as surveyed fact.
+            </figcaption>
+            <div class="layer-legend">
+                <span class="layer-blue">Blue — primary structure / curtain wall envelope</span>
+                <span class="layer-green">Green — site / terrain / foundation boundary</span>
+                <span class="layer-purple">Purple — internal core / layered infill</span>
+                <span class="layer-orange">Orange — folded transition planes (crown)</span>
+                <span class="layer-pink">Pink — subsurface / parking stratum</span>
+            </div>
+        </figure>
+
+        <h2>What this study does not claim</h2>
+        <ul>
+            <li>Survey-grade footprint or setback dimensions</li>
+            <li>Geotechnical or hydrological analysis</li>
+            <li>Code compliance or permit-ready drawings</li>
+            <li>Authority over architect-of-record (Duda|Paine / HKS) documents</li>
+        </ul>
+        <p>For construction accuracy, consult licensed survey, geotechnical reports, and official architectural construction documents.</p>
+
+        <p style="margin-top:48px; font-size:0.8rem; color:var(--text-light);">Kristen Fenwick · Portfolio CAD study · Jun 2026</p>
+    </main>
+</body>
+</html>
