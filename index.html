@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="styles.css?v=7">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -110,7 +111,7 @@
                     </div>
                     <span class="project-index">02 / 03</span>
                 </div>
-                <p class="project-desc">Developed a cable-driven aluminum drum system to enable safe descent from a fifth-floor height. Conducted analytic modeling to derive relationships for drum mass, moment of inertia, and drum dimensions, applying energy conservation principles. Used Excel to run parameter sweeps for angular speeds from 2–5 rad/s and generated plots to evaluate feasible geometries. Recommended a drum radius of ~1.5 m and depth of ~88 mm; analysis indicated a fully solid aluminum drum would be impractically massive, prompting a thicker-rim or hollow design proposal as a safer alternative. <a href="#cad-projects" class="text-link project-crosslink">See OpenSCAD implementation →</a></p>
+                <p class="project-desc">Developed a cable-driven aluminum drum system to enable safe descent from a fifth-floor height. Conducted analytic modeling to derive relationships for drum mass, moment of inertia, and drum dimensions, applying energy conservation principles. Used Excel to run parameter sweeps for angular speeds from 2–5 rad/s and generated plots to evaluate feasible geometries. Recommended a drum radius of ~1.5 m and depth of ~88 mm; analysis indicated a fully solid aluminum drum would be impractically massive, prompting a thicker-rim or hollow design proposal as a safer alternative. <a href="#cad-projects" class="text-link project-crosslink">See CAD implementation →</a></p>
             </article>
 
             <article class="project-item">
@@ -163,34 +164,45 @@
             <div class="section-head">
                 <h2 class="section-title">CAD &amp; Design</h2>
             </div>
-            <p class="section-intro">Approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, OpenSCAD, and Tinkercad — mechanical drawings, assembly modeling, parametric design, and design documentation through NASA L'SPACE.</p>
+            <p class="section-intro">Approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad — from 2D technical drawings and AEC floor plans to sculptural 3D assemblies and parametric mechanical design through NASA L'SPACE.</p>
 
             <div class="cad-gallery">
                 <article class="cad-item cad-item--featured cad-item--showcase">
+                    <div class="cad-viewer-wrap">
+                        <model-viewer
+                            src="cad-portfolio/vesper-deployment-pod/vesper-pod.glb"
+                            alt="Vesper Deployment Pod — interactive 3D model"
+                            camera-controls
+                            auto-rotate
+                            shadow-intensity="0.55"
+                            exposure="0.95"
+                            environment-image="neutral"
+                            loading="lazy">
+                        </model-viewer>
+                        <p class="cad-viewer-hint">Drag to rotate · scroll to zoom · no download required</p>
+                    </div>
                     <div class="cad-images cad-images--triple">
-                        <img src="cad-portfolio/mission-control-safety-module/mcsm_assembly_preview.png" alt="Mission-Control Safety Module wall-mounted assembly">
-                        <img src="cad-portfolio/mission-control-safety-module/mcsm_exploded_preview.png" alt="MCSM exploded view with bracket, drum, housing, cover, and locking pin">
-                        <img src="cad-portfolio/mission-control-safety-module/mcsm_section_preview.png" alt="MCSM section view showing guided release channel, modular cable path, and sensor slot">
+                        <img src="cad-portfolio/vesper-deployment-pod/vesper_hero.png" alt="Vesper Deployment Pod sculptural aerospace housing">
+                        <img src="cad-portfolio/vesper-deployment-pod/vesper_detail.png" alt="Helical cable raceway and toroidal drum detail">
+                        <img src="cad-portfolio/vesper-deployment-pod/vesper_side.png" alt="Sensor bay, release nozzle, and wall-mount arcs">
                     </div>
                     <div class="cad-caption">
-                        <h3>Mission-Control Safety Module — Compact Emergency Deployment System</h3>
-                        <p>OpenSCAD parametric assembly (320 × 240 × 88 mm) extending my ENGR 216 hollow-rim drum analysis into a wall-mounted safety deployment system. Nine modeled components: storage housing, spool/drum mechanism, locking pin, handle/grip, guided release channel, modular rope/cable path, mounting bracket, safety label plate, and an optional sensor slot for a future IoT/data iteration.</p>
+                        <h3>Vesper Deployment Pod — Sculptural Safety Housing</h3>
+                        <p>Organic aerospace-inspired form (~57k mesh faces) extending my ENGR 216 hollow-rim drum work and NASA A.N.D.E.R. mission thinking into a wall-mounted deployment object. Revolved seed-pod shell, helical cable raceway, toroidal drum chamber, locking collar with pin, sculptural grip loop, sensor bay, release nozzle, and flowing wall-mount arcs.</p>
                         <ul class="mcsm-components">
-                            <li>Wall-mounted storage housing</li>
-                            <li>Spool/drum mechanism</li>
-                            <li>Locking pin</li>
-                            <li>Handle/grip</li>
-                            <li>Guided release channel</li>
-                            <li>Modular rope/cable path</li>
-                            <li>Mounting bracket</li>
-                            <li>Safety label plate</li>
-                            <li>Sensor slot (future IoT)</li>
+                            <li>Revolved shell</li>
+                            <li>Helical raceway</li>
+                            <li>Toroidal drum</li>
+                            <li>Locking collar</li>
+                            <li>Sculptural grip</li>
+                            <li>Sensor bay</li>
+                            <li>Release nozzle</li>
+                            <li>Wall-mount arcs</li>
                         </ul>
-                        <p class="mcsm-future">Future iteration: sensor-based usage logging, load monitoring, or emergency deployment detection — connecting mechanical CAD to data engineering.</p>
+                        <p class="mcsm-future">Future iteration: sensor-based usage logging, load monitoring, or emergency deployment detection — connecting sculptural CAD to data engineering.</p>
                         <div class="cad-links">
-                            <a href="cad-portfolio/mission-control-safety-module/mcsm_assembly.scad" download>Download .scad</a>
-                            <a href="cad-portfolio/mission-control-safety-module/mcsm_parts.scad" download>Parts library</a>
-                            <a href="cad-portfolio/mission-control-safety-module/mcsm_assembly.stl" download>Download .stl</a>
+                            <a href="cad-portfolio/vesper-deployment-pod/vesper-pod.glb" target="_blank">View 3D model</a>
+                            <a href="cad-portfolio/vesper-deployment-pod/vesper-pod.stl" download>Download STL</a>
                         </div>
                     </div>
                 </article>

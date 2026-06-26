@@ -619,6 +619,29 @@ a {
   font-style: italic;
 }
 
+.cad-viewer-wrap {
+  margin-bottom: 24px;
+  background: #F4F1EC;
+  border: 1px solid var(--line);
+}
+
+.cad-viewer-wrap model-viewer {
+  width: 100%;
+  height: clamp(320px, 45vw, 480px);
+  --poster-color: #F4F1EC;
+}
+
+.cad-viewer-hint {
+  margin: 0;
+  padding: 10px 16px 14px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+
 @media (max-width: 640px) {
   .cad-item--featured .cad-images {
     grid-template-columns: 1fr;
