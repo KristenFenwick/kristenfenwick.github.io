@@ -7,24 +7,14 @@
     <title>Kristen Fenwick | Engineering Student</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
-    <header class="site-header">
-        <div class="site-header-inner">
-            <img src="headshot.jpg" alt="Kristen Fenwick Headshot" class="profile-pic">
-            <h1>Kristen Fenwick</h1>
-            <p class="site-header-tagline">Data Engineering Student · Former NASA L'SPACE LEAP Intern · Team-Oriented with a Business Foundation</p>
-        </div>
-    </header>
 
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <div class="nav-inner">
-            <a href="#about" class="nav-logo" aria-label="Kristen Fenwick home">
-                <span class="nav-logo-mark">KF</span>
-                <span class="nav-logo-name">Kristen Fenwick</span>
-            </a>
+            <a href="#about" class="nav-logo" aria-label="Kristen Fenwick home">Kristen Fenwick</a>
             <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
                 <span></span>
                 <span></span>
@@ -34,320 +24,332 @@
                 <li><a href="#about" class="nav-link" data-section="about">About</a></li>
                 <li><a href="#portfolio" class="nav-link" data-section="portfolio">Portfolio</a></li>
                 <li><a href="#projects" class="nav-link" data-section="projects">Projects</a></li>
-                <li><a href="#cad-projects" class="nav-link" data-section="cad-projects">CAD Samples</a></li>
-                <li><a href="#space-selfie" class="nav-link" data-section="space-selfie">Space Selfie</a></li>
+                <li><a href="#cad-projects" class="nav-link" data-section="cad-projects">CAD</a></li>
                 <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <section id="about">
-        <h2>About Me</h2>
-        <p>
-            My name is Kristen Fenwick I am a current Data Engineering student at Texas A&M University with a business foundation and a systems mindset. 
-        </p>
-        <p>
-            In the spring of '25 I served as Deputy Project Manager of Resources in NASA’s L’SPACE Mission Concept Academy, helping lead a conceptual Venus aerobot mission A.N.D.E.R. We coordinated task schedules, deliverables, and subsystem documentation aligned with NASA lifecycle phases. I had the opportunity to continue with the program as a Program Analyst Mentor through the NASA LEAP internship, guiding student teams on systems engineering and project planning best practices.
-        </p>
-        <p>
-            I also work as a K-12 substitute teacher with Austin ISD, where I’ve strengthened my adaptability, communication, and classroom leadership. Across every role, I enjoy blending structured problem-solving with collaboration and making space for curiosity along the way.
-        </p>
-
-
-
-    </section>
-
-    <section id="portfolio">
-        <div class="portfolio-stars" aria-hidden="true"></div>
-        <div class="portfolio-orbit" aria-hidden="true">
-            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="40" cy="40" r="28" stroke="currentColor" stroke-width="0.75" opacity="0.35"/>
-                <circle cx="40" cy="40" r="4" fill="currentColor" opacity="0.5"/>
-                <line x1="40" y1="12" x2="40" y2="68" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>
-                <line x1="12" y1="40" x2="68" y2="40" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>
-            </svg>
+    <header class="hero">
+        <div class="hero-inner">
+            <h1 class="hero-name">Kristen Fenwick</h1>
+            <div class="hero-rule" aria-hidden="true"></div>
+            <p class="hero-tagline">Data Engineering Student · Former NASA L'SPACE LEAP Intern · Team-oriented with a business foundation</p>
         </div>
-        <div class="portfolio-inner">
-            <p class="portfolio-eyebrow">Portfolio</p>
-            <h2 class="portfolio-name">Kristen Fenwick</h2>
-            <div class="portfolio-rule" aria-hidden="true"></div>
-            <p class="portfolio-description">
-                A collection of my education, NASA L'SPACE work, CAD &amp; mechanical design samples, projects, and professional experience.
-            </p>
-            <div class="portfolio-actions">
-                <a href="Kristen_Fenwick_Portfolio.pdf" target="_blank" class="portfolio-action portfolio-action-primary">View PDF</a>
-                <a href="Kristen_Fenwick_Portfolio.pdf" download class="portfolio-action portfolio-action-secondary">Download PDF</a>
+    </header>
+
+    <section id="about" class="section">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">About</h2>
+            </div>
+            <div class="about-grid">
+                <img src="headshot.jpg" alt="Kristen Fenwick portrait" class="about-portrait">
+                <div class="about-text">
+                    <p>My name is Kristen Fenwick. I am a current Data Engineering student at Texas A&amp;M University with a business foundation and a systems mindset.</p>
+                    <p>In the spring of '25 I served as Deputy Project Manager of Resources in NASA's L'SPACE Mission Concept Academy, helping lead a conceptual Venus aerobot mission A.N.D.E.R. We coordinated task schedules, deliverables, and subsystem documentation aligned with NASA lifecycle phases. I had the opportunity to continue with the program as a Program Analyst Mentor through the NASA LEAP internship, guiding student teams on systems engineering and project planning best practices.</p>
+                    <p>I also work as a K-12 substitute teacher with Austin ISD, where I've strengthened my adaptability, communication, and classroom leadership. Across every role, I enjoy blending structured problem-solving with collaboration and making space for curiosity along the way.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="experience">
-        <h2>Professional Experience</h2>
-        <ul>
-            <li><strong>Austin ISD (2025–Present):</strong> Substitute Teacher - Provided K-12 classroom coverage across subjects, adapting to diverse student needs.</li>
-            <li><strong>NASA L'SPACE LEAP Intern (2025):</strong> Program Analyst Mentor – Guide multiple student teams in mission planning, aligning projects with NASA lifecycle milestones.</li>
-            <li><strong>Road Vantage (2024):</strong> Claims Adjudicator - Set service records and handled negotiations.</li>
-            <li><strong>Gopuff (2021–2024):</strong> Senior CSR - Led training and fraud resolution nationwide.</li>
-            <li><strong>Kindred at Home (2015–2018):</strong> Caregiver & Trainer - Recognized for exceptional support.</li>
-        </ul>
+    <section id="portfolio" class="section section--alt">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Portfolio</h2>
+                <a href="Kristen_Fenwick_Portfolio.pdf" target="_blank" class="section-link">View PDF</a>
+            </div>
+            <div class="portfolio-cta">
+                <p>A collection of my education, NASA L'SPACE work, CAD &amp; mechanical design samples, projects, and professional experience.</p>
+                <div class="portfolio-actions">
+                    <a href="Kristen_Fenwick_Portfolio.pdf" target="_blank" class="text-link">View PDF</a>
+                    <a href="Kristen_Fenwick_Portfolio.pdf" download class="text-link">Download</a>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section id="projects">
-        <h2>Projects</h2>
-
-        <div class="project-grid">
-
-        <div class="project-card">
-            <h3>NASA L'SPACE A.N.D.E.R. Mission</h3>
-            <p><strong>Role:</strong> Deputy Project Manager of Resources</p>
-            <p>Contributed to a conceptual Discovery-class Venus aerobot mission as part of NASA's L'SPACE Academy. Developed the subsystem integration timeline and mission schedule (Gantt chart) in alignment with NASA lifecycle phases, coordinated milestone reviews, documentation, and multidisciplinary communication supporting programmatic, engineering, and science deliverables.</p>
+    <section id="experience" class="section">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Experience</h2>
+            </div>
+            <ul class="experience-list">
+                <li><strong>Austin ISD (2025–Present)</strong> Substitute Teacher — Provided K-12 classroom coverage across subjects, adapting to diverse student needs.</li>
+                <li><strong>NASA L'SPACE LEAP Intern (2025)</strong> Program Analyst Mentor — Guide multiple student teams in mission planning, aligning projects with NASA lifecycle milestones.</li>
+                <li><strong>Road Vantage (2024)</strong> Claims Adjudicator — Set service records and handled negotiations.</li>
+                <li><strong>Gopuff (2021–2024)</strong> Senior CSR — Led training and fraud resolution nationwide.</li>
+                <li><strong>Kindred at Home (2015–2018)</strong> Caregiver &amp; Trainer — Recognized for exceptional support.</li>
+            </ul>
         </div>
-
-        <div class="project-card">
-            <h3>Fire Escape Drum Safety Design – ENGR 216</h3>
-            <p><strong>Role:</strong> Individual Engineering Analysis</p>
-            <p>Developed a cable-driven aluminum drum system to enable safe descent from a fifth-floor height. Conducted analytic modeling to derive relationships for drum mass, moment of inertia, and drum dimensions, applying energy conservation principles. Used Excel to run parameter sweeps for angular speeds from 2–5 rad/s and generated plots to evaluate feasible geometries. Recommended a drum radius of ~1.5 m and depth of ~88 mm; analysis indicated a fully solid aluminum drum would be impractically massive, prompting a thicker-rim or hollow design proposal as a safer alternative.</p>
-        </div>
-        
-        <div class="project-card">
-            <h3>Visual Odometry Lab - Measuring g on a 3.6° Incline</h3>
-            <p class="meta">Texas A&amp;M - ENGR 216 • Team: Kristen Fenwick, Cayleigh Locke, Alex Thomason, Damian Torres</p>
-            <p>
-                Estimated gravitational acceleration using video tracking of a puck on a 3.6° air-table incline.
-                Pixels → SI via a 10.00 cm baseline (s = 0.08098 ± 0.00006 cm/px), 5-point smoothing, central differences, trimmed endpoints;
-                g = a/sin(theta).
-            </p>
-            <ul class="stats">
-            <li><strong>a:</strong> 0.611 ± 0.018 m/s² (SE, N=6)</li>
-            <li><strong>g:</strong> 9.73 ± 0.28 m/s² (SE, N=6)</li>
-            <li><strong>Bias vs Austin g:</strong> 0.64% low (within ~2.9% uncertainty)</li>
-          </ul>
-        </div>
-        
-    </div>
-
-        <div class="badges">
-            <h3>NASA L'SPACE Badges</h3>
-
-            <figure>
-                <img src="LSPACE NX Skills Badge.png" alt="Siemens NX CAD" class="badge">
-                <figcaption>Siemens NX CAD</figcaption>
-            </figure>
-
-            <figure>
-                <img src="LSPACE Project Management Skills Badge.png" alt="Project Management" class="badge">
-                <figcaption>Project Management</figcaption>
-            </figure>
-
-            <figure>
-                <img src="LSPACE Heat Transfer Skills Badge.png" alt="Heat Transfer" class="badge">
-                <figcaption>Heat Transfer</figcaption>
-            </figure>
-
-            <figure>
-                <img src="LSPACE Requirements Skills Badge.png" alt="Requirements" class="badge">
-                <figcaption>Requirements</figcaption>
-            </figure>
-
-            <figure>
-                <img src="LSPACE Risk Management Skills Badge.png" alt="Risk Management" class="badge">
-                <figcaption>Risk Management</figcaption>
-            </figure>
-
-            <figure>
-                <img src="LSPACE Systems Topics Skills Badge.png" alt="Systems" class="badge">
-                <figcaption>Systems</figcaption>
-            </figure>
-        </div>
-
-
     </section>
 
-    <section id="cad-projects">
-        <h2>CAD &amp; Mechanical Design Work Samples</h2>
-        <p>
-            I have approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad.
-            My work includes mechanical drawings, modeled components, parametric design, and design documentation, including engineering project work through NASA L'SPACE.
-        </p>
+    <section id="projects" class="section section--alt">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Projects</h2>
+            </div>
 
-        <div class="project-grid cad-grid">
-            <div class="project-card cad-card cad-featured">
-                <div class="cad-thumb-pair">
-                    <div class="cad-media">
-                        <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" alt="CAD model of iPhone-fit speaker enclosure with KLF engraving" class="cad-thumb">
+            <article class="project-item">
+                <div class="project-caption">
+                    <div>
+                        <h3>NASA L'SPACE A.N.D.E.R. Mission</h3>
+                        <p class="meta">Deputy Project Manager of Resources</p>
                     </div>
-                    <div class="cad-media">
-                        <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" alt="3D printed iPhone speaker dock with phone inserted" class="cad-thumb">
+                    <span class="project-index">01 / 03</span>
+                </div>
+                <p class="project-desc">Contributed to a conceptual Discovery-class Venus aerobot mission as part of NASA's L'SPACE Academy. Developed the subsystem integration timeline and mission schedule (Gantt chart) in alignment with NASA lifecycle phases, coordinated milestone reviews, documentation, and multidisciplinary communication supporting programmatic, engineering, and science deliverables.</p>
+            </article>
+
+            <article class="project-item">
+                <div class="project-caption">
+                    <div>
+                        <h3>Fire Escape Drum Safety Design</h3>
+                        <p class="meta">ENGR 216 · Individual Engineering Analysis</p>
                     </div>
+                    <span class="project-index">02 / 03</span>
                 </div>
-                <h3>Custom iPhone Speaker Project — 3D Printed</h3>
-                <p><strong>Tools:</strong> Ultimaker Cura, STL modification, 3D printing</p>
-                <p>Scaled and modified a speaker enclosure STL to precisely fit my iPhone (verified with direct measurements), then 3D printed and tested a functional dock with storage compartments, ventilation openings, and custom KLF embossing (~140 × 90 × 40 mm). This project demonstrates practical CAD editing, print optimization, and functional product design skills.</p>
-                <div class="cad-links">
-                    <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" target="_blank">View print photo</a>
-                    <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" target="_blank">View CAD model</a>
-                    <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_fenwick.stl" download>Download .stl</a>
-                </div>
-            </div>
+                <p class="project-desc">Developed a cable-driven aluminum drum system to enable safe descent from a fifth-floor height. Conducted analytic modeling to derive relationships for drum mass, moment of inertia, and drum dimensions, applying energy conservation principles. Used Excel to run parameter sweeps for angular speeds from 2–5 rad/s and generated plots to evaluate feasible geometries. Recommended a drum radius of ~1.5 m and depth of ~88 mm; analysis indicated a fully solid aluminum drum would be impractically massive, prompting a thicker-rim or hollow design proposal as a safer alternative.</p>
+            </article>
 
-            <div class="project-card cad-card">
-                <div class="cad-media">
-                    <img src="cad-portfolio/openscad-parametric-bracket/mounting_bracket_preview.png" alt="Parametric mounting bracket 3D preview" class="cad-thumb">
+            <article class="project-item">
+                <div class="project-caption">
+                    <div>
+                        <h3>Visual Odometry Lab</h3>
+                        <p class="meta">ENGR 216 · Kristen Fenwick, Cayleigh Locke, Alex Thomason, Damian Torres</p>
+                    </div>
+                    <span class="project-index">03 / 03</span>
                 </div>
-                <h3>Parametric Mounting Bracket — OpenSCAD</h3>
-                <p><strong>Tools:</strong> OpenSCAD, parametric modeling, STL export</p>
-                <p>Created a fully parametric mounting bracket using OpenSCAD with adjustable width, height, thickness, and hole radius. This code-driven project demonstrates reusable digital asset creation, parametric design principles, and efficient mechanical component modeling.</p>
-                <div class="cad-links">
-                    <a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.scad" download>Download .scad</a>
-                    <a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.stl" download>Download .stl</a>
-                </div>
-            </div>
+                <p class="project-desc">Estimated gravitational acceleration using video tracking of a puck on a 3.6° air-table incline. Pixels → SI via a 10.00 cm baseline (s = 0.08098 ± 0.00006 cm/px), 5-point smoothing, central differences, trimmed endpoints; g = a/sin(theta).</p>
+                <ul class="project-stats">
+                    <li><strong>a:</strong> 0.611 ± 0.018 m/s² (SE, N=6)</li>
+                    <li><strong>g:</strong> 9.73 ± 0.28 m/s² (SE, N=6)</li>
+                    <li><strong>Bias vs Austin g:</strong> 0.64% low (within ~2.9% uncertainty)</li>
+                </ul>
+            </article>
 
-            <div class="project-card cad-card">
-                <div class="cad-media">
-                    <img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.png" alt="Mechanical mounting plate 2D drawing" class="cad-thumb">
-                </div>
-                <h3>Mechanical Mounting Plate — 2D CAD Drawing</h3>
-                <p><strong>Tools:</strong> AutoCAD-style drafting, dimensioning, title blocks</p>
-                <p>Produced a clean, manufacturing-ready 2D mechanical drawing of a mounting plate complete with precise hole patterns, centerlines, dimensions, notes, and title block. Demonstrates strong technical drafting standards and clear engineering communication.</p>
-                <div class="cad-links">
-                    <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.pdf" target="_blank">View PDF</a>
-                    <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.svg" target="_blank">View SVG</a>
-                </div>
+            <div class="badges-row">
+                <figure class="badge-item">
+                    <img src="LSPACE NX Skills Badge.png" alt="Siemens NX CAD">
+                    <figcaption>NX CAD</figcaption>
+                </figure>
+                <figure class="badge-item">
+                    <img src="LSPACE Project Management Skills Badge.png" alt="Project Management">
+                    <figcaption>Project Management</figcaption>
+                </figure>
+                <figure class="badge-item">
+                    <img src="LSPACE Heat Transfer Skills Badge.png" alt="Heat Transfer">
+                    <figcaption>Heat Transfer</figcaption>
+                </figure>
+                <figure class="badge-item">
+                    <img src="LSPACE Requirements Skills Badge.png" alt="Requirements">
+                    <figcaption>Requirements</figcaption>
+                </figure>
+                <figure class="badge-item">
+                    <img src="LSPACE Risk Management Skills Badge.png" alt="Risk Management">
+                    <figcaption>Risk Management</figcaption>
+                </figure>
+                <figure class="badge-item">
+                    <img src="LSPACE Systems Topics Skills Badge.png" alt="Systems">
+                    <figcaption>Systems</figcaption>
+                </figure>
             </div>
+        </div>
+    </section>
 
-            <div class="project-card cad-card">
-                <div class="cad-media">
-                    <img src="cad-portfolio/small-office-floor-plan/office_floor_plan.png" alt="Small office floor plan layout" class="cad-thumb">
-                </div>
-                <h3>Small Office Layout — AEC Drafting Sample</h3>
-                <p><strong>Tools:</strong> Floor plan drafting, spatial layout, dimensioning</p>
-                <p>Developed a scaled small office floor plan including walls, doors, windows, room labels, dimensions, and basic furniture blocking. This project highlights fundamental AEC drafting skills, spatial reasoning, and professional layout documentation.</p>
-                <div class="cad-links">
-                    <a href="cad-portfolio/small-office-floor-plan/office_floor_plan.pdf" target="_blank">View PDF</a>
-                    <a href="cad-portfolio/small-office-floor-plan/office_floor_plan.svg" target="_blank">View SVG</a>
+    <section id="cad-projects" class="section">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">CAD &amp; Design</h2>
+            </div>
+            <p class="section-intro">Approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad — mechanical drawings, modeled components, parametric design, and design documentation through NASA L'SPACE.</p>
+
+            <div class="cad-gallery">
+                <article class="cad-item cad-item--featured">
+                    <div class="cad-images">
+                        <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" alt="CAD model of iPhone-fit speaker enclosure with KLF engraving">
+                        <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" alt="3D printed iPhone speaker dock with phone inserted">
+                    </div>
+                    <div class="cad-caption">
+                        <h3>Custom iPhone Speaker — 3D Printed</h3>
+                        <p>Scaled and modified a speaker enclosure STL to precisely fit my iPhone, then 3D printed and tested a functional dock with storage compartments, ventilation openings, and custom KLF embossing (~140 × 90 × 40 mm).</p>
+                        <div class="cad-links">
+                            <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" target="_blank">Print photo</a>
+                            <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" target="_blank">CAD model</a>
+                            <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_fenwick.stl" download>Download .stl</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cad-item">
+                    <div class="cad-images">
+                        <img src="cad-portfolio/openscad-parametric-bracket/mounting_bracket_preview.png" alt="Parametric mounting bracket 3D preview">
+                    </div>
+                    <div class="cad-caption">
+                        <h3>Parametric Mounting Bracket — OpenSCAD</h3>
+                        <p>Created a fully parametric mounting bracket with adjustable width, height, thickness, and hole radius — demonstrating reusable digital asset creation and efficient mechanical component modeling.</p>
+                        <div class="cad-links">
+                            <a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.scad" download>Download .scad</a>
+                            <a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.stl" download>Download .stl</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cad-item">
+                    <div class="cad-images">
+                        <img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.png" alt="Mechanical mounting plate 2D drawing">
+                    </div>
+                    <div class="cad-caption">
+                        <h3>Mechanical Mounting Plate — 2D CAD</h3>
+                        <p>Manufacturing-ready 2D mechanical drawing with precise hole patterns, centerlines, dimensions, notes, and title block.</p>
+                        <div class="cad-links">
+                            <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.pdf" target="_blank">View PDF</a>
+                            <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.svg" target="_blank">View SVG</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cad-item">
+                    <div class="cad-images">
+                        <img src="cad-portfolio/small-office-floor-plan/office_floor_plan.png" alt="Small office floor plan layout">
+                    </div>
+                    <div class="cad-caption">
+                        <h3>Small Office Layout — AEC Drafting</h3>
+                        <p>Scaled small office floor plan including walls, doors, windows, room labels, dimensions, and basic furniture blocking.</p>
+                        <div class="cad-links">
+                            <a href="cad-portfolio/small-office-floor-plan/office_floor_plan.pdf" target="_blank">View PDF</a>
+                            <a href="cad-portfolio/small-office-floor-plan/office_floor_plan.svg" target="_blank">View SVG</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="certifications" class="section section--alt">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Certifications</h2>
+            </div>
+            <ul class="cert-list">
+                <li>
+                    <div class="cert-info">
+                        <h4>NASA L'SPACE LEAP Internship</h4>
+                        <p>Completed Dec 2025</p>
+                    </div>
+                    <a href="NASA_LEAP_Internship_Certificate.pdf" target="_blank">View</a>
+                </li>
+                <li>
+                    <div class="cert-info">
+                        <h4>NASA L'SPACE Mission Concept Academy</h4>
+                        <p>Completed Spring 2025</p>
+                    </div>
+                    <a href="NASA_LSpace_Mission_Academy_Certificate.pdf" target="_blank">View</a>
+                </li>
+                <li>
+                    <div class="cert-info">
+                        <h4>Python Programming (OpenEDG)</h4>
+                        <p>Completed Aug 2024</p>
+                    </div>
+                    <a href="CertificateOfCompletion_OpenEDG Python Institute Programming with Python Professional Certificate.pdf" target="_blank">View</a>
+                </li>
+                <li>
+                    <div class="cert-info">
+                        <h4>Cloud Data Engineering for Dummies</h4>
+                        <p>Snowflake Special Edition · Wiley</p>
+                    </div>
+                    <a href="https://www.snowflake.com/resource/cloud-data-engineering-for-dummies/" target="_blank" rel="noopener">View</a>
+                </li>
+                <li>
+                    <div class="cert-info">
+                        <h4>CrunchLabs Space Selfie — SAT GUS Mission</h4>
+                        <p>Completed Dec 2024</p>
+                    </div>
+                    <a href="space-selfie/CrunchLabsSpaceSelfieCertificate.pdf" target="_blank">View</a>
+                </li>
+                <li>
+                    <div class="cert-info">
+                        <h4>Simulink Onramp</h4>
+                        <p>Completed Dec 2024</p>
+                    </div>
+                    <a href="certificate simulink.pdf" target="_blank">View</a>
+                </li>
+                <li>
+                    <div class="cert-info">
+                        <h4>MATLAB Onramp</h4>
+                        <p>Completed Dec 2024</p>
+                    </div>
+                    <a href="certificate.pdf" target="_blank">View</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="space-selfie" class="section">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Space Selfie</h2>
+                <a href="https://space.crunchlabs.com/selfie/WLNDDZ" target="_blank" rel="noopener" class="section-link">Track satellite</a>
+            </div>
+            <div class="space-feature">
+                <img src="space-selfie/kristen_space_selfie.jpg" alt="Kristen Fenwick Space Selfie with Earth in the background from CrunchLabs SAT GUS satellite" class="space-hero-img">
+                <div class="space-detail">
+                    <div class="space-patch">
+                        <img src="space-selfie/satgus_mission_patch.jpg" alt="Official SAT GUS mission patch">
+                        <p class="space-patch-caption">Official SAT GUS mission patch — awarded as an official member of the mission.</p>
+                    </div>
+                    <div class="space-text">
+                        <h3>CrunchLabs Space Selfie — SAT GUS Mission</h3>
+                        <p>Sent a selfie into space through CrunchLabs' Space Selfie program. It was displayed on a Google Pixel aboard the SATGUS satellite and photographed from orbit with Earth in the background during the daytime.</p>
+                        <p class="space-meta">CrunchLabs × Mark Rober · Satellite imaging · STEM outreach</p>
+                        <div class="space-links">
+                            <a href="https://space.crunchlabs.com/selfie/WLNDDZ" target="_blank" rel="noopener" class="text-link">Where is the satellite?</a>
+                            <a href="https://space.crunchlabs.com/livestream" target="_blank" rel="noopener" class="text-link">Launch livestream</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-
-    <section id="certifications">
-        <h2>Licenses & Certifications</h2>
-
-        <div class="cert-card-container">
-
-            <div class="cert-card">
-                <h4>NASA L'SPACE Leadership Experience and Accelerator Program (LEAP) Internship</h4>
-                <p>Completed Dec 2025</p>
-                <a href="NASA_LEAP_Internship_Certificate.pdf" target="_blank"> ✨ View Certificate</a>
+    <section id="mission-control" class="section section--alt">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Mission Control</h2>
             </div>
-            
-            <div class="cert-card">
-                <h4>NASA L'SPACE Mission Concept Academy</h4>
-                <p>Completed Spring 2025</p>
-                <a href="NASA_LSpace_Mission_Academy_Certificate.pdf" target="_blank"> 🌟 View Certificate</a>
-            </div>
+            <p class="section-intro">A personalized workspace concept inspired by schedule parsing, systems planning, and project dashboards.</p>
 
-            <div class="cert-card">
-                <h4>Python Programming (OpenEDG)</h4>
-                <p>Completed Aug 2024</p>
-                <a href="CertificateOfCompletion_OpenEDG Python Institute Programming with Python Professional Certificate.pdf" target="_blank">  View Certificate</a>
-            </div>
-
-            <div class="cert-card">
-                <h4>Cloud Data Engineering for Dummies</h4>
-                <p>Snowflake Special Edition · Wiley</p>
-                <a href="https://www.snowflake.com/resource/cloud-data-engineering-for-dummies/" target="_blank" rel="noopener">📘 Get Official Copy</a>
-            </div>
-
-            <div class="cert-card">
-                <h4>CrunchLabs Space Selfie — SAT GUS Mission</h4>
-                <p>Completed Dec 2024</p>
-                <a href="space-selfie/CrunchLabsSpaceSelfieCertificate.pdf" target="_blank">🛰️ View Certificate</a>
-            </div>
-
-            <div class="cert-card">
-                <h4>Simulink Onramp</h4>
-                <p>Completed Dec 2024</p>
-                <a href="certificate simulink.pdf" target="_blank">  View Certificate</a>
-            </div>
-
-            <div class="cert-card">
-                <h4>MATLAB Onramp</h4>
-                <p>Completed Dec 2024</p>
-                <a href="certificate.pdf" target="_blank">  View Certificate</a>
-            </div>
-
-        </div>
-</section>
-
-    <section id="space-selfie">
-        <h2>Space Selfie</h2>
-        <div class="space-selfie-feature">
-            <div class="space-selfie-hero">
-                <img src="space-selfie/kristen_space_selfie.jpg" alt="Kristen Fenwick Space Selfie with Earth in the background from CrunchLabs SAT GUS satellite">
-            </div>
-            <div class="space-selfie-body">
-                <div class="space-selfie-patch">
-                    <img src="space-selfie/satgus_mission_patch.jpg" alt="Official SAT GUS mission patch">
-                    <p class="space-selfie-patch-caption">Official SAT GUS mission patch — awarded as an official member of the mission.</p>
+            <div class="mission-overview">
+                <div class="mission-item">
+                    <span>01</span>
+                    <h3>Schedule Parser</h3>
+                    <p>Convert pasted class or event text into structured calendar blocks. Live demo below.</p>
                 </div>
-                <div class="space-selfie-text">
-                    <h3>CrunchLabs Space Selfie — SAT GUS Mission</h3>
-                    <p>
-                        Sent a selfie into space through CrunchLabs’ Space Selfie program. It was displayed on a Google Pixel aboard the SATGUS satellite and photographed from orbit with Earth in the background during the daytime.
-                    </p>
-                    <p class="space-selfie-meta">CrunchLabs × Mark Rober · Satellite imaging · STEM outreach</p>
-                    <div class="space-selfie-links">
-                        <a href="https://space.crunchlabs.com/selfie/WLNDDZ" target="_blank" rel="noopener">Where is the satellite now?</a>
-                        <a href="https://space.crunchlabs.com/livestream" target="_blank" rel="noopener">Watch Launch Livestream</a>
-                    </div>
+                <div class="mission-item">
+                    <span>02</span>
+                    <h3>Workspace</h3>
+                    <p>Prototype interface for organizing code, data, demos, project notes, and workflows.</p>
+                </div>
+                <div class="mission-item">
+                    <span>03</span>
+                    <h3>Systems Dashboard</h3>
+                    <p>Track projects, deadlines, certifications, and technical milestones.</p>
                 </div>
             </div>
-        </div>
-    </section>
 
-<section id="mission-control">
-  <h2>Mission Control</h2>
-  <p>
-    A personalized workspace concept inspired by various tools, data, schedule parsing,
-    systems planning, and space-style project dashboards. 
-  </p>
+            <div class="parser-disclaimer">
+                <strong>Note:</strong> While the parser runs, for something as important as a schedule the goal is accuracy. Currently testing locally in a self-contained demo.
+            </div>
 
-  <div class="mission-grid">
-    <div class="mission-card">
-      <span>01</span>
-      <h3>Schedule Parser</h3>
-      <p>Convert pasted class or event text into structured calendar blocks. <strong>Live demo below.</strong></p>
-    </div>
+            <div class="parser-demo">
+                <div class="parser-header">
+                    <strong>Live Schedule Parser</strong>
+                    <span class="parser-hint">Paste raw text from a syllabus or PDF export</span>
+                </div>
 
-    <div class="mission-card">
-      <span>02</span>
-      <h3>Workspace</h3>
-      <p>Prototype interface for organizing code, data, demos of zero-install nature for testing environments, project notes, and workflows.</p>
-    </div>
-
-    <div class="mission-card">
-      <span>03</span>
-      <h3>Systems Dashboard</h3>
-      <p>Track projects, deadlines, certifications, and technical milestones.</p>
-    </div>
-  </div>
-    
-<div class="parser-disclaimer">
-  <strong>Note:</strong> While the parser runs, for something as important as a schedule the goal is accuracy. Currently testing locally in a self-contained demo.
-</div>
-    
-  <!-- Live Schedule Parser Demo -->
-  <div class="parser-demo">
-    <div class="parser-header">
-      <strong>Live Schedule Parser</strong>
-      <span class="parser-hint">Paste raw text from a syllabus or PDF export</span>
-    </div>
-
-    <textarea id="parser-input" class="parser-input" rows="6"
-      placeholder="Example:
+                <textarea id="parser-input" class="parser-input" rows="6"
+                    placeholder="Example:
 Monday, January 20, 2025
 
 CSCE 121
@@ -359,59 +361,71 @@ MATH 152
 11:30 AM - 12:45 PM
 BLOC 860"></textarea>
 
-    <div class="parser-actions">
-      <button onclick="runPortfolioParser()" class="parser-btn primary">Parse Text</button>
-      <button onclick="clearPortfolioParser()" class="parser-btn">Clear</button>
-      <button onclick="loadPortfolioExample()" class="parser-btn ghost">Load Example</button>
-    </div>
+                <div class="parser-actions">
+                    <button onclick="runPortfolioParser()" class="parser-btn primary">Parse Text</button>
+                    <button onclick="clearPortfolioParser()" class="parser-btn">Clear</button>
+                    <button onclick="loadPortfolioExample()" class="parser-btn ghost">Load Example</button>
+                </div>
 
-    <div id="parser-results" class="parser-results" style="display:none;">
-      <div class="parser-results-header">Parsed Events</div>
-      <div id="parser-results-list" class="parser-results-list"></div>
-    </div>
-  </div>
-</section>
-    
-<section id="recognition">
-  <h2>Recognition</h2>
-  <div class="recognition-card-container">
-    
-    <div class="recognition-card">
-      <h4>Phi Theta Kappa</h4>
-      <p>Active member of the international honor society for two-year college students. Participated in workshops and chapter meetings, strengthening leadership and collaboration while maintaining high academic achievement.</p>
-    </div>
-
-    <div class="recognition-card">
-      <h4>Featured by 
-        <a href="https://students.austincc.edu/honors-program/student-spotlights/" target="_blank" class="recognition-link">
-          ACC Honors Program
-        </a> (2025)
-      </h4>
-      <p>Recognized for work in NASA's L'SPACE Mission Concept Academy and selection into the LEAP internship.</p>
-    </div>
-
-  </div>
-</section>
-
-
-    <section id="contact">
-        <h2>Contact</h2>
-        <div class="contact-card">
-          <ul class="contact-list">
-            <li><strong>Email:</strong> <a href="mailto:kfenwick.career@gmail.com">kfenwick.career@gmail.com</a></li>
-            <li><strong>Resume:</strong> <a href="KFenwick_Resume_May2025.pdf" download>Download PDF</a></li>
-            <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/kristen-f-313b15141/" target="_blank">View My LinkedIn</a></li>
-          </ul>
+                <div id="parser-results" class="parser-results" style="display:none;">
+                    <div class="parser-results-header">Parsed Events</div>
+                    <div id="parser-results-list" class="parser-results-list"></div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section id="resources" class="resources-section">
-        <h2>Resources &amp; Inspiration</h2>
-        <p>
-            Color palette used on this site is from <strong>346eur</strong> — author of Colors for Designers.<br>
-            Check out more palettes: <a href="https://346kit.com/CFD" target="_blank" rel="noopener">346kit.com/CFD</a>
-        </p>
+    <section id="recognition" class="section">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Recognition</h2>
+            </div>
+            <div class="recognition-list">
+                <div class="recognition-item">
+                    <h4>Phi Theta Kappa</h4>
+                    <p>Active member of the international honor society for two-year college students. Participated in workshops and chapter meetings, strengthening leadership and collaboration while maintaining high academic achievement.</p>
+                </div>
+                <div class="recognition-item">
+                    <h4>Featured by <a href="https://students.austincc.edu/honors-program/student-spotlights/" target="_blank" class="recognition-link">ACC Honors Program</a> (2025)</h4>
+                    <p>Recognized for work in NASA's L'SPACE Mission Concept Academy and selection into the LEAP internship.</p>
+                </div>
+            </div>
+        </div>
     </section>
+
+    <section id="contact" class="section section--alt">
+        <div class="section-inner">
+            <div class="section-head">
+                <h2 class="section-title">Contact</h2>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <a href="mailto:kfenwick.career@gmail.com">kfenwick.career@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <a href="KFenwick_Resume_May2025.pdf" download>Download Resume</a>
+                </div>
+                <div class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    <a href="https://www.linkedin.com/in/kristen-f-313b15141/" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p class="footer-tag">#KristenFenwick</p>
+        <ul class="footer-nav">
+            <li><a href="#about">About</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#cad-projects">CAD</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <p class="footer-copy">&copy; 2025 Kristen Fenwick</p>
+    </footer>
 
     <script src="schedule-parser.js"></script>
     <script>
@@ -422,24 +436,22 @@ function runPortfolioParser() {
   const list = document.getElementById('parser-results-list');
   list.innerHTML = '';
   const grouped = window.ScheduleParser.groupByDate(events);
-  const colors = { exam: '#ff6b6b', class: '#a5b4fc', deadline: '#fbbf24', personal: '#34d399' };
 
   Object.keys(grouped).sort().forEach(date => {
     const day = document.createElement('div');
-    day.innerHTML = `<div style="font-size:0.8rem; color:#ff9fc7; margin:8px 0 4px; text-transform:uppercase; letter-spacing:0.05em;">${window.ScheduleParser.formatDate(date)}</div>`;
+    day.innerHTML = `<div style="font-size:0.7rem; color:var(--text-light); margin:12px 0 6px; text-transform:uppercase; letter-spacing:0.1em;">${window.ScheduleParser.formatDate(date)}</div>`;
     grouped[date].forEach(ev => {
       const el = document.createElement('div');
       el.className = 'parser-event';
-      const c = colors[ev.category] || '#f5dce8';
       el.innerHTML = `
-        <div class="dot" style="background:${c}"></div>
+        <div class="dot"></div>
         <div class="content">
           <div class="title">${ev.title}</div>
           <div class="meta">
             ${ev.startTime ? window.ScheduleParser.formatTime(ev.startTime) : ''}${ev.endTime ? ' – ' + window.ScheduleParser.formatTime(ev.endTime) : ''}
-            ${ev.location ? ' • ' + ev.location : ''}
+            ${ev.location ? ' · ' + ev.location : ''}
           </div>
-          <span class="cat" style="background:${c}22; color:${c};">${ev.category}</span>
+          <span class="cat">${ev.category}</span>
         </div>`;
       day.appendChild(el);
     });
@@ -511,10 +523,6 @@ ZACH 860`;
   if (sections.length) setActiveSection(sections[0].id);
 })();
 </script>
-    <!-- Tidio Chatbot -->
     <script src="//code.tidio.co/wf6negrt0zca6dbii4ilfydtfsjlfze0.js" async></script>
-    <footer>
-        <p>&copy; 2025 Kristen Fenwick</p>
-    </footer>
 </body>
 </html>
