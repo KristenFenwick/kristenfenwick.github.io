@@ -604,7 +604,7 @@ def main():
     print("  frost_north_elevation.png")
     print("  frost_tower_massing.glb")
     print(f"  {dwg.name}")
-    print("  frost_setup.scr / frost_tower.lsp (AutoCAD 2025 Mac)")
+    print("  frost_setup.scr / frost_save_dwg.scr / frost_tower.lsp")
 
 
 if __name__ == "__main__":

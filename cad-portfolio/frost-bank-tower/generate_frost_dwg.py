@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
-Frost Bank Tower — AutoCAD-ready DWG export (feet, AIA layers, 346eur colors).
+Frost Bank Tower — AutoCAD-ready DXF export (feet, AIA layers, 346eur colors).
 Generates 3D massing + 2D orthographic sheet geometry for AutoCAD 2025 Mac.
+
+Note: ezdxf writes DXF (not binary DWG). AutoCAD opens the .dxf directly;
+run frost_save_dwg.scr inside AutoCAD to save a native .dwg if needed.
 """
 
 from __future__ import annotations
@@ -9,7 +12,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import ezdxf
-from ezdxf import colors
 from ezdxf.enums import TextEntityAlignment
 from ezdxf.units import FT
 
@@ -41,28 +43,23 @@ ROOT = Path(__file__).resolve().parent
 SHEET_X = 2500.0
 SHEET_Y = 0.0
 
-LAYERS = {
-    "A-PODIUM": PALETTE_SOFT_LINEN,
-    "A-GLASS": PALETTE_BLUE_GREY,
-    "A-CROWN": PALETTE_MORNING_BUTTER,
-    "A-CORE": PALETTE_CHERRY_BLOSSOM,
-    "A-SITE": PALETTE_SOFT_LINEN,
-    "A-PARKING": PALETTE_CHERRY_BLOSSOM,
-    "A-GRID": "#D8D2C8",
-    "A-DIMS": "#2A2A2A",
-    "A-TEXT": "#2A2A2A",
-    "A-TITLE": "#2A2A2A",
-    "A-SECT": PALETTE_MORNING_BUTTER,
-    "A-ANNO": "#6E6A65",
-    "A-BORDER": "#2A2A2A",
-    "DEFPOINTS": "#2A2A2A",
+# ACI colors — reliable in AutoCAD (346eur palette mapped to nearest ACI)
+LAYERS: dict[str, int] = {
+    "A-PODIUM": 254,   # Soft Linen → light gray
+    "A-GLASS": 5,      # Blue Grey → blue
+    "A-CROWN": 2,      # Morning Butter → yellow
+    "A-CORE": 6,       # Cherry Blossom → magenta
+    "A-SITE": 254,
+    "A-PARKING": 6,
+    "A-GRID": 8,
+    "A-DIMS": 7,
+    "A-TEXT": 7,
+    "A-TITLE": 7,
+    "A-SECT": 2,
+    "A-ANNO": 8,
+    "A-BORDER": 7,
+    "DEFPOINTS": 7,
 }
-
-
-def _rgb(hex_color: str) -> int:
-    h = hex_color.lstrip("#")
-    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    return colors.rgb2int((r, g, b))
 
 
 def _crown_bands() -> list[tuple[float, float, float, float]]:
@@ -88,13 +85,14 @@ def _core_size() -> tuple[float, float]:
 
 
 def _setup_doc() -> ezdxf.document.Drawing:
-    doc = ezdxf.new("R2018", setup=True)
+    doc = ezdxf.new("R2010", setup=True)
     doc.units = FT
     doc.header["$INSUNITS"] = 2  # feet
-    doc.header["$MEASUREMENT"] = 1  # metric flag off → architectural
-    for name, hex_color in LAYERS.items():
+    doc.header["$MEASUREMENT"] = 0  # imperial
+    doc.header["$LUNITS"] = 2  # architectural (feet/inches display)
+    for name, aci in LAYERS.items():
         layer = doc.layers.get(name) if name in doc.layers else doc.layers.add(name)
-        layer.dxf.true_color = _rgb(hex_color)
+        layer.dxf.color = aci
     return doc
 
 
@@ -114,13 +112,14 @@ def _add_rect(msp, layer: str, x: float, y: float, w: float, h: float, closed: b
     msp.add_lwpolyline(pts, close=closed, dxfattribs={"layer": layer})
 
 
-def _add_hatch_rect(msp, layer: str, x: float, y: float, w: float, h: float, pattern: str = "ANSI31") -> None:
-    hatch = msp.add_hatch(dxfattribs={"layer": layer, "color": 256})
-    hatch.set_pattern_fill(pattern, scale=3.0, angle=45)
-    hatch.paths.add_polyline_path(
-        [(x, y), (x + w, y), (x + w, y + h), (x, y + h)],
-        is_closed=True,
-    )
+def _add_fill_rect(msp, layer: str, x: float, y: float, w: float, h: float) -> None:
+    """Solid polyline fill — avoids hatch compatibility issues in DXF import."""
+    _add_rect(msp, layer, x, y, w, h)
+    # Diagonal ticks suggest section cut without HATCH entity
+    step = max(w, h) / 6
+    for i in range(1, 6):
+        ox = x + i * step * 0.8
+        msp.add_line((ox, y), (ox + step * 0.3, y + h), dxfattribs={"layer": layer})
 
 
 def _add_text(msp, layer: str, text: str, x: float, y: float, height: float = 3.0) -> None:
@@ -182,14 +181,14 @@ def build_elevation_2d(msp, ox: float, oy: float) -> None:
 
 
 def build_section_2d(msp, ox: float, oy: float) -> None:
-    _add_hatch_rect(msp, "A-SECT", ox, oy, BASE_WIDTH_FT, PODIUM_HEIGHT_FT, "ANSI37")
+    _add_fill_rect(msp, "A-SECT", ox, oy, BASE_WIDTH_FT, PODIUM_HEIGHT_FT)
     cl, _ = _core_size()
     cx = ox + BASE_WIDTH_FT / 2
-    _add_hatch_rect(msp, "A-CORE", cx - cl / 2, oy, cl, ROOF_HEIGHT_FT, "ANSI31")
+    _add_fill_rect(msp, "A-CORE", cx - cl / 2, oy, cl, ROOF_HEIGHT_FT)
     gw = BASE_WIDTH_FT - 2 * GLASS_SHAFT_INSET_FT
     _add_rect(msp, "A-GLASS", cx - gw / 2, oy + PODIUM_HEIGHT_FT, gw, ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT)
     for z0, z1, _, width in _crown_bands():
-        _add_hatch_rect(msp, "A-CROWN", cx - width / 2, oy + z0, width, z1 - z0, "ANSI32")
+        _add_fill_rect(msp, "A-CROWN", cx - width / 2, oy + z0, width, z1 - z0)
     msp.add_line((cx, oy - 5), (cx, oy + TOTAL_HEIGHT_FT + 5), dxfattribs={"layer": "A-ANNO"})
     msp.add_line((ox - 8, oy + ROOF_HEIGHT_FT), (ox + BASE_WIDTH_FT + 8, oy + ROOF_HEIGHT_FT),
                  dxfattribs={"layer": "A-ANNO", "linetype": "DASHED"})
@@ -203,7 +202,7 @@ def build_floor_plan_2d(msp, ox: float, oy: float) -> None:
     cl, cw = _core_size()
     cx = ox + (BASE_LENGTH_FT - cl) / 2
     cy = oy + (BASE_WIDTH_FT - cw) / 2
-    _add_hatch_rect(msp, "A-CORE", cx, cy, cl, cw, "ANSI31")
+    _add_fill_rect(msp, "A-CORE", cx, cy, cl, cw)
     _add_text(msp, "A-TEXT", "CORE", cx + cl / 2 - 4, cy + cw / 2, 3.5)
     for i in range(14):
         x = ox + 3 + i * (BASE_LENGTH_FT - 6) / 13
@@ -225,7 +224,7 @@ def build_site_plan_2d(msp, ox: float, oy: float) -> None:
     )
     bx = ox + (site_l - BASE_LENGTH_FT) / 2
     by = oy + (site_w - BASE_WIDTH_FT) / 2
-    _add_hatch_rect(msp, "A-PODIUM", bx, by, BASE_LENGTH_FT, BASE_WIDTH_FT, "ANSI37")
+    _add_rect(msp, "A-PODIUM", bx, by, BASE_LENGTH_FT, BASE_WIDTH_FT)
     park_w = BASE_LENGTH_FT * 0.38
     msp.add_lwpolyline(
         [(bx + 4, by + 4), (bx + 4 + park_w, by + 4), (bx + 4 + park_w, by + BASE_WIDTH_FT - 4),
@@ -244,7 +243,7 @@ def build_title_block(msp, ox: float, oy: float) -> None:
     _add_text(msp, "A-TITLE", "DWG NO. KF-FT-001  |  REV B  |  SCALE 1/64\"=1'-0\"", ox + 4, oy + h - 20, 3.5)
     _add_text(msp, "A-TITLE", f"AUTHOR: Kristen Fenwick  |  {SITE_ADDRESS}", ox + 4, oy + h - 28, 3.5)
     _add_text(msp, "A-TITLE", "UNITS: FEET  |  PROJECTION: THIRD ANGLE  |  PALETTE: 346EUR/CFD", ox + 4, oy + h - 36, 3.5)
-    _add_text(msp, "A-ANNO", "REGIONS: ORIGIN=3D MODEL  |  X>2000=SHEET VIEWS  |  RUN frost_setup.scr", ox + 4, oy + 6, 3)
+    _add_text(msp, "A-ANNO", "OPEN frost_tower_study.dxf  |  SCRIPT frost_setup.scr", ox + 4, oy + 6, 3)
 
 
 def build_sheet_border(msp, ox: float, oy: float) -> None:
@@ -252,43 +251,27 @@ def build_sheet_border(msp, ox: float, oy: float) -> None:
     _add_rect(msp, "A-BORDER", ox, oy, bw, bh)
 
 
-def write_autocad_script(dwg_path: Path) -> None:
-    scr = ROOT / "frost_setup.scr"
-    scr.write_text(
-        f"; Frost Bank Tower — AutoCAD 2025 Mac setup\n"
-        f"; Open {dwg_path.name} then run: SCRIPT frost_setup.scr\n"
+def write_autocad_scripts(dxf_path: Path) -> None:
+    setup = ROOT / "frost_setup.scr"
+    setup.write_text(
+        "; Frost Bank Tower — AutoCAD 2025 Mac setup\n"
+        "; File → open frost_tower_study.dxf first, then: SCRIPT frost_setup.scr\n"
         "INSUNITS\n2\n"
-        "UNITS\n2\n2\n2\n2\n0\n"
-        "-LAYER\nM\nA-GLASS\nC\n5\nA-GLASS\n"
-        "-LAYER\nM\nA-PODIUM\nC\n254\nA-PODIUM\n"
-        "-LAYER\nM\nA-CROWN\nC\n2\nA-CROWN\n"
-        "-LAYER\nM\nA-CORE\nC\n6\nA-CORE\n"
-        "-VIEW\nS\nKF-3D\n"
-        "-0,0,250\n"
-        "1,1,1\n"
-        "0,1,0\n"
-        "50\n"
-        "0,0,0\n"
-        "KF-3D\n"
-        "-VIEW\nS\nKF-SHEET\n"
-        f"{SHEET_X + 350}\n"
-        f"{SHEET_Y + 300}\n"
-        "0,0,1\n"
-        "0,1,0\n"
-        "0\n"
-        f"{SHEET_X + 350}\n"
-        f"{SHEET_Y + 300}\n"
-        "0\n"
-        "KF-SHEET\n"
-        "ZOOM\nE\n"
         "ZOOM\nW\n"
         f"{SHEET_X - 20}\n"
         f"{SHEET_Y - 30}\n"
         f"{SHEET_X + 720}\n"
         f"{SHEET_Y + 640}\n"
-        "ZOOM\nP\n"
-        "QSAVE\n"
         "_.REDRAW\n",
+        encoding="utf-8",
+    )
+    save_dwg = ROOT / "frost_save_dwg.scr"
+    save_dwg.write_text(
+        "; Save native DWG after DXF opens successfully\n"
+        "_.SAVEAS\n"
+        "2018\n"
+        f"{dxf_path.with_suffix('.dwg')}\n"
+        "Y\n",
         encoding="utf-8",
     )
 
@@ -336,19 +319,26 @@ def write_autolisp() -> None:
     )
 
 
-def write_open_script(dwg_path: Path) -> None:
+def write_open_script(dxf_path: Path) -> None:
     sh = ROOT / "open_in_autocad.sh"
     sh.write_text(
         f"""#!/bin/bash
-# Open Frost Bank Tower DWG in AutoCAD 2025 Mac
-open -a "AutoCAD 2025" "{dwg_path}"
-echo "Opened {dwg_path.name}"
-echo "In AutoCAD: SCRIPT → frost_setup.scr"
-echo "Or APPLOAD → frost_tower.lsp → type KFFROST"
+# Open Frost Bank Tower DXF in AutoCAD 2025 Mac
+open -a "AutoCAD 2025" "{dxf_path}"
+echo "Opened {dxf_path.name}"
+echo "Then: SCRIPT → frost_setup.scr (zoom to sheet)"
+echo "Optional: SCRIPT → frost_save_dwg.scr (save native .dwg)"
+echo "Or APPLOAD → frost_tower.lsp → KFFROST / KF3D"
 """,
         encoding="utf-8",
     )
     sh.chmod(0o755)
+
+
+def _validate_doc(doc: ezdxf.document.Drawing) -> None:
+    auditor = doc.audit()
+    if auditor.has_errors:
+        raise RuntimeError(f"DXF audit errors: {auditor.errors}")
 
 
 def generate_dwg() -> Path:
@@ -365,9 +355,16 @@ def generate_dwg() -> Path:
     build_site_plan_2d(msp, sx + 430, sy + 220)
     build_title_block(msp, sx + 30, sy + 520)
 
-    out = ROOT / "frost_tower_study.dwg"
+    _validate_doc(doc)
+
+    out = ROOT / "frost_tower_study.dxf"
     doc.saveas(out)
-    write_autocad_script(out)
+    # Remove stale fake-DWG if present (ezdxf cannot write binary DWG without ODA)
+    stale = ROOT / "frost_tower_study.dwg"
+    if stale.exists():
+        stale.unlink()
+
+    write_autocad_scripts(out)
     write_autolisp()
     write_open_script(out)
     return out
@@ -375,10 +372,11 @@ def generate_dwg() -> Path:
 
 def main() -> None:
     path = generate_dwg()
-    print(f"AutoCAD DWG written: {path}")
-    print(f"  frost_setup.scr   — run via SCRIPT command in AutoCAD")
-    print(f"  frost_tower.lsp   — APPLOAD then KFFROST / KF3D")
-    print(f"  open_in_autocad.sh — launch DWG in AutoCAD 2025 Mac")
+    print(f"AutoCAD DXF written: {path}")
+    print("  frost_setup.scr     — SCRIPT after opening DXF")
+    print("  frost_save_dwg.scr  — save native .dwg inside AutoCAD")
+    print("  frost_tower.lsp     — APPLOAD then KFFROST / KF3D")
+    print("  open_in_autocad.sh — launch DXF in AutoCAD 2025 Mac")
 
 
 if __name__ == "__main__":

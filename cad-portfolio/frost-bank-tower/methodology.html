@@ -152,12 +152,13 @@
         </table>
 
         <h2>AutoCAD 2025 Mac</h2>
-        <p>Parametric DWG export for editing in AutoCAD — same dimensions as the web study.</p>
+        <p>Parametric DXF export for editing in AutoCAD — same dimensions as the web study. Open the <code>.dxf</code> directly (not the old <code>.dwg</code> placeholder).</p>
         <ul>
-            <li><a href="frost_tower_study.dwg">frost_tower_study.dwg</a> — 3D massing at origin + 2D sheet views at X&nbsp;2500&nbsp;ft</li>
+            <li><a href="frost_tower_study.dxf">frost_tower_study.dxf</a> — 3D massing at origin + 2D sheet views at X&nbsp;2500&nbsp;ft</li>
             <li><a href="generate_frost_dwg.py">generate_frost_dwg.py</a> — regenerate with <code>python3 generate_frost_dwg.py</code></li>
-            <li><code>frost_setup.scr</code> — in AutoCAD type <code>SCRIPT</code>, select file (sets units, layers, saved views KF-3D / KF-SHEET)</li>
-            <li><code>frost_tower.lsp</code> — <code>APPLOAD</code> then commands <code>KFFROST</code> (sheet zoom) or <code>KF3D</code> (massing zoom)</li>
+            <li><code>frost_setup.scr</code> — after opening DXF, type <code>SCRIPT</code> → zoom to sheet</li>
+            <li><code>frost_save_dwg.scr</code> — optional: save native <code>.dwg</code> inside AutoCAD</li>
+            <li><code>frost_tower.lsp</code> — <code>APPLOAD</code> then <code>KFFROST</code> (sheet) or <code>KF3D</code> (massing)</li>
         </ul>
         <p>Layers: <code>A-PODIUM</code>, <code>A-GLASS</code>, <code>A-CROWN</code>, <code>A-CORE</code>, <code>A-PARKING</code>, <code>A-SITE</code>. Units: feet.</p>
 

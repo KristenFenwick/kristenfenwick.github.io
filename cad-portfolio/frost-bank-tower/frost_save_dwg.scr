@@ -1,0 +1,5 @@
+; Save native DWG after DXF opens successfully
+_.SAVEAS
+2018
+/Users/kriswick/kristenfenwick.github.io/cad-portfolio/frost-bank-tower/frost_tower_study.dwg
+Y
