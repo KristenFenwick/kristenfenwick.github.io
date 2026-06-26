@@ -186,48 +186,74 @@ def _section_paths(mesh: trimesh.Trimesh, z: float) -> list[np.ndarray]:
 
 
 def _draw_title_block(ax, x: float, y: float, w: float, h: float) -> None:
-    """Four-column professional CAD title block."""
+    """Six-column × eight-row CAD title block with dedicated name column."""
     from matplotlib.patches import FancyBboxPatch
 
     ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="square,pad=0",
                                 fill=False, ec="#2A2A2A", lw=1.6))
 
-    # Column splits: label | value | label | value
-    c1, c2, c3, c4 = x + 0.95, x + 2.35, x + 3.3, x + w
-    for cx in [c1, c2, c3]:
-        ax.plot([cx, cx], [y, y + h], color="#2A2A2A", lw=0.7)
+    # Columns: L1 | V1 | L2 | V2 | NAME (dedicated) | META
+    cw = w / 6
+    cols = [x + i * cw for i in range(7)]
+    name_col = 4   # index into cols — 5th column dedicated to Kristen Fenwick
+    meta_col = 5
 
-    title_h = 0.72
+    title_h = 0.78
+    footer_h = 0.38
+    body_h = h - title_h - footer_h
+    row_count = 8
+    row_h = body_h / row_count
+
+    # Vertical grid
+    for i in range(1, 6):
+        ax.plot([cols[i], cols[i]], [y, y + h], color="#2A2A2A", lw=0.65)
+
+    # Title band
     ax.plot([x, x + w], [y + h - title_h, y + h - title_h], color="#2A2A2A", lw=0.7)
-    ax.plot([c3, c3], [y + h - title_h, y + h], color="#2A2A2A", lw=0.7)
+    ax.plot([cols[name_col], cols[name_col]], [y + h - title_h, y + h], color="#2A2A2A", lw=0.7)
 
-    ax.text(x + 0.12, y + h - 0.22, "TITLE", fontsize=6.5, color="#9A958F", va="top")
-    ax.text(x + 0.12, y + h - 0.48, "Aurora Trunnion Plate", fontsize=10, color="#2A2A2A",
-            fontweight="light", va="top")
-    ax.text(c3 + 0.1, y + h - 0.22, "DWG NO.", fontsize=6.5, color="#9A958F", va="top")
-    ax.text(c3 + 0.1, y + h - 0.48, "KF-MMP-001", fontsize=8.5, color="#2A2A2A", va="top")
+    ax.text(cols[0] + 0.08, y + h - 0.2, "TITLE", fontsize=6, color="#9A958F", va="top")
+    ax.text(cols[0] + 0.08, y + h - 0.46, "Aurora Trunnion Plate", fontsize=9.5,
+            color="#2A2A2A", fontweight="light", va="top")
+    ax.text(cols[meta_col] + 0.08, y + h - 0.2, "DWG NO.", fontsize=6, color="#9A958F", va="top")
+    ax.text(cols[meta_col] + 0.08, y + h - 0.46, "KF-MMP-001", fontsize=8, color="#2A2A2A", va="top")
 
-    row_h = (h - title_h) / 6
+    # Dedicated name column — spans full body height
+    name_cx = (cols[name_col] + cols[name_col + 1]) / 2
+    name_mid = y + footer_h + body_h / 2
+    ax.text(name_cx, name_mid + 0.35, "KRISTEN", fontsize=7.5, color="#2A2A2A",
+            ha="center", va="center", fontweight="light", rotation=90)
+    ax.text(name_cx, name_mid - 0.35, "FENWICK", fontsize=7.5, color="#2A2A2A",
+            ha="center", va="center", fontweight="light", rotation=90)
+    ax.text(name_cx, y + footer_h + body_h - 0.12, "AUTHOR", fontsize=5.5,
+            color="#9A958F", ha="center", va="top")
+
     rows = [
-        ("MATERIAL", "6061-T6 Aluminum", "SCALE", "1:1"),
-        ("FINISH", "Deburr / Break edges", "UNITS", "mm"),
-        ("DRAWN BY", "K. Fenwick", "DATE", "Jun 2026"),
-        ("CHECKED BY", "—", "REV", "A"),
-        ("APPROVED BY", "—", "SHEET", "1 of 1"),
-        ("TOLERANCE", "±0.15 unless noted", "WEIGHT", "0.38 kg"),
+        ("MATERIAL", "6061-T6 Aluminum", "SCALE", "1:1", "REV", "A"),
+        ("FINISH", "Deburr / Break", "UNITS", "mm", "SHEET", "1 of 1"),
+        ("PROCESS", "CNC / Waterjet", "TOL.", "±0.15", "STATUS", "RELEASE"),
+        ("THICKNESS", "14 mm", "PROJ.", "MCSM", "CLASS", "PORTFOLIO"),
+        ("INTERFACE", "Vesper Pod", "ANGLE", "3rd", "ZONE", "MECH."),
+        ("HOLES", "4 × M8 CB", "POCKETS", "5", "QA", "VISUAL"),
+        ("MASS", "0.38 kg", "ALLOY", "6061-T6", "HEAT", "T6"),
+        ("DRAWN", "Jun 2026", "CHECKED", "—", "APPR.", "—"),
     ]
-    for i, (l1, v1, l2, v2) in enumerate(rows):
-        ry = y + h - title_h - (i + 0.72) * row_h
-        ax.plot([x, x + w], [y + h - title_h - i * row_h, y + h - title_h - i * row_h],
-                color="#2A2A2A", lw=0.45)
-        ax.text(x + 0.1, ry, l1, fontsize=6.2, color="#9A958F", va="center")
-        ax.text(c1 + 0.1, ry, v1, fontsize=7.2, color="#2A2A2A", va="center")
-        ax.text(c2 + 0.1, ry, l2, fontsize=6.2, color="#9A958F", va="center")
-        ax.text(c3 + 0.1, ry, v2, fontsize=7.2, color="#2A2A2A", va="center")
+    for i, (l1, v1, l2, v2, l3, v3) in enumerate(rows):
+        ry = y + h - title_h - (i + 0.55) * row_h
+        ax.plot([x, cols[name_col]], [y + h - title_h - i * row_h,
+                                      y + h - title_h - i * row_h], color="#2A2A2A", lw=0.4)
+        ax.plot([cols[name_col + 1], x + w], [y + h - title_h - i * row_h,
+                                              y + h - title_h - i * row_h], color="#2A2A2A", lw=0.4)
+        ax.text(cols[0] + 0.07, ry, l1, fontsize=5.8, color="#9A958F", va="center")
+        ax.text(cols[1] + 0.07, ry, v1, fontsize=6.5, color="#2A2A2A", va="center")
+        ax.text(cols[2] + 0.07, ry, l2, fontsize=5.8, color="#9A958F", va="center")
+        ax.text(cols[3] + 0.07, ry, v2, fontsize=6.5, color="#2A2A2A", va="center")
+        ax.text(cols[meta_col] + 0.07, ry, l3, fontsize=5.8, color="#9A958F", va="center")
+        ax.text(cols[meta_col + 1] - 0.07, ry, v3, fontsize=6.5, color="#2A2A2A", va="center", ha="right")
 
-    # Projection + status footer cell
-    ax.text(x + 0.1, y + 0.18, "PROJECTION  ·  THIRD ANGLE  ·  PORTFOLIO SAMPLE",
-            fontsize=5.8, color="#9A958F", va="center")
+    ax.plot([x, x + w], [y + footer_h, y + footer_h], color="#2A2A2A", lw=0.55)
+    ax.text(x + 0.1, y + footer_h / 2, "PROJECTION  ·  THIRD ANGLE  ·  TOP VIEW FROM 3D MODEL  ·  PORTFOLIO",
+            fontsize=5.5, color="#9A958F", va="center")
 
 
 def _draw_section_paths(ax, paths: list[np.ndarray], ox: float, oy: float, scale: float,
@@ -342,7 +368,7 @@ def render_2d_drawing(mesh: trimesh.Trimesh) -> None:
     ]):
         ax.text(notes_x, 8.25 - i * 0.3, note, fontsize=8.5, color="#6E6A65")
 
-    _draw_title_block(ax, x=8.8, y=0.35, w=5.0, h=2.85)
+    _draw_title_block(ax, x=7.6, y=0.25, w=6.2, h=3.15)
 
     for ext in ("png", "pdf"):
         plt.savefig(ROOT / f"mounting_plate_drawing.{ext}", dpi=220, bbox_inches="tight",
