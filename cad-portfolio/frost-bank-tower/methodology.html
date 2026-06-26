@@ -30,11 +30,12 @@
         .layer-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 16px; }
         .layer-legend span { font-size: 0.7rem; letter-spacing: 0.06em; color: var(--text-muted); }
         .layer-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: middle; border: 1px solid var(--line-strong); }
-        .layer-blue::before { background: #6B9BD1; }
-        .layer-green::before { background: #7CB87C; }
-        .layer-purple::before { background: #9B7BB8; }
-        .layer-orange::before { background: #D4A574; }
-        .layer-pink::before { background: #C98BA8; }
+        .layer-blue::before { background: #7298C7; }
+        .layer-linen::before { background: #F5F1E6; }
+        .layer-butter::before { background: #F3D98F; }
+        .layer-cherry::before { background: #F5A8A8; }
+        .palette-credit { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.78rem; line-height: 1.75; }
+        .palette-credit a { border-bottom: 1px solid var(--line-strong); }
         .back-link { display: inline-block; margin-bottom: 32px; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
         .source-list { list-style: none; padding: 0; margin: 0; }
         .source-list li { padding: 14px 0; border-bottom: 1px solid var(--line); }
@@ -126,13 +127,29 @@
                 Field sketch — <em>not scaled</em>. Color-coded layering concept for folded planes (crown geometry) and horizontal stratification (podium, tower, parking, subsurface). Dashed lines indicate internal layer boundaries; arrows show plane relationships. This diagram informs how crown setbacks and site strata are interpreted in the study — not as surveyed fact.
             </figcaption>
             <div class="layer-legend">
-                <span class="layer-blue">Blue — primary structure / curtain wall envelope</span>
-                <span class="layer-green">Green — site / terrain / foundation boundary</span>
-                <span class="layer-purple">Purple — internal core / layered infill</span>
-                <span class="layer-orange">Orange — folded transition planes (crown)</span>
-                <span class="layer-pink">Pink — subsurface / parking stratum</span>
+                <span class="layer-blue">Blue Grey <code>#7298C7</code> — curtain wall envelope &amp; crown cap</span>
+                <span class="layer-linen">Soft Linen <code>#F5F1E6</code> — limestone podium &amp; site pad</span>
+                <span class="layer-butter">Morning Butter <code>#F3D98F</code> — folded crown transition facets</span>
+                <span class="layer-cherry">Cherry Blossom <code>#F5A8A8</code> — core, crown infill slabs &amp; parking strata</span>
             </div>
+            <p class="palette-credit">
+                Color palette from <strong>346eur</strong> — author of <em>Colors for Designers</em>.
+                <a href="https://346kit.com/CFD" target="_blank" rel="noopener">346kit.com/CFD</a>
+            </p>
         </figure>
+
+        <h2>CAD design review (massing study)</h2>
+        <p>Subjective engineering review of the parametric massing model — architectural research geometry, not fabrication-ready mechanical CAD.</p>
+        <table class="status-table">
+            <thead><tr><th>Category</th><th>Score</th><th>Notes</th></tr></thead>
+            <tbody>
+                <tr><td>Geometry quality</td><td>7 / 10</td><td>Folded crown facets and layered strata match sketch intent; hollow curtain wall added.</td></tr>
+                <tr><td>Manufacturability</td><td>5 / 10</td><td>Massing-only — no draft, fillets, or curtain-wall mullion detail expected at this fidelity.</td></tr>
+                <tr><td>Structural soundness</td><td>6 / 10</td><td>Core load path modeled; solid blocks replaced with shell envelope to reduce false mass.</td></tr>
+                <tr><td>Parametric robustness</td><td>8 / 10</td><td>Dimensions and palette centralized in <code>frost_tower_dimensions.py</code>.</td></tr>
+                <tr><td>Overall engineering quality</td><td>7 / 10</td><td>Strong study model after parking geometry correction and shell-based envelope.</td></tr>
+            </tbody>
+        </table>
 
         <h2>What this study does not claim</h2>
         <ul>

@@ -56,3 +56,18 @@ CROWN_SETBACKS_FT = [
 # --- Drawing scale ---
 DRAWING_SCALE = 1 / 64  # 1" = 64'-0" architectural study scale
 UNITS = "ft"
+
+# --- 346eur palette (Colors for Designers — 346kit.com/CFD) ---
+# Credit: 346eur, author of Colors for Designers
+PALETTE_BLUE_GREY = "#7298C7"       # curtain wall envelope, crown cap
+PALETTE_SOFT_LINEN = "#F5F1E6"      # limestone podium, site pad
+PALETTE_MORNING_BUTTER = "#F3D98F"  # folded crown transition facets
+PALETTE_CHERRY_BLOSSOM = "#F5A8A8"  # core, crown infill slabs, parking strata
+
+# --- Massing engineering parameters ---
+CURTAIN_WALL_THICKNESS_FT = 1.5
+PARKING_STRATA_DEPTH_FT = 36        # conceptual below-grade layers (within footprint)
+PARKING_STRATA_COUNT = 4
+GLASS_SHAFT_INSET_FT = 6.0
+TOWER_SHAFT_TAPER = 0.96
+CROWN_INFILL_THICKNESS_FT = 1.5

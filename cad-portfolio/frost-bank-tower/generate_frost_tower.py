@@ -18,16 +18,26 @@ from frost_tower_dimensions import (
     BASE_LENGTH_FT,
     BASE_WIDTH_FT,
     CROWN_HEIGHT_FT,
+    CROWN_INFILL_THICKNESS_FT,
     CROWN_SETBACKS_FT,
     CROWN_TOP_SIDE_FT,
+    CURTAIN_WALL_THICKNESS_FT,
     FLOOR_COUNT,
+    GLASS_SHAFT_INSET_FT,
+    PALETTE_BLUE_GREY,
+    PALETTE_CHERRY_BLOSSOM,
+    PALETTE_MORNING_BUTTER,
+    PALETTE_SOFT_LINEN,
     PARKING_LEVELS,
+    PARKING_STRATA_COUNT,
+    PARKING_STRATA_DEPTH_FT,
     PODIUM_FLOORS,
     PODIUM_HEIGHT_FT,
     ROOF_HEIGHT_FT,
     SITE_ADDRESS,
     SITE_SQFT,
     TOTAL_HEIGHT_FT,
+    TOWER_SHAFT_TAPER,
     TYPICAL_FLOOR_SIDE_FT,
 )
 
@@ -36,18 +46,24 @@ BG = "#FAF9F6"
 INK = "#2A2A2A"
 MUTED = "#6E6A65"
 GRID = "#D8D2C8"
-GLASS = "#9EB4C8"
-LIMESTONE = "#C9C0B0"
-CROWN_LITE = "#B8D4E8"
-
-# Layer colors aligned with methodology.html legend
-LAYER_GLASS = [107, 155, 209, 255]
-LAYER_SITE = [124, 184, 124, 255]
-LAYER_CORE = [155, 123, 184, 255]
-LAYER_CROWN = [212, 165, 116, 255]
-LAYER_PARKING = [201, 139, 168, 255]
+GLASS = PALETTE_BLUE_GREY
+LIMESTONE = PALETTE_SOFT_LINEN
+CROWN_LITE = PALETTE_MORNING_BUTTER
+CORE_FILL = PALETTE_CHERRY_BLOSSOM
 
 FT_TO_M = 0.3048
+
+
+def _hex_rgba(hex_color: str, alpha: int = 255) -> list[int]:
+    h = hex_color.lstrip("#")
+    return [int(h[i : i + 2], 16) for i in (0, 2, 4)] + [alpha]
+
+
+# 346eur layer mapping — see methodology.html for program assignments
+LAYER_GLASS = _hex_rgba(PALETTE_BLUE_GREY)
+LAYER_SITE = _hex_rgba(PALETTE_SOFT_LINEN)
+LAYER_CORE = _hex_rgba(PALETTE_CHERRY_BLOSSOM)
+LAYER_CROWN = _hex_rgba(PALETTE_MORNING_BUTTER)
 
 
 def ft_to_draw(ft: float, scale_px_per_ft: float = 0.012) -> float:
@@ -155,7 +171,7 @@ def render_typical_floor() -> None:
     ax.add_patch(Rectangle((ox, oy), h, w, fill=False, ec=INK, lw=2.2))
     core_w, core_h = h * 0.22, w * 0.28
     cx, cy = ox + (h - core_h) / 2, oy + (w - core_w) / 2
-    ax.add_patch(Rectangle((cx, cy), core_h, core_w, fill=True, facecolor=GRID, edgecolor=INK, lw=1.2))
+    ax.add_patch(Rectangle((cx, cy), core_h, core_w, fill=True, facecolor=CORE_FILL, edgecolor=INK, lw=1.2))
     ax.text(cx + core_h / 2, cy + core_w / 2, "CORE\nELEV.\nSTAIRS\nMEP",
             ha="center", va="center", fontsize=6.5, color=MUTED)
 
@@ -309,9 +325,43 @@ def _folded_step(lo: float, wo: float, li: float, wi: float,
     return folds
 
 
-def _crown_infill_slab(length: float, width: float, z: float,
-                       thickness: float = 2.5) -> trimesh.Trimesh:
-    return _paint(_box_ft(length, width, thickness, z - thickness), LAYER_CORE)
+def _crown_infill_slab(length: float, width: float, z: float) -> trimesh.Trimesh:
+    t = CROWN_INFILL_THICKNESS_FT
+    return _paint(_box_ft(length, width, t, z - t), LAYER_CORE)
+
+
+def _hollow_curtain_wall(length: float, width: float, height: float, z0: float) -> trimesh.Trimesh:
+    """Thin-walled envelope — represents curtain wall depth, not solid infill."""
+    wall = CURTAIN_WALL_THICKNESS_FT
+    outer = _box_ft(length, width, height, z0)
+    inner_l = length - 2 * wall
+    inner_w = width - 2 * wall
+    inner_h = max(height - wall, wall)
+    if inner_l <= wall or inner_w <= wall:
+        return _paint(outer, LAYER_GLASS)
+    inner = _box_ft(inner_l, inner_w, inner_h, z0 + wall * 0.5)
+    try:
+        shell = outer.difference(inner)
+        if shell is not None and len(shell.faces) > 0:
+            return _paint(shell, LAYER_GLASS)
+    except Exception:
+        pass
+    return _paint(outer, LAYER_GLASS)
+
+
+def _parking_strata() -> list[tuple[str, trimesh.Trimesh]]:
+    """Horizontal subsurface layers within footprint — no protruding volumes."""
+    layers: list[tuple[str, trimesh.Trimesh]] = []
+    layer_h = PARKING_STRATA_DEPTH_FT / PARKING_STRATA_COUNT
+    for i in range(PARKING_STRATA_COUNT):
+        inset = i * 2.0
+        length = BASE_LENGTH_FT * 0.94 - inset
+        width = BASE_WIDTH_FT * 0.94 - inset
+        z0 = -PARKING_STRATA_DEPTH_FT + i * layer_h
+        slab_h = layer_h * 0.82
+        mesh = _paint(_box_ft(length, width, slab_h, z0), LAYER_CORE)
+        layers.append((f"parking_stratum_{i + 1}", mesh))
+    return layers
 
 
 def build_massing_3d() -> trimesh.Scene:
@@ -322,39 +372,35 @@ def build_massing_3d() -> trimesh.Scene:
     def add(name: str, mesh: trimesh.Trimesh) -> None:
         meshes.append((name, mesh))
 
-    glass_inset = 6.0
-    tower_l = BASE_LENGTH_FT - glass_inset
-    tower_w = BASE_WIDTH_FT - glass_inset
+    tower_l = BASE_LENGTH_FT - GLASS_SHAFT_INSET_FT
+    tower_w = BASE_WIDTH_FT - GLASS_SHAFT_INSET_FT
     core_l = BASE_LENGTH_FT * 0.22
     core_w = BASE_WIDTH_FT * 0.28
 
-    # Site pad + subsurface parking stratum (sketch: green / pink layers)
+    # Site pad (Soft Linen) — symmetric, no offset protrusions
     add("site_pad", _paint(
-        _box_ft(BASE_LENGTH_FT + 18, BASE_WIDTH_FT + 14, 8, -8), LAYER_SITE))
-    parking_depth = min(48, PODIUM_HEIGHT_FT * 0.85)
-    add("parking_substructure", _paint(
-        _box_ft(BASE_LENGTH_FT * 0.62, BASE_WIDTH_FT * 0.88, parking_depth,
-                -parking_depth, cx=-BASE_LENGTH_FT * 0.12), LAYER_PARKING))
+        _box_ft(BASE_LENGTH_FT + 14, BASE_WIDTH_FT + 10, 6, -6), LAYER_SITE))
 
-    # Limestone podium (site / foundation layer)
+    # Parking strata: horizontal layers inside footprint (Cherry Blossom)
+    for name, mesh in _parking_strata():
+        add(name, mesh)
+
+    # Limestone podium (Soft Linen)
     add("podium", _paint(_box_ft(BASE_LENGTH_FT, BASE_WIDTH_FT, PODIUM_HEIGHT_FT, 0), LAYER_SITE))
 
-    # Vertical core through podium + tower (purple infill)
-    add("core", _paint(
-        _box_ft(core_l, core_w, ROOF_HEIGHT_FT, 0), LAYER_CORE))
+    # Vertical core — podium through roof only, centered (Cherry Blossom)
+    add("core", _paint(_box_ft(core_l, core_w, ROOF_HEIGHT_FT, 0), LAYER_CORE))
 
-    # Curtain-wall tower shaft with slight taper toward roof (blue envelope)
-    taper = 0.96
+    # Hollow curtain-wall shaft with controlled taper (Blue Grey)
     shaft_segments = 6
     shaft_h = ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT
     for i in range(shaft_segments):
         t0 = i / shaft_segments
-        t1 = (i + 1) / shaft_segments
-        seg_l = tower_l * (1 - (1 - taper) * t0)
-        seg_w = tower_w * (1 - (1 - taper) * t0)
+        seg_l = tower_l * (1 - (1 - TOWER_SHAFT_TAPER) * t0)
+        seg_w = tower_w * (1 - (1 - TOWER_SHAFT_TAPER) * t0)
         seg_h = shaft_h / shaft_segments
         z0 = PODIUM_HEIGHT_FT + shaft_h * t0
-        add(f"tower_glass_{i}", _paint(_box_ft(seg_l, seg_w, seg_h, z0), LAYER_GLASS))
+        add(f"tower_curtain_wall_{i + 1}", _hollow_curtain_wall(seg_l, seg_w, seg_h, z0))
 
     # Crown: layered infill slabs + folded transition planes (orange facets)
     schedule = list(CROWN_SETBACKS_FT)
@@ -371,7 +417,7 @@ def build_massing_3d() -> trimesh.Scene:
     top_z, top_l, top_w = schedule[-1]
     cap_h = TOTAL_HEIGHT_FT - top_z
     if cap_h > 0:
-        add("crown_cap", _paint(_box_ft(top_l, top_w, cap_h, top_z), LAYER_GLASS))
+        add("crown_cap", _hollow_curtain_wall(top_l, top_w, cap_h, top_z))
 
     for name, mesh in meshes:
         scene.add_geometry(mesh, node_name=name)
