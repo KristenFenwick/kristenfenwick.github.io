@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Frost Bank Tower — AutoCAD-ready DXF export (feet, AIA layers, 346eur colors).
-Generates 3D massing + 2D orthographic sheet geometry for AutoCAD 2025 Mac.
+Generates 3D massing + 2D orthographic sheet geometry for AutoCAD Mac (2027/2025).
 
 Note: ezdxf writes DXF (not binary DWG). AutoCAD opens the .dxf directly;
 run frost_save_dwg.scr inside AutoCAD to save a native .dwg if needed.
@@ -254,7 +254,7 @@ def build_sheet_border(msp, ox: float, oy: float) -> None:
 def write_autocad_scripts(dxf_path: Path) -> None:
     setup = ROOT / "frost_setup.scr"
     setup.write_text(
-        "; Frost Bank Tower — AutoCAD 2025 Mac setup\n"
+        "; Frost Bank Tower — AutoCAD Mac setup (2027/2025)\n"
         "; File → open frost_tower_study.dxf first, then: SCRIPT frost_setup.scr\n"
         "INSUNITS\n2\n"
         "ZOOM\nW\n"
@@ -279,7 +279,7 @@ def write_autocad_scripts(dxf_path: Path) -> None:
 def write_autolisp() -> None:
     lisp = ROOT / "frost_tower.lsp"
     lisp.write_text(
-        r"""; Frost Bank Tower — AutoCAD 2025 Mac helper
+        r"""; Frost Bank Tower — AutoCAD Mac helper (2027/2025)
 ; APPLOAD frost_tower.lsp  then type KFFROST
 
 (defun kf-layer (name aci / )
@@ -323,12 +323,17 @@ def write_open_script(dxf_path: Path) -> None:
     sh = ROOT / "open_in_autocad.sh"
     sh.write_text(
         f"""#!/bin/bash
-# Open Frost Bank Tower DXF in AutoCAD 2025 Mac
-open -a "AutoCAD 2025" "{dxf_path}"
-echo "Opened {dxf_path.name}"
-echo "Then: SCRIPT → frost_setup.scr (zoom to sheet)"
-echo "Optional: SCRIPT → frost_save_dwg.scr (save native .dwg)"
-echo "Or APPLOAD → frost_tower.lsp → KFFROST / KF3D"
+# Open Frost Bank Tower DXF in AutoCAD Mac (2027 or 2025)
+for APP in "AutoCAD 2027" "AutoCAD 2025"; do
+  if [ -d "/Applications/Autodesk/$APP/$APP.app" ]; then
+    cp "{dxf_path}" "$HOME/Desktop/Frost_Bank_Tower_Study.dxf"
+    open -a "$APP" "{dxf_path}"
+    echo "Opened in $APP"
+    break
+  fi
+done
+echo "Desktop copy: ~/Desktop/Frost_Bank_Tower_Study.dxf"
+echo "SCRIPT → frost_setup.scr  |  APPLOAD → frost_tower.lsp"
 """,
         encoding="utf-8",
     )
@@ -376,7 +381,8 @@ def main() -> None:
     print("  frost_setup.scr     — SCRIPT after opening DXF")
     print("  frost_save_dwg.scr  — save native .dwg inside AutoCAD")
     print("  frost_tower.lsp     — APPLOAD then KFFROST / KF3D")
-    print("  open_in_autocad.sh — launch DXF in AutoCAD 2025 Mac")
+    print("  open_in_autocad.sh — launch DXF in AutoCAD 2027/2025 Mac")
+    print("  Desktop copy: ~/Desktop/Frost_Bank_Tower_Study.dxf")
 
 
 if __name__ == "__main__":
