@@ -1,19 +1,22 @@
 // Mission-Control Safety Module (MCSM)
-// Compact Emergency Deployment System — 2023 Dodge Charger trunk mount
+// Compact Emergency Deployment System
 //
 // Kristen Fenwick | OpenSCAD parametric mechanical design
-// Portfolio case study: hollow-rim drum geometry, cable routing, latch, assembly
 //
-// Tools: OpenSCAD, parametric modeling, STL export
-// Use case: trunk-mounted safety module for controlled cable/strap deployment
+// Components:
+//   1. Wall-mounted storage housing
+//   2. Spool/drum mechanism (hollow-rim, ENGR 216)
+//   3. Locking pin
+//   4. Handle/grip
+//   5. Guided release channel
+//   6. Modular rope/cable path
+//   7. Mounting bracket (wall or trunk)
+//   8. Safety label plate
+//   9. Sensor slot (future IoT / data-engineering iteration)
 //
-// Fellowship relevance: parametric CAD, mechanical constraints, digital assets
+// Future iteration: sensor-based usage logging, load monitoring,
+// or emergency deployment detection.
 
 use <mcsm_parts.scad>
 
 mcsm_assembly();
-
-// --- 2D drawing export (uncomment in OpenSCAD for technical drawing) ---
-// projection(cut = true)
-//     translate([0, 0, -floor_clearance - 20])
-//         mcsm_assembly();

@@ -589,6 +589,36 @@ a {
   color: var(--text);
 }
 
+.mcsm-components {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.mcsm-components li {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.mcsm-components li::before {
+  content: "— ";
+  color: var(--line-strong);
+}
+
+.mcsm-future {
+  margin-top: 12px !important;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem !important;
+  color: var(--text-muted) !important;
+  font-style: italic;
+}
+
 @media (max-width: 640px) {
   .cad-item--featured .cad-images {
     grid-template-columns: 1fr;
