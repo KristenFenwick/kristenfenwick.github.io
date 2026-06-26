@@ -185,6 +185,51 @@ def _section_paths(mesh: trimesh.Trimesh, z: float) -> list[np.ndarray]:
     return paths
 
 
+def _draw_title_block(ax, x: float, y: float, w: float, h: float) -> None:
+    """Four-column professional CAD title block."""
+    from matplotlib.patches import FancyBboxPatch
+
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="square,pad=0",
+                                fill=False, ec="#2A2A2A", lw=1.6))
+
+    # Column splits: label | value | label | value
+    c1, c2, c3, c4 = x + 0.95, x + 2.35, x + 3.3, x + w
+    for cx in [c1, c2, c3]:
+        ax.plot([cx, cx], [y, y + h], color="#2A2A2A", lw=0.7)
+
+    title_h = 0.72
+    ax.plot([x, x + w], [y + h - title_h, y + h - title_h], color="#2A2A2A", lw=0.7)
+    ax.plot([c3, c3], [y + h - title_h, y + h], color="#2A2A2A", lw=0.7)
+
+    ax.text(x + 0.12, y + h - 0.22, "TITLE", fontsize=6.5, color="#9A958F", va="top")
+    ax.text(x + 0.12, y + h - 0.48, "Aurora Trunnion Plate", fontsize=10, color="#2A2A2A",
+            fontweight="light", va="top")
+    ax.text(c3 + 0.1, y + h - 0.22, "DWG NO.", fontsize=6.5, color="#9A958F", va="top")
+    ax.text(c3 + 0.1, y + h - 0.48, "KF-MMP-001", fontsize=8.5, color="#2A2A2A", va="top")
+
+    row_h = (h - title_h) / 6
+    rows = [
+        ("MATERIAL", "6061-T6 Aluminum", "SCALE", "1:1"),
+        ("FINISH", "Deburr / Break edges", "UNITS", "mm"),
+        ("DRAWN BY", "K. Fenwick", "DATE", "Jun 2026"),
+        ("CHECKED BY", "—", "REV", "A"),
+        ("APPROVED BY", "—", "SHEET", "1 of 1"),
+        ("TOLERANCE", "±0.15 unless noted", "WEIGHT", "0.38 kg"),
+    ]
+    for i, (l1, v1, l2, v2) in enumerate(rows):
+        ry = y + h - title_h - (i + 0.72) * row_h
+        ax.plot([x, x + w], [y + h - title_h - i * row_h, y + h - title_h - i * row_h],
+                color="#2A2A2A", lw=0.45)
+        ax.text(x + 0.1, ry, l1, fontsize=6.2, color="#9A958F", va="center")
+        ax.text(c1 + 0.1, ry, v1, fontsize=7.2, color="#2A2A2A", va="center")
+        ax.text(c2 + 0.1, ry, l2, fontsize=6.2, color="#9A958F", va="center")
+        ax.text(c3 + 0.1, ry, v2, fontsize=7.2, color="#2A2A2A", va="center")
+
+    # Projection + status footer cell
+    ax.text(x + 0.1, y + 0.18, "PROJECTION  ·  THIRD ANGLE  ·  PORTFOLIO SAMPLE",
+            fontsize=5.8, color="#9A958F", va="center")
+
+
 def _draw_section_paths(ax, paths: list[np.ndarray], ox: float, oy: float, scale: float,
                         lw: float, color: str, ls: str = "-") -> None:
     for pts in paths:
@@ -297,21 +342,7 @@ def render_2d_drawing(mesh: trimesh.Trimesh) -> None:
     ]):
         ax.text(notes_x, 8.25 - i * 0.3, note, fontsize=8.5, color="#6E6A65")
 
-    tb_x, tb_y = 10.0, 0.6
-    ax.add_patch(FancyBboxPatch((tb_x, tb_y), 3.6, 2.2, boxstyle="square,pad=0",
-                                fill=False, ec="#2A2A2A", lw=1.5))
-    for yy in [tb_y + 0.55, tb_y + 1.1, tb_y + 1.65]:
-        ax.plot([tb_x, tb_x + 3.6], [yy, yy], color="#2A2A2A", lw=0.6)
-    ax.plot([tb_x + 1.45, tb_x + 1.45], [tb_y, tb_y + 2.2], color="#2A2A2A", lw=0.6)
-    for i, (k, v) in enumerate([
-        ("TITLE", "Aurora Trunnion Plate"),
-        ("MATERIAL", "6061-T6 Aluminum"),
-        ("DRAWN BY", "K. Fenwick"),
-        ("DATE", "Jun 2026"),
-        ("SHEET", "1 of 1"),
-    ]):
-        ax.text(tb_x + 0.12, tb_y + 1.9 - i * 0.44, k, fontsize=7.5, color="#9A958F")
-        ax.text(tb_x + 1.6, tb_y + 1.9 - i * 0.44, v, fontsize=8.5, color="#2A2A2A")
+    _draw_title_block(ax, x=8.8, y=0.35, w=5.0, h=2.85)
 
     for ext in ("png", "pdf"):
         plt.savefig(ROOT / f"mounting_plate_drawing.{ext}", dpi=220, bbox_inches="tight",
