@@ -171,125 +171,173 @@ def render_3d(mesh: trimesh.Trimesh) -> None:
         plt.close()
 
 
-def render_2d_drawing() -> None:
-    """Publication-quality 2D technical drawing PNG."""
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Arc, Circle, FancyBboxPatch, Polygon, Wedge
-    from matplotlib.lines import Line2D
+def _section_paths(mesh: trimesh.Trimesh, z: float) -> list[np.ndarray]:
+    """Slice mesh at Z height and return 2D path polylines in model coords."""
+    section = mesh.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
+    if section is None:
+        return []
+    planar, _ = section.to_planar()
+    paths = []
+    for entity in planar.entities:
+        pts = planar.vertices[entity.points]
+        if len(pts) > 1:
+            paths.append(pts)
+    return paths
 
-    fig, ax = plt.subplots(figsize=(13, 9), facecolor="#FAF9F6")
+
+def _draw_section_paths(ax, paths: list[np.ndarray], ox: float, oy: float, scale: float,
+                        lw: float, color: str, ls: str = "-") -> None:
+    for pts in paths:
+        xs = pts[:, 0] * scale + ox
+        ys = pts[:, 1] * scale + oy
+        closed = np.linalg.norm(pts[0] - pts[-1]) < 0.5
+        if closed and len(pts) > 2:
+            xs = np.append(xs, xs[0])
+            ys = np.append(ys, ys[0])
+        ax.plot(xs, ys, color=color, lw=lw, ls=ls, solid_capstyle="round")
+
+
+def render_2d_drawing(mesh: trimesh.Trimesh) -> None:
+    """2D technical drawing derived from actual 3D mesh sections — matches top view."""
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import FancyBboxPatch
+
+    bounds = mesh.bounds
+    width_mm = bounds[1][0] - bounds[0][0]
+    height_mm = bounds[1][1] - bounds[0][1]
+
+    fig, ax = plt.subplots(figsize=(14, 10), facecolor="#FAF9F6")
     ax.set_facecolor("#FAF9F6")
-    ax.set_xlim(0, 13)
-    ax.set_ylim(0, 9)
+    ax.set_xlim(0, 14)
+    ax.set_ylim(0, 10)
     ax.axis("off")
     ax.set_aspect("equal")
 
-    # Title
-    ax.text(0.4, 8.55, "Aurora Trunnion Mounting Plate", fontsize=18, fontweight="light",
-            color="#2A2A2A", fontfamily="sans-serif")
-    ax.text(0.4, 8.2, "Kristen Fenwick  ·  Scale 1:1  ·  Units: mm  ·  6061-T6 Aluminum",
+    ax.text(0.5, 9.55, "Aurora Trunnion Mounting Plate", fontsize=18, fontweight="light",
+            color="#2A2A2A")
+    ax.text(0.5, 9.15, "Kristen Fenwick  ·  Scale 1:1  ·  Units: mm  ·  6061-T6 Aluminum",
             fontsize=9, color="#6E6A65")
 
-    # TOP VIEW — intricate outline
-    ox, oy = 1.2, 4.2
-    scale = 0.018
-    prof = plate_outline_2d() * scale
-    poly = Polygon(prof + [ox + 1.6, oy + 1.1], closed=True,
-                   fill=False, edgecolor="#2A2A2A", linewidth=2.2)
-    ax.add_patch(poly)
+    # Fit top view into drawing area from mesh bounds
+    margin = 1.8
+    avail_w = 5.8
+    avail_h = 5.2
+    scale = min(avail_w / width_mm, avail_h / height_mm)
+    cx_mm = (bounds[0][0] + bounds[1][0]) / 2
+    cy_mm = (bounds[0][1] + bounds[1][1]) / 2
+    ox = 3.6 - cx_mm * scale
+    oy = 5.8 - cy_mm * scale
 
-    # Center lines
-    ax.plot([ox + 1.6, ox + 1.6], [oy + 0.2, oy + 2.0], color="#B8B2A8", lw=0.8, ls="--")
-    ax.plot([ox + 0.3, ox + 2.9], [oy + 1.1, oy + 1.1], color="#B8B2A8", lw=0.8, ls="--")
+    # Center lines through mesh centroid
+    ax.plot([ox + cx_mm * scale, ox + cx_mm * scale],
+            [oy + (bounds[0][1] - 8) * scale, oy + (bounds[1][1] + 8) * scale],
+            color="#B8B2A8", lw=0.7, ls=(0, (6, 4)))
+    ax.plot([ox + (bounds[0][0] - 8) * scale, ox + (bounds[1][0] + 8) * scale],
+            [oy + cy_mm * scale, oy + cy_mm * scale],
+            color="#B8B2A8", lw=0.7, ls=(0, (6, 4)))
 
-    # Holes
-    for hx, hy in [(-72, 48), (72, 48), (-72, -48), (72, -48)]:
-        cx, cy = ox + 1.6 + hx * scale, oy + 1.1 + hy * scale
-        ax.add_patch(Circle((cx, cy), 8 * scale, fill=False, ec="#2A2A2A", lw=1.6))
-        ax.add_patch(Circle((cx, cy), 4.4 * scale, fill=False, ec="#2A2A2A", lw=1.0))
-        ax.plot(cx, cy, "k+", ms=4, mew=0.8)
+    # Top surface outline (z ≈ 14) — outer profile + counterbore rings
+    top_paths = _section_paths(mesh, z=13.95)
+    top_paths += _section_paths(mesh, z=13.2)
+    _draw_section_paths(ax, top_paths, ox, oy, scale, lw=2.4, color="#2A2A2A")
 
-    # Central recess
-    ax.add_patch(Circle((ox + 1.6, oy + 1.1), 38 * scale, fill=False, ec="#2A2A2A", lw=1.2, ls="--"))
+    # Pocket floors + through-holes (z ≈ 6)
+    inner_paths = _section_paths(mesh, z=6.0)
+    inner_paths += _section_paths(mesh, z=1.0)
+    _draw_section_paths(ax, inner_paths, ox, oy, scale, lw=1.2, color="#2A2A2A")
 
-    # Lightening pockets
-    theta = np.linspace(0, 2 * np.pi, 40)
-    for px, py, rx, ry in [(0, 0, 16, 10), (-42, 22, 12, 8), (42, -22, 12, 8)]:
-        ellipse_pts = np.column_stack([
-            (px + rx * np.cos(theta)) * scale + ox + 1.6,
-            (py + ry * np.sin(theta)) * scale + oy + 1.1,
-        ])
-        ax.add_patch(Polygon(ellipse_pts, closed=True, fill=False, ec="#2A2A2A", lw=1.0))
+    # Rib edges visible from top (z ≈ 8)
+    rib_paths = _section_paths(mesh, z=7.8)
+    _draw_section_paths(ax, rib_paths, ox, oy, scale, lw=1.0, color="#6E6A65", ls="-")
 
-    # Keyhole slots
-    for sx in [-50, 50]:
-        cx = ox + 1.6 + sx * scale
-        ax.add_patch(FancyBboxPatch((cx - 18 * scale, oy + 1.1 - 4 * scale),
-                                    36 * scale, 8 * scale, boxstyle="round,pad=0",
-                                    fill=False, ec="#2A2A2A", lw=1.0))
-        ax.add_patch(Circle((cx - 12 * scale, oy + 1.1), 6 * scale, fill=False, ec="#2A2A2A", lw=1.0))
+    ax.text(ox + cx_mm * scale, oy + (bounds[1][1] + 14) * scale,
+            "TOP VIEW", ha="center", fontsize=11, color="#2A2A2A", fontweight="light")
 
-    ax.text(ox + 1.6, oy + 2.25, "TOP VIEW", ha="center", fontsize=10, color="#2A2A2A",
-            fontweight="light", fontfamily="sans-serif")
+    # Dimensions from mesh bounds
+    left = ox + bounds[0][0] * scale
+    right = ox + bounds[1][0] * scale
+    bottom = oy + bounds[0][1] * scale
+    top = oy + bounds[1][1] * scale
 
-    # Dimension — overall width
-    ax.annotate("", xy=(ox + 0.3, oy - 0.05), xytext=(ox + 2.9, oy - 0.05),
+    dim_y = bottom - 0.35
+    ax.annotate("", xy=(left, dim_y), xytext=(right, dim_y),
                 arrowprops=dict(arrowstyle="<->", color="#2A2A2A", lw=0.9))
-    ax.text(ox + 1.6, oy - 0.22, "176", ha="center", fontsize=9, color="#2A2A2A")
+    ax.text((left + right) / 2, dim_y - 0.22, f"{width_mm:.0f}",
+            ha="center", fontsize=9, color="#2A2A2A")
 
-    ax.annotate("", xy=(ox - 0.15, oy + 0.2), xytext=(ox - 0.15, oy + 2.0),
+    dim_x = left - 0.35
+    ax.annotate("", xy=(dim_x, bottom), xytext=(dim_x, top),
                 arrowprops=dict(arrowstyle="<->", color="#2A2A2A", lw=0.9))
-    ax.text(ox - 0.35, oy + 1.1, "124", ha="center", va="center", rotation=90, fontsize=9)
+    ax.text(dim_x - 0.18, (bottom + top) / 2, f"{height_mm:.0f}",
+            ha="center", va="center", rotation=90, fontsize=9, color="#2A2A2A")
 
-    # SECTION A-A
-    sx0, sy0 = 5.0, 4.5
-    ax.plot([sx0, sx0 + 2.8], [sy0, sy0], color="#2A2A2A", lw=2.2)
-    ax.plot([sx0, sx0 + 2.8], [sy0 + 0.14 * scale * 1000 / 18, sy0 + 0.14 * scale * 1000 / 18],
-            color="#2A2A2A", lw=2.2)
-    # pocket cut in section
-    ax.plot([sx0 + 1.0, sx0 + 1.6], [sy0, sy0 + 0.08], color="#2A2A2A", lw=1.0)
-    ax.plot([sx0 + 1.0, sx0 + 1.6], [sy0 + 0.14 * scale * 1000 / 18, sy0 + 0.06], color="#2A2A2A", lw=1.0)
-    ax.annotate("", xy=(sx0 + 3.0, sy0), xytext=(sx0 + 3.0, sy0 + 0.14 * scale * 1000 / 18),
+    # Section A–A
+    sx0, sy0 = 8.2, 5.0
+    th = 14 * scale * (14 / max(width_mm, 1)) * (width_mm / 176)
+    th = 0.22
+    ax.plot([sx0, sx0 + 2.6], [sy0, sy0], color="#2A2A2A", lw=2.2)
+    ax.plot([sx0, sx0 + 2.6], [sy0 + th, sy0 + th], color="#2A2A2A", lw=2.2)
+    ax.plot([sx0 + 0.9, sx0 + 1.5], [sy0, sy0 + th * 0.55], color="#2A2A2A", lw=1.0)
+    ax.plot([sx0 + 0.9, sx0 + 1.5], [sy0 + th, sy0 + th * 0.45], color="#2A2A2A", lw=1.0)
+    ax.annotate("", xy=(sx0 + 2.85, sy0), xytext=(sx0 + 2.85, sy0 + th),
                 arrowprops=dict(arrowstyle="<->", color="#2A2A2A", lw=0.9))
-    ax.text(sx0 + 3.2, sy0 + 0.07, "14", fontsize=9, va="center")
-    ax.text(sx0 + 1.4, sy0 + 0.55, "SECTION A–A", ha="center", fontsize=10, color="#2A2A2A",
-            fontweight="light")
+    ax.text(sx0 + 3.05, sy0 + th / 2, "14", fontsize=9, va="center")
+    ax.text(sx0 + 1.3, sy0 + 0.65, "SECTION A–A", ha="center", fontsize=10,
+            color="#2A2A2A", fontweight="light")
 
-    # NOTES
-    notes_x = 5.0
-    ax.text(notes_x, 7.8, "NOTES", fontsize=10, color="#2A2A2A", fontweight="light")
+    notes_x = 8.2
+    ax.text(notes_x, 8.6, "NOTES", fontsize=10, color="#2A2A2A", fontweight="light")
     for i, note in enumerate([
         "1. DEBURR AND BREAK ALL SHARP EDGES 0.5 mm MAX.",
         "2. HOLE POSITION TOLERANCE ±0.15 mm.",
         "3. LIGHTENING POCKETS: RA 1.6 µm SURFACE FINISH.",
         "4. COUNTERBORE DEPTH 5.0 mm UNLESS NOTED.",
         "5. COMPATIBLE WITH VESPER DEPLOYMENT POD INTERFACE.",
-        "6. UNLESS NOTED, DIMENSIONS IN mm.",
+        "6. TOP VIEW PROJECTED FROM 3D MODEL — 1:1.",
     ]):
-        ax.text(notes_x, 7.45 - i * 0.28, note, fontsize=8.5, color="#6E6A65")
+        ax.text(notes_x, 8.25 - i * 0.3, note, fontsize=8.5, color="#6E6A65")
 
-    # Title block
-    tb_x, tb_y = 9.2, 0.5
-    ax.add_patch(FancyBboxPatch((tb_x, tb_y), 3.5, 2.2, boxstyle="square,pad=0",
+    tb_x, tb_y = 10.0, 0.6
+    ax.add_patch(FancyBboxPatch((tb_x, tb_y), 3.6, 2.2, boxstyle="square,pad=0",
                                 fill=False, ec="#2A2A2A", lw=1.5))
     for yy in [tb_y + 0.55, tb_y + 1.1, tb_y + 1.65]:
-        ax.plot([tb_x, tb_x + 3.5], [yy, yy], color="#2A2A2A", lw=0.6)
-    ax.plot([tb_x + 1.4, tb_x + 1.4], [tb_y, tb_y + 2.2], color="#2A2A2A", lw=0.6)
-    fields = [
+        ax.plot([tb_x, tb_x + 3.6], [yy, yy], color="#2A2A2A", lw=0.6)
+    ax.plot([tb_x + 1.45, tb_x + 1.45], [tb_y, tb_y + 2.2], color="#2A2A2A", lw=0.6)
+    for i, (k, v) in enumerate([
         ("TITLE", "Aurora Trunnion Plate"),
         ("MATERIAL", "6061-T6 Aluminum"),
         ("DRAWN BY", "K. Fenwick"),
         ("DATE", "Jun 2026"),
         ("SHEET", "1 of 1"),
-    ]
-    for i, (k, v) in enumerate(fields):
+    ]):
         ax.text(tb_x + 0.12, tb_y + 1.9 - i * 0.44, k, fontsize=7.5, color="#9A958F")
-        ax.text(tb_x + 1.55, tb_y + 1.9 - i * 0.44, v, fontsize=8.5, color="#2A2A2A")
+        ax.text(tb_x + 1.6, tb_y + 1.9 - i * 0.44, v, fontsize=8.5, color="#2A2A2A")
 
     for ext in ("png", "pdf"):
-        plt.savefig(ROOT / f"mounting_plate_drawing.{ext}", dpi=200, bbox_inches="tight",
-                    facecolor="#FAF9F6", pad_inches=0.3)
-    plt.close()
+        plt.savefig(ROOT / f"mounting_plate_drawing.{ext}", dpi=220, bbox_inches="tight",
+                    facecolor="#FAF9F6", pad_inches=0.25)
+
+    # Standalone large top view (matches 3D viewer overhead)
+    fig2, ax2 = plt.subplots(figsize=(8, 8), facecolor="#FAF9F6")
+    ax2.set_facecolor("#FAF9F6")
+    ax2.set_aspect("equal")
+    ax2.axis("off")
+    s2 = min(6.8 / width_mm, 6.8 / height_mm)
+    o2x = 4 - cx_mm * s2
+    o2y = 4 - cy_mm * s2
+    _draw_section_paths(ax2, top_paths, o2x, o2y, s2, lw=2.6, color="#2A2A2A")
+    _draw_section_paths(ax2, inner_paths, o2x, o2y, s2, lw=1.3, color="#2A2A2A")
+    _draw_section_paths(ax2, rib_paths, o2x, o2y, s2, lw=1.1, color="#6E6A65")
+    ax2.plot([o2x + cx_mm * s2, o2x + cx_mm * s2],
+             [o2y + bounds[0][1] * s2, o2y + bounds[1][1] * s2],
+             color="#B8B2A8", lw=0.6, ls=(0, (5, 4)))
+    ax2.plot([o2x + bounds[0][0] * s2, o2x + bounds[1][0] * s2],
+             [o2y + cy_mm * s2, o2y + cy_mm * s2],
+             color="#B8B2A8", lw=0.6, ls=(0, (5, 4)))
+    ax2.text(0.5, 7.6, "TOP VIEW", fontsize=12, color="#2A2A2A", fontweight="light")
+    plt.savefig(ROOT / "mounting_plate_top_view.png", dpi=220, bbox_inches="tight",
+                facecolor="#FAF9F6", pad_inches=0.2)
+    plt.close("all")
 
 
 def main():
@@ -297,7 +345,7 @@ def main():
     mesh.export(ROOT / "mounting_plate.glb")
     mesh.export(ROOT / "mounting_plate.stl")
     render_3d(mesh)
-    render_2d_drawing()
+    render_2d_drawing(mesh)
     print(f"Mounting plate: {len(mesh.vertices):,} verts")
     print("Exported GLB, STL, 3D renders, and 2D drawing.")
 
