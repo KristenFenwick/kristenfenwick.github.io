@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import trimesh
 from matplotlib.patches import FancyBboxPatch, Polygon, Rectangle
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 from frost_tower_dimensions import (
     BASE_LENGTH_FT,
@@ -52,6 +54,9 @@ CROWN_LITE = PALETTE_MORNING_BUTTER
 CORE_FILL = PALETTE_CHERRY_BLOSSOM
 
 FT_TO_M = 0.3048
+IN_PER_FT = 1 / 64  # 1/64" = 1'-0" — single scale for every orthographic view
+SHEET_W, SHEET_H = 24.0, 18.0
+HATCH = "#C5C0B8"
 
 
 def _hex_rgba(hex_color: str, alpha: int = 255) -> list[int]:
@@ -70,205 +75,361 @@ def ft_to_draw(ft: float, scale_px_per_ft: float = 0.012) -> float:
     return ft * scale_px_per_ft
 
 
-def draw_title_block(ax, x, y, w, h, sheet: str) -> None:
+def _s(ft: float) -> float:
+    """Feet → inches on sheet at 1/64 scale."""
+    return ft * IN_PER_FT
+
+
+def _view_frame(ax, x: float, y: float, w: float, h: float, label: str) -> None:
+    ax.add_patch(Rectangle((x, y), w, h, fill=False, ec=INK, lw=0.9))
+    ax.plot([x, x + w], [y, y], color=INK, lw=1.2)
+    ax.text(x + w / 2, y - 0.22, label, ha="center", va="top", fontsize=7.5,
+            color=INK, fontweight="light")
+
+
+def _centerline(ax, x0: float, y0: float, x1: float, y1: float) -> None:
+    ax.plot([x0, x1], [y0, y1], color=MUTED, lw=0.45, ls=(0, (6, 3, 1, 3)))
+
+
+def _dim_v(ax, x: float, y0: float, y1: float, text: str, offset: float = 0.35) -> None:
+    ax.plot([x, x - offset], [y0, y0], color=INK, lw=0.35)
+    ax.plot([x, x - offset], [y1, y1], color=INK, lw=0.35)
+    ax.annotate("", xy=(x - offset, y0), xytext=(x - offset, y1),
+                arrowprops=dict(arrowstyle="<->", color=INK, lw=0.7, mutation_scale=8))
+    ax.text(x - offset - 0.12, (y0 + y1) / 2, text, rotation=90, va="center", ha="center",
+            fontsize=6.5, color=INK)
+
+
+def _dim_h(ax, x0: float, x1: float, y: float, text: str, offset: float = 0.28) -> None:
+    ax.plot([x0, x0], [y, y - offset], color=INK, lw=0.35)
+    ax.plot([x1, x1], [y, y - offset], color=INK, lw=0.35)
+    ax.annotate("", xy=(x0, y - offset), xytext=(x1, y - offset),
+                arrowprops=dict(arrowstyle="<->", color=INK, lw=0.7, mutation_scale=8))
+    ax.text((x0 + x1) / 2, y - offset - 0.15, text, ha="center", va="top", fontsize=6.5, color=INK)
+
+
+def _crown_step_bands() -> list[tuple[float, float, float, float]]:
+    """Discrete horizontal crown tiers — (z0, z1, north_length, east_width)."""
+    bands: list[tuple[float, float, float, float]] = []
+    prev_z = CROWN_SETBACKS_FT[0][0]
+    for elev, length, width in CROWN_SETBACKS_FT[1:]:
+        if elev > prev_z:
+            bands.append((prev_z, elev, length, width))
+        prev_z = elev
+    return bands
+
+
+def _tower_glass_width_ft() -> float:
+    return BASE_LENGTH_FT - 2 * GLASS_SHAFT_INSET_FT
+
+
+def _core_size_ft() -> tuple[float, float]:
+    return BASE_LENGTH_FT * 0.22, BASE_WIDTH_FT * 0.28
+
+
+def draw_north_elevation_geom(ax, ox: float, oy: float) -> tuple[float, float, float, float]:
+    """Return (x0, y0, width, height) bounds in sheet inches."""
+    pod_w = _s(BASE_LENGTH_FT)
+    pod_h = _s(PODIUM_HEIGHT_FT)
+    ax.add_patch(Rectangle((ox, oy), pod_w, pod_h, facecolor=LIMESTONE, edgecolor=INK, lw=1.1))
+
+    glass_w = _s(_tower_glass_width_ft())
+    glass_x = ox + (pod_w - glass_w) / 2
+    tower_h = _s(ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT)
+    ax.add_patch(Rectangle((glass_x, oy + pod_h), glass_w, tower_h,
+                            facecolor=GLASS, edgecolor=INK, lw=1.1, alpha=0.85))
+    floors = FLOOR_COUNT - PODIUM_FLOORS
+    for i in range(1, floors):
+        fy = oy + pod_h + tower_h * i / floors
+        ax.plot([glass_x, glass_x + glass_w], [fy, fy], color="#5A7A9A", lw=0.22)
+
+    cx = ox + pod_w / 2
+    for z0, z1, length, _width in _crown_step_bands():
+        band_h = _s(z1 - z0)
+        band_y = oy + _s(z0)
+        band_w = _s(length)
+        x0 = cx - band_w / 2
+        ax.add_patch(Rectangle((x0, band_y), band_w, band_h,
+                                facecolor=CROWN_LITE, edgecolor=INK, lw=0.75))
+        ax.plot([x0, x0 + band_w], [band_y + band_h, band_y + band_h], color=INK, lw=0.5)
+
+    total_h = _s(TOTAL_HEIGHT_FT)
+    _centerline(ax, cx, oy - 0.15, cx, oy + total_h + 0.15)
+    _dim_v(ax, ox, oy, oy + total_h, f"{TOTAL_HEIGHT_FT}'-0\"")
+    _dim_h(ax, ox, ox + pod_w, oy, f"{BASE_LENGTH_FT}'-0\"")
+    _dim_v(ax, ox + pod_w + 0.55, oy + _s(ROOF_HEIGHT_FT), oy + total_h,
+           f"{CROWN_HEIGHT_FT}'-0\"", offset=0.2)
+    ax.text(ox + pod_w + 0.7, oy + _s(ROOF_HEIGHT_FT) + 0.08, "ROOF", fontsize=5.5, color=MUTED)
+    ax.text(ox + pod_w + 0.7, oy + total_h - 0.1, "CROWN", fontsize=5.5, color=MUTED)
+    return ox, oy, pod_w, total_h
+
+
+def draw_section_a_geom(ax, ox: float, oy: float) -> None:
+    """Section A–A through crown centerline — hatched cut surfaces."""
+    total_h = _s(TOTAL_HEIGHT_FT)
+    half_w = _s(BASE_WIDTH_FT) / 2
+    cx = ox + half_w
+
+    ax.add_patch(Rectangle((ox, oy), _s(BASE_WIDTH_FT), _s(PODIUM_HEIGHT_FT),
+                            facecolor=LIMESTONE, edgecolor=INK, lw=1.0, hatch="///", alpha=0.9))
+    core_w, _ = _core_size_ft()
+    core_hw = _s(core_w) / 2
+    ax.add_patch(Rectangle((cx - core_hw, oy), _s(core_w), _s(ROOF_HEIGHT_FT),
+                            facecolor=CORE_FILL, edgecolor=INK, lw=0.9, hatch="xx", alpha=0.75))
+
+    glass_hw = _s(BASE_WIDTH_FT - 2 * GLASS_SHAFT_INSET_FT) / 2
+    ax.add_patch(Rectangle((cx - glass_hw, oy + _s(PODIUM_HEIGHT_FT)),
+                            _s(BASE_WIDTH_FT - 2 * GLASS_SHAFT_INSET_FT),
+                            _s(ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT),
+                            facecolor=GLASS, edgecolor=INK, lw=0.9, alpha=0.55))
+
+    for z0, z1, _length, width in _crown_step_bands():
+        tier_w = _s(width)
+        x0 = cx - tier_w / 2
+        ax.add_patch(Rectangle((x0, oy + _s(z0)), tier_w, _s(z1 - z0),
+                                facecolor=CROWN_LITE, edgecolor=INK, lw=0.6, hatch=".."))
+
+    _centerline(ax, cx, oy - 0.1, cx, oy + total_h + 0.1)
+    ax.plot([ox - 0.35, ox + _s(BASE_WIDTH_FT) + 0.35],
+            [oy + _s(ROOF_HEIGHT_FT), oy + _s(ROOF_HEIGHT_FT)], color=MUTED, lw=0.5, ls="--")
+    ax.text(ox - 0.3, oy + _s(ROOF_HEIGHT_FT) + 0.08, "A", fontsize=7, color=INK, fontweight="bold")
+    ax.text(ox + _s(BASE_WIDTH_FT) + 0.15, oy + _s(ROOF_HEIGHT_FT) + 0.08, "A", fontsize=7, color=INK)
+    _dim_v(ax, ox + _s(BASE_WIDTH_FT), oy, oy + total_h, f"{TOTAL_HEIGHT_FT}'-0\"", offset=0.25)
+
+
+def draw_site_plan_geom(ax, ox: float, oy: float) -> None:
+    site_l = _s(280)
+    site_w = _s(220)
+    ax.add_patch(Rectangle((ox, oy), site_l, site_w, fill=False, ec=GRID, lw=0.9, ls=(0, (5, 4))))
+    ax.text(ox + site_l / 2, oy - 0.2, "SITE BOUNDARY (EST.)", ha="center", fontsize=5.5, color=MUTED)
+
+    bl, bw = _s(BASE_LENGTH_FT), _s(BASE_WIDTH_FT)
+    bx = ox + (site_l - bl) / 2
+    by = oy + (site_w - bw) / 2
+    ax.add_patch(Rectangle((bx, by), bl, bw, facecolor=LIMESTONE, edgecolor=INK, lw=1.1))
+    ax.add_patch(Rectangle((bx + _s(GLASS_SHAFT_INSET_FT), by + _s(GLASS_SHAFT_INSET_FT)),
+                            _s(_tower_glass_width_ft()), _s(BASE_WIDTH_FT - 2 * GLASS_SHAFT_INSET_FT),
+                            fill=False, ec=GLASS, lw=0.9))
+    park_w = bl * 0.38
+    ax.add_patch(Rectangle((bx + _s(4), by + _s(4)), park_w, bw - _s(8),
+                            fill=False, ec=MUTED, lw=0.6, ls=(0, (4, 3))))
+    ax.text(bx + park_w / 2 + _s(4), by + bw / 2, f"PARKING\n{PARKING_LEVELS} LVLS",
+            ha="center", va="center", fontsize=5, color=MUTED)
+    ax.plot([ox - 0.2, ox + site_l + 0.2], [oy - 0.45, oy - 0.45], color=INK, lw=1.0)
+    ax.text(ox + site_l / 2, oy - 0.62, "CONGRESS AVENUE", ha="center", fontsize=6, color=INK)
+    _dim_h(ax, bx, bx + bl, by + bw, f"{BASE_LENGTH_FT}'-0\"")
+    _dim_v(ax, bx, by, by + bw, f"{BASE_WIDTH_FT}'-0\"", offset=0.22)
+
+
+def draw_floor_plan_geom(ax, ox: float, oy: float) -> None:
+    plate_l, plate_w = _s(BASE_LENGTH_FT), _s(BASE_WIDTH_FT)
+    ax.add_patch(Rectangle((ox, oy), plate_l, plate_w, fill=False, edgecolor=INK, lw=1.2))
+    core_l, core_w = _s(_core_size_ft()[0]), _s(_core_size_ft()[1])
+    cx = ox + (plate_l - core_l) / 2
+    cy = oy + (plate_w - core_w) / 2
+    ax.add_patch(Rectangle((cx, cy), core_l, core_w, facecolor=CORE_FILL, edgecolor=INK, lw=0.9))
+    ax.text(cx + core_l / 2, cy + core_w / 2, "CORE\nELEV.\nSTAIRS\nMEP",
+            ha="center", va="center", fontsize=5.5, color=MUTED)
+
+    mullion_x = np.linspace(ox + _s(3), ox + plate_l - _s(3), 14)
+    mullion_y = np.linspace(oy + _s(3), oy + plate_w - _s(3), 9)
+    for mx in mullion_x:
+        ax.plot([mx, mx], [oy + _s(2), oy + plate_w - _s(2)], color=GLASS, lw=0.28)
+    for my in mullion_y:
+        ax.plot([ox + _s(2), ox + plate_l - _s(2)], [my, my], color=GLASS, lw=0.28)
+
+    _centerline(ax, ox + plate_l / 2, oy - 0.1, ox + plate_l / 2, oy + plate_w + 0.1)
+    _centerline(ax, ox - 0.1, oy + plate_w / 2, ox + plate_l + 0.1, oy + plate_w / 2)
+    _dim_h(ax, ox, ox + plate_l, oy + plate_w, f"{BASE_LENGTH_FT}'-0\"")
+    _dim_v(ax, ox + plate_l, oy, oy + plate_w, f"{BASE_WIDTH_FT}'-0\"", offset=0.22)
+
+
+def draw_isometric_geom(ax) -> None:
+    """Third-angle isometric massing derived from the same dimensions as orthographic views."""
+    ax.set_facecolor(BG)
+    ax.axis("off")
+
+    def _box_faces(x, y, z, w, h, d, color, alpha=0.92):
+        verts = np.array([
+            [x, y, z], [x + w, y, z], [x + w, y + h, z], [x, y + h, z],
+            [x, y, z + d], [x + w, y, z + d], [x + w, y + h, z + d], [x, y + h, z + d],
+        ], dtype=float)
+        faces = [
+            [verts[j] for j in (0, 1, 2, 3)], [verts[j] for j in (4, 5, 6, 7)],
+            [verts[j] for j in (0, 1, 5, 4)], [verts[j] for j in (2, 3, 7, 6)],
+            [verts[j] for j in (1, 2, 6, 5)], [verts[j] for j in (0, 3, 7, 4)],
+        ]
+        col = Poly3DCollection(faces, alpha=alpha, linewidths=0.25, edgecolors=INK)
+        col.set_facecolor(color)
+        ax.add_collection3d(col)
+
+    s = 0.011
+    ox, oy, oz = -1.0, -0.4, 0.0
+    _box_faces(ox, oy, oz, BASE_LENGTH_FT * s, BASE_WIDTH_FT * s, PODIUM_HEIGHT_FT * s, LIMESTONE)
+    gi = GLASS_SHAFT_INSET_FT
+    _box_faces(ox + gi * s, oy + gi * s, oz + PODIUM_HEIGHT_FT * s,
+               _tower_glass_width_ft() * s, (BASE_WIDTH_FT - 2 * gi) * s,
+               (ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT) * s, GLASS, alpha=0.8)
+    cl, cw = _core_size_ft()
+    _box_faces(ox + (BASE_LENGTH_FT - cl) / 2 * s, oy + (BASE_WIDTH_FT - cw) / 2 * s, oz,
+               cl * s, cw * s, ROOF_HEIGHT_FT * s, CORE_FILL, alpha=0.7)
+    for z0, z1, length, width in _crown_step_bands():
+        band_h = (z1 - z0) * s
+        band_x = ox + (BASE_LENGTH_FT - length) / 2 * s
+        band_y = oy + (BASE_WIDTH_FT - width) / 2 * s
+        _box_faces(band_x, band_y, oz + z0 * s, length * s, width * s, band_h, CROWN_LITE)
+
+    ax.view_init(elev=22, azim=-52)
+    ax.set_xlim(-2, 4)
+    ax.set_ylim(-1, 3)
+    ax.set_zlim(0, 5.5)
+    ax.set_box_aspect((2.2, 1.2, 2.8))
+
+
+def draw_sheet_title_block(ax, x: float, y: float, w: float, h: float, sheet: str = "A0.0") -> None:
     cols = [x + w * i / 6 for i in range(7)]
-    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="square,pad=0", fill=False, ec=INK, lw=1.4))
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="square,pad=0", fill=False, ec=INK, lw=1.2))
     for i in range(1, 6):
-        ax.plot([cols[i], cols[i]], [y, y + h], color=INK, lw=0.5)
-    bands = [h * 0.78, h * 0.55, h * 0.32]
-    for by in [y + h - b for b in bands]:
-        ax.plot([x, x + w], [by, by], color=INK, lw=0.45)
-    ax.text(cols[0] + 0.08, y + h - 0.18, "TITLE", fontsize=5.5, color=MUTED)
-    ax.text(cols[0] + 0.08, y + h - 0.42, "Frost Bank Tower Study", fontsize=8, color=INK)
-    ax.text(cols[3] + 0.08, y + h - 0.18, "SHEET", fontsize=5.5, color=MUTED)
-    ax.text(cols[3] + 0.08, y + h - 0.42, sheet, fontsize=7, color=INK)
+        ax.plot([cols[i], cols[i]], [y, y + h], color=INK, lw=0.45)
+    title_h = h * 0.28
+    ax.plot([x, x + w], [y + h - title_h, y + h - title_h], color=INK, lw=0.55)
+    ax.text(cols[0] + 0.1, y + h - 0.18, "TITLE", fontsize=5.5, color=MUTED)
+    ax.text(cols[0] + 0.1, y + h - 0.48, "Frost Bank Tower — Architectural CAD Study",
+            fontsize=8.5, color=INK, fontweight="light")
+    ax.text(cols[3] + 0.1, y + h - 0.18, "DWG NO.", fontsize=5.5, color=MUTED)
+    ax.text(cols[3] + 0.1, y + h - 0.48, sheet, fontsize=8, color=INK)
     rows = [
-        ("LOCATION", "401 Congress Ave, Austin TX", "SCALE", "1/64\"=1'-0\"", "REV", "A"),
+        ("LOCATION", SITE_ADDRESS, "SCALE", '1/64"=1\'-0"', "REV", "B"),
         ("ARCHITECT", "Duda/Paine + HKS", "HEIGHT", f"{TOTAL_HEIGHT_FT}'-0\"", "FLOORS", str(FLOOR_COUNT)),
-        ("SOURCE", "Public reference dims", "CROWN", f"{CROWN_HEIGHT_FT}'-0\"", "STATUS", "STUDY"),
-        ("AUTHOR", "Kristen Fenwick", "UNITS", "feet", "CLASS", "AEC"),
+        ("PROJECTION", "Third Angle", "ROOF", f"{ROOF_HEIGHT_FT}'-0\"", "STATUS", "STUDY"),
+        ("AUTHOR", "Kristen Fenwick", "CROWN", f"{CROWN_HEIGHT_FT}'-0\"", "CLASS", "AEC"),
+        ("PALETTE", "346eur / CFD", "UNITS", "feet", "SHEET", "1 of 1"),
     ]
-    y0 = y + h - bands[0]
-    rh = bands[0] / 4
+    row_h = (h - title_h) / len(rows)
     for i, (a, b, c, d, e, f) in enumerate(rows):
-        ry = y0 - (i + 0.55) * rh
-        ax.text(cols[0] + 0.06, ry, a, fontsize=5, color=MUTED, va="center")
-        ax.text(cols[1] + 0.06, ry, b, fontsize=5.8, color=INK, va="center")
-        ax.text(cols[2] + 0.06, ry, c, fontsize=5, color=MUTED, va="center")
-        ax.text(cols[3] + 0.06, ry, d, fontsize=5.8, color=INK, va="center")
-        ax.text(cols[4] + 0.06, ry, e, fontsize=5, color=MUTED, va="center")
-        ax.text(cols[5] - 0.06, ry, f, fontsize=5.8, color=INK, va="center", ha="right")
-    name_x = (cols[4] + cols[5]) / 2
-    ax.text(name_x, y + h * 0.12, "KRISTEN", fontsize=6, color=INK, ha="center", rotation=90, fontweight="light")
-    ax.text(name_x, y + h * 0.04, "FENWICK", fontsize=6, color=INK, ha="center", rotation=90, fontweight="light")
+        ry = y + h - title_h - (i + 0.55) * row_h
+        ax.plot([x, x + w], [y + h - title_h - i * row_h, y + h - title_h - i * row_h],
+                color=INK, lw=0.3)
+        ax.text(cols[0] + 0.08, ry, a, fontsize=5, color=MUTED, va="center")
+        ax.text(cols[1] + 0.08, ry, b, fontsize=5.8, color=INK, va="center")
+        ax.text(cols[2] + 0.08, ry, c, fontsize=5, color=MUTED, va="center")
+        ax.text(cols[3] + 0.08, ry, d, fontsize=5.8, color=INK, va="center")
+        ax.text(cols[4] + 0.08, ry, e, fontsize=5, color=MUTED, va="center")
+        ax.text(cols[5] - 0.08, ry, f, fontsize=5.8, color=INK, va="center", ha="right")
+    ax.text(x + 0.12, y + 0.12,
+            "PROJECTION · THIRD ANGLE · ORTHOGRAPHIC + ISOMETRIC · PARAMETRIC MASSING",
+            fontsize=5.2, color=MUTED)
+
+
+def render_drawing_sheet() -> None:
+    """Unified multi-view sheet — aligned orthographic projections at one scale."""
+    fig = plt.figure(figsize=(SHEET_W, SHEET_H), facecolor=BG)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, SHEET_W)
+    ax.set_ylim(0, SHEET_H)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    ax.add_patch(Rectangle((0.35, 0.35), SHEET_W - 0.7, SHEET_H - 0.7, fill=False, ec=INK, lw=1.6))
+    ax.text(SHEET_W / 2, SHEET_H - 0.55, "FROST BANK TOWER — ARCHITECTURAL CAD STUDY",
+            ha="center", fontsize=11, color=INK, fontweight="light")
+
+    elev_x, elev_y = 1.0, 3.2
+    elev_w, elev_h = 4.2, 9.2
+    _view_frame(ax, elev_x - 0.35, elev_y - 0.45, elev_w, elev_h, "NORTH ELEVATION · SCALE 1/64\"=1'-0\"")
+    draw_north_elevation_geom(ax, elev_x, elev_y)
+
+    sec_x, sec_y = 6.0, 3.2
+    sec_w, sec_h = 3.4, 9.2
+    _view_frame(ax, sec_x - 0.3, sec_y - 0.45, sec_w, sec_h, "SECTION A–A · LOOKING EAST")
+    draw_section_a_geom(ax, sec_x, sec_y)
+
+    site_x, site_y = 10.2, 9.0
+    site_w, site_h = 4.8, 3.2
+    _view_frame(ax, site_x - 0.25, site_y - 0.35, site_w, site_h, "SITE PLAN STUDY")
+    draw_site_plan_geom(ax, site_x, site_y)
+
+    plan_x, plan_y = 10.2, 3.2
+    plan_w, plan_h = 4.8, 5.2
+    _view_frame(ax, plan_x - 0.25, plan_y - 0.35, plan_w, plan_h,
+                f"TYPICAL OFFICE FLOOR · FLOORS 10–30 · ~{TYPICAL_FLOOR_SIDE_FT:.0f} FT PLATE")
+    draw_floor_plan_geom(ax, plan_x, plan_y)
+
+    iso_ax = fig.add_axes([0.62, 0.14, 0.34, 0.38], projection="3d")
+    _view_frame(ax, 15.4, 3.0, 7.8, 9.0, "ISOMETRIC MASSING · 3D REFERENCE")
+    draw_isometric_geom(iso_ax)
+
+    notes = [
+        "NOTES:",
+        "1. ALL ORTHOGRAPHIC VIEWS AT UNIFORM SCALE 1/64\"=1'-0\".",
+        "2. CROWN SETBACKS & FOOTPRINT DIMENSIONS EST. — VERIFY WITH AOR DRAWINGS.",
+        "3. COLORS: BLUE GREY #7298C7 ENVELOPE · SOFT LINEN #F5F1E6 PODIUM ·",
+        "   MORNING BUTTER #F3D98F CROWN · CHERRY BLOSSOM #F5A8A8 CORE (346EUR / CFD).",
+        "4. SECTION HATCHING INDICATES CUT MASS ONLY — NOT MATERIAL SPECIFICATION.",
+    ]
+    for i, line in enumerate(notes):
+        ax.text(0.9, 2.55 - i * 0.28, line, fontsize=5.5, color=MUTED if i else INK,
+                fontweight="light" if i == 0 else "normal")
+
+    draw_sheet_title_block(ax, 9.5, 0.55, 14.0, 2.35, "KF-FT-001")
+    fig.savefig(ROOT / "frost_drawing_sheet.png", dpi=200, facecolor=BG, pad_inches=0.15)
+    plt.close(fig)
+
+
+def _render_single_view(filename: str, title: str, subtitle: str, sheet: str,
+                        draw_fn, frame_w: float, frame_h: float, margin: float = 1.2) -> None:
+    """Export individual views using the same geometry helpers as the master sheet."""
+    fig_w = frame_w + margin * 2 + 4.5
+    fig_h = frame_h + margin * 2 + 2.8
+    fig, ax = plt.subplots(figsize=(fig_w, fig_h), facecolor=BG)
+    ax.set_facecolor(BG)
+    ax.set_xlim(0, fig_w)
+    ax.set_ylim(0, fig_h)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    ax.text(margin, fig_h - 0.55, title, fontsize=14, color=INK, fontweight="light")
+    ax.text(margin, fig_h - 0.95, subtitle, fontsize=8, color=MUTED)
+    ox, oy = margin, margin
+    draw_fn(ax, ox, oy)
+    draw_sheet_title_block(ax, fig_w - 4.3, 0.45, 4.0, 2.1, sheet)
+    plt.savefig(ROOT / filename, dpi=220, facecolor=BG, pad_inches=0.2)
+    plt.close()
 
 
 def render_site_plan() -> None:
-    fig, ax = plt.subplots(figsize=(12, 9), facecolor=BG)
-    ax.set_facecolor(BG)
-    ax.set_xlim(0, 12)
-    ax.set_ylim(0, 9)
-    ax.axis("off")
-    ax.set_aspect("equal")
-
-    ax.text(0.4, 8.5, "Frost Bank Tower — Site Plan Study", fontsize=16, color=INK, fontweight="light")
-    ax.text(0.4, 8.1, f"{SITE_ADDRESS}  ·  Block 42  ·  {SITE_SQFT:,.0f} sf site",
-            fontsize=8.5, color=MUTED)
-
-    ox, oy = 2.0, 2.2
-    s = 0.018
-    site_w, site_d = 360 * s, 280 * s  # illustrative block envelope
-
-    ax.add_patch(Rectangle((ox, oy), site_w, site_d, fill=False, ec=GRID, lw=1.2, ls="--"))
-    ax.text(ox + site_w / 2, oy - 0.25, "SITE BOUNDARY (EST.)", ha="center", fontsize=7, color=MUTED)
-
-    bw, bl = BASE_WIDTH_FT * s, BASE_LENGTH_FT * s
-    bx = ox + (site_w - bl) / 2
-    by = oy + (site_d - bw) / 2
-    ax.add_patch(Rectangle((bx, by), bl, bw, fill=True, facecolor=LIMESTONE, edgecolor=INK, lw=2))
-    ax.add_patch(Rectangle((bx + bl * 0.08, by + bw * 0.1), bl * 0.84, bw * 0.8,
-                            fill=False, ec=GLASS, lw=1.4, ls="-"))
-
-    # Congress Ave
-    ax.plot([ox - 0.4, ox + site_w + 0.4], [oy - 0.55, oy - 0.55], color=INK, lw=2)
-    ax.text(ox + site_w / 2, oy - 0.75, "CONGRESS AVENUE", ha="center", fontsize=8, color=INK)
-
-    # Parking garage footprint (under podium)
-    ax.add_patch(Rectangle((bx + bl * 0.05, by + bw * 0.05), bl * 0.35, bw * 0.9,
-                            fill=False, ec=MUTED, lw=0.8, ls=(0, (4, 3))))
-    ax.text(bx + bl * 0.22, by + bw * 0.5, f"PARKING\n{PARKING_LEVELS} LVLS",
-            ha="center", va="center", fontsize=6, color=MUTED)
-
-    ax.text(bx + bl / 2, by + bw + 0.35, "TOWER FOOTPRINT", ha="center", fontsize=8, color=INK)
-    ax.annotate("", xy=(bx, by - 0.15), xytext=(bx + bl, by - 0.15),
-                arrowprops=dict(arrowstyle="<->", color=INK, lw=0.8))
-    ax.text(bx + bl / 2, by - 0.35, f"{BASE_LENGTH_FT}'-0\"", ha="center", fontsize=8, color=INK)
-    ax.annotate("", xy=(bx - 0.15, by), xytext=(bx - 0.15, by + bw),
-                arrowprops=dict(arrowstyle="<->", color=INK, lw=0.8))
-    ax.text(bx - 0.38, by + bw / 2, f"{BASE_WIDTH_FT}'-0\"", ha="center", va="center",
-            rotation=90, fontsize=8, color=INK)
-
-    draw_title_block(ax, 7.8, 0.5, 3.8, 2.4, "A1.0")
-    plt.savefig(ROOT / "frost_site_plan.png", dpi=220, bbox_inches="tight", facecolor=BG, pad_inches=0.25)
-    plt.close()
+    _render_single_view(
+        "frost_site_plan.png",
+        "Frost Bank Tower — Site Plan Study",
+        f"{SITE_ADDRESS}  ·  Block 42  ·  {SITE_SQFT:,.0f} sf site  ·  Scale 1/64\"=1'-0\"",
+        "A1.0",
+        draw_site_plan_geom,
+        _s(280) + 0.8,
+        _s(220) + 1.0,
+    )
 
 
 def render_typical_floor() -> None:
-    fig, ax = plt.subplots(figsize=(12, 9), facecolor=BG)
-    ax.set_facecolor(BG)
-    ax.set_xlim(0, 12)
-    ax.set_ylim(0, 9)
-    ax.axis("off")
-    ax.set_aspect("equal")
-
-    ax.text(0.4, 8.5, "Frost Bank Tower — Typical Office Floor Plan", fontsize=16, color=INK, fontweight="light")
-    ax.text(0.4, 8.1, f"Floor 10–30 (typ.)  ·  ~{TYPICAL_FLOOR_SIDE_FT:.0f} ft plate  ·  curtain-wall perimeter",
-            fontsize=8.5, color=MUTED)
-
-    ox, oy = 2.4, 2.0
-    s = 0.02
-    w, h = BASE_WIDTH_FT * s * 0.92, BASE_LENGTH_FT * s * 0.88
-    ax.add_patch(Rectangle((ox, oy), h, w, fill=False, ec=INK, lw=2.2))
-    core_w, core_h = h * 0.22, w * 0.28
-    cx, cy = ox + (h - core_h) / 2, oy + (w - core_w) / 2
-    ax.add_patch(Rectangle((cx, cy), core_h, core_w, fill=True, facecolor=CORE_FILL, edgecolor=INK, lw=1.2))
-    ax.text(cx + core_h / 2, cy + core_w / 2, "CORE\nELEV.\nSTAIRS\nMEP",
-            ha="center", va="center", fontsize=6.5, color=MUTED)
-
-    # Perimeter mullion grid (intricate curtain wall rhythm)
-    mullion_x = np.linspace(ox + 0.08, ox + h - 0.08, 14)
-    mullion_y = np.linspace(oy + 0.08, oy + w - 0.08, 9)
-    for mx in mullion_x:
-        ax.plot([mx, mx], [oy + 0.05, oy + w - 0.05], color=GLASS, lw=0.35)
-    for my in mullion_y:
-        ax.plot([ox + 0.05, ox + h - 0.05], [my, my], color=GLASS, lw=0.35)
-
-    # Office bays
-    for i in range(3):
-        for j in range(2):
-            rx = ox + 0.35 + i * (h * 0.28)
-            ry = oy + 0.35 + j * (w * 0.38)
-            if rx + h * 0.22 < cx or rx > cx + core_h:
-                ax.add_patch(Rectangle((rx, ry), h * 0.2, w * 0.3, fill=False, ec=MUTED, lw=0.5))
-
-    ax.text(ox + h / 2, oy + w + 0.35, "TOP VIEW — TYPICAL FLOOR", ha="center", fontsize=9, color=INK)
-    draw_title_block(ax, 7.8, 0.5, 3.8, 2.4, "A2.0")
-    plt.savefig(ROOT / "frost_floor_plan.png", dpi=220, bbox_inches="tight", facecolor=BG, pad_inches=0.25)
-    plt.close()
+    _render_single_view(
+        "frost_floor_plan.png",
+        "Frost Bank Tower — Typical Office Floor Plan",
+        f"Floor 10–30 (typ.)  ·  {BASE_LENGTH_FT}′×{BASE_WIDTH_FT}′ plate  ·  curtain-wall perimeter",
+        "A2.0",
+        draw_floor_plan_geom,
+        _s(BASE_LENGTH_FT) + 0.8,
+        _s(BASE_WIDTH_FT) + 0.8,
+    )
 
 
 def render_north_elevation() -> None:
-    fig, ax = plt.subplots(figsize=(12, 14), facecolor=BG)
-    ax.set_facecolor(BG)
-    ax.set_xlim(0, 12)
-    ax.set_ylim(0, 16)
-    ax.axis("off")
-    ax.set_aspect("equal")
-
-    ax.text(0.4, 15.2, "Frost Bank Tower — North Elevation", fontsize=16, color=INK, fontweight="light")
-    ax.text(0.4, 14.75, f"Total {TOTAL_HEIGHT_FT}'-0\"  ·  Roof {ROOF_HEIGHT_FT}'-0\"  ·  Crown {CROWN_HEIGHT_FT}'-0\"",
-            fontsize=8.5, color=MUTED)
-
-    ox, oy = 3.0, 1.0
-    s = 0.018
-
-    # Podium limestone
-    pod_h = PODIUM_HEIGHT_FT * s
-    pod_w = BASE_LENGTH_FT * s
-    ax.add_patch(Rectangle((ox, oy), pod_w, pod_h, fill=True, facecolor=LIMESTONE, edgecolor=INK, lw=2))
-
-    # Glass tower with floor lines
-    tower_h = (ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT) * s
-    ax.add_patch(Rectangle((ox + pod_w * 0.04, oy + pod_h), pod_w * 0.92, tower_h,
-                            fill=True, facecolor=GLASS, edgecolor=INK, lw=2, alpha=0.55))
-    for i in range(1, FLOOR_COUNT - PODIUM_FLOORS):
-        fy = oy + pod_h + tower_h * i / (FLOOR_COUNT - PODIUM_FLOORS)
-        ax.plot([ox + pod_w * 0.04, ox + pod_w * 0.96], [fy, fy], color="#7A8FA0", lw=0.25)
-
-    # Crown setbacks — intricate folded geometry
-    crown_pts = []
-    for elev, length, _width in CROWN_SETBACKS_FT:
-        y = oy + elev * s
-        half = length * s / 2
-        cx = ox + pod_w / 2
-        crown_pts.append([cx - half, y])
-    crown_pts.append([ox + pod_w / 2 + CROWN_TOP_SIDE_FT * s / 2, oy + TOTAL_HEIGHT_FT * s])
-    crown_pts.append([ox + pod_w / 2 - CROWN_TOP_SIDE_FT * s / 2, oy + TOTAL_HEIGHT_FT * s])
-    for elev, length, _ in reversed(CROWN_SETBACKS_FT):
-        y = oy + elev * s
-        half = length * s / 2
-        cx = ox + pod_w / 2
-        crown_pts.append([cx + half, y])
-
-    ax.add_patch(Polygon(crown_pts, closed=True, fill=True, facecolor=CROWN_LITE,
-                         edgecolor=INK, lw=1.8, alpha=0.75))
-
-    # Crown facet lines
-    for elev, length, _ in CROWN_SETBACKS_FT[1:-1]:
-        y = oy + elev * s
-        half = length * s / 2
-        cx = ox + pod_w / 2
-        ax.plot([cx - half, cx + half], [y, y], color=INK, lw=0.6)
-
-    # Dimensions
-    ax.annotate("", xy=(ox - 0.35, oy), xytext=(ox - 0.35, oy + TOTAL_HEIGHT_FT * s),
-                arrowprops=dict(arrowstyle="<->", color=INK, lw=0.9))
-    ax.text(ox - 0.55, oy + TOTAL_HEIGHT_FT * s / 2, f"{TOTAL_HEIGHT_FT}'-0\"",
-            rotation=90, va="center", ha="center", fontsize=8, color=INK)
-    ax.annotate("", xy=(ox, oy - 0.25), xytext=(ox + pod_w, oy - 0.25),
-                arrowprops=dict(arrowstyle="<->", color=INK, lw=0.9))
-    ax.text(ox + pod_w / 2, oy - 0.45, f"{BASE_LENGTH_FT}'-0\"", ha="center", fontsize=8, color=INK)
-
-    ax.text(ox + pod_w + 0.3, oy + ROOF_HEIGHT_FT * s, "ROOF", fontsize=7, color=MUTED)
-    ax.text(ox + pod_w + 0.3, oy + TOTAL_HEIGHT_FT * s - 0.1, "CROWN", fontsize=7, color=MUTED)
-
-    ax.text(0.4, 0.55, "NOTE: Crown setback dimensions EST. from published imagery. "
-            "Verify against Duda/Paine drawings for construction accuracy.",
-            fontsize=7, color=MUTED, wrap=True)
-
-    draw_title_block(ax, 7.6, 0.4, 3.9, 2.5, "A3.0")
-    plt.savefig(ROOT / "frost_north_elevation.png", dpi=220, bbox_inches="tight", facecolor=BG, pad_inches=0.25)
-    plt.close()
+    _render_single_view(
+        "frost_north_elevation.png",
+        "Frost Bank Tower — North Elevation",
+        f"Total {TOTAL_HEIGHT_FT}'-0\"  ·  Roof {ROOF_HEIGHT_FT}'-0\"  ·  Crown {CROWN_HEIGHT_FT}'-0\"",
+        "A3.0",
+        draw_north_elevation_geom,
+        _s(BASE_LENGTH_FT) + 1.2,
+        _s(TOTAL_HEIGHT_FT) + 0.8,
+    )
 
 
 def _paint(mesh: trimesh.Trimesh, rgba: list[int]) -> trimesh.Trimesh:
@@ -425,6 +586,7 @@ def build_massing_3d() -> trimesh.Scene:
 
 
 def main():
+    render_drawing_sheet()
     render_site_plan()
     render_typical_floor()
     render_north_elevation()
@@ -433,6 +595,7 @@ def main():
     combined = trimesh.util.concatenate(list(scene.geometry.values()))
     combined.export(ROOT / "frost_tower_massing.stl")
     print("Frost Bank Tower study generated.")
+    print("  frost_drawing_sheet.png")
     print("  frost_site_plan.png")
     print("  frost_floor_plan.png")
     print("  frost_north_elevation.png")

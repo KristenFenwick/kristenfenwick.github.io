@@ -516,6 +516,17 @@ a {
   gap: 16px;
 }
 
+.cad-images--sheet {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.cad-images--sheet img {
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border: 1px solid var(--line);
+}
+
 .cad-images--triple {
   grid-template-columns: 1.4fr 1fr;
   grid-template-rows: auto auto;
