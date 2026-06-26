@@ -1,0 +1,35 @@
+; Frost Bank Tower — AutoCAD 2025 Mac helper
+; APPLOAD frost_tower.lsp  then type KFFROST
+
+(defun kf-layer (name aci / )
+  (command "._-LAYER" "M" name "C" (itoa aci) "" "")
+)
+
+(defun c:KFFROST ()
+  (princ "\n[Kristen Fenwick] Frost Bank Tower setup...")
+  (kf-layer "A-GLASS" 5)
+  (kf-layer "A-PODIUM" 254)
+  (kf-layer "A-CROWN" 2)
+  (kf-layer "A-CORE" 6)
+  (kf-layer "A-PARKING" 6)
+  (kf-layer "A-SITE" 254)
+  (kf-layer "A-GRID" 8)
+  (kf-layer "A-DIMS" 7)
+  (kf-layer "A-TEXT" 7)
+  (kf-layer "A-TITLE" 7)
+  (kf-layer "A-SECT" 2)
+  (kf-layer "A-ANNO" 8)
+  (kf-layer "A-BORDER" 7)
+  (command "._ZOOM" "_W" "2470,0" "3220,640")
+  (princ "\nZoomed to 2D sheet. Use view KF-3D for massing, KF-SHEET for drawings.")
+  (princ)
+)
+
+(defun c:KF3D ()
+  (command "._ZOOM" "_W" "-120,-90" "120,530")
+  (princ "\n3D model region (feet). Use 3DORBIT.")
+  (princ)
+)
+
+(princ "\nFrost Tower LISP loaded. Commands: KFFROST, KF3D")
+(princ)

@@ -594,12 +594,17 @@ def main():
     scene.export(ROOT / "frost_tower_massing.glb")
     combined = trimesh.util.concatenate(list(scene.geometry.values()))
     combined.export(ROOT / "frost_tower_massing.stl")
+    from generate_frost_dwg import generate_dwg
+
+    dwg = generate_dwg()
     print("Frost Bank Tower study generated.")
     print("  frost_drawing_sheet.png")
     print("  frost_site_plan.png")
     print("  frost_floor_plan.png")
     print("  frost_north_elevation.png")
     print("  frost_tower_massing.glb")
+    print(f"  {dwg.name}")
+    print("  frost_setup.scr / frost_tower.lsp (AutoCAD 2025 Mac)")
 
 
 if __name__ == "__main__":
