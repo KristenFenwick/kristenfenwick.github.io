@@ -40,6 +40,15 @@ GLASS = "#9EB4C8"
 LIMESTONE = "#C9C0B0"
 CROWN_LITE = "#B8D4E8"
 
+# Layer colors aligned with methodology.html legend
+LAYER_GLASS = [107, 155, 209, 255]
+LAYER_SITE = [124, 184, 124, 255]
+LAYER_CORE = [155, 123, 184, 255]
+LAYER_CROWN = [212, 165, 116, 255]
+LAYER_PARKING = [201, 139, 168, 255]
+
+FT_TO_M = 0.3048
+
 
 def ft_to_draw(ft: float, scale_px_per_ft: float = 0.012) -> float:
     return ft * scale_px_per_ft
@@ -246,45 +255,137 @@ def render_north_elevation() -> None:
     plt.close()
 
 
-def build_massing_3d() -> trimesh.Trimesh:
-    """3D massing model from setback schedule."""
-    parts = []
-    s = 0.3048  # feet to meters for GLB
+def _paint(mesh: trimesh.Trimesh, rgba: list[int]) -> trimesh.Trimesh:
+    mesh.visual.face_colors = np.tile(rgba, (len(mesh.faces), 1))
+    return mesh
 
-    def box_at(length, width, height, z0, cx=0, cy=0):
-        mesh = trimesh.creation.box(extents=[length * s, width * s, height * s])
-        mesh.apply_translation([cx * s, cy * s, (z0 + height / 2) * s])
-        return mesh
 
-    # Podium
-    parts.append(box_at(BASE_LENGTH_FT, BASE_WIDTH_FT, PODIUM_HEIGHT_FT, 0))
+def _box_ft(length: float, width: float, height: float, z0: float,
+            cx: float = 0.0, cy: float = 0.0) -> trimesh.Trimesh:
+    mesh = trimesh.creation.box(extents=[length * FT_TO_M, width * FT_TO_M, height * FT_TO_M])
+    mesh.apply_translation([cx * FT_TO_M, cy * FT_TO_M, (z0 + height / 2) * FT_TO_M])
+    return mesh
 
-    z = PODIUM_HEIGHT_FT
-    schedule = [(ROOF_HEIGHT_FT, BASE_LENGTH_FT, BASE_WIDTH_FT)] + list(CROWN_SETBACKS_FT[1:])
-    prev_l, prev_w = BASE_LENGTH_FT, BASE_WIDTH_FT
-    prev_z = PODIUM_HEIGHT_FT
 
-    for elev, length, width in schedule:
-        h = elev - prev_z
-        if h > 0:
-            parts.append(box_at(prev_l, prev_w, h, prev_z))
-        prev_l, prev_w, prev_z = length, width, elev
+def _quad_ft(v0, v1, v2, v3, rgba: list[int]) -> trimesh.Trimesh:
+    verts = np.array([v0, v1, v2, v3], dtype=float) * FT_TO_M
+    faces = np.array([[0, 1, 2], [0, 2, 3]])
+    return _paint(trimesh.Trimesh(vertices=verts, faces=faces), rgba)
 
-    # Final crown cap
-    h = TOTAL_HEIGHT_FT - prev_z
-    if h > 0:
-        parts.append(box_at(prev_l, prev_w, h, prev_z))
 
-    return trimesh.util.concatenate(parts)
+def _folded_step(lo: float, wo: float, li: float, wi: float,
+                 z0: float, z1: float, rgba: list[int]) -> list[trimesh.Trimesh]:
+    """Four inclined facade folds plus corner chamfers between two setback tiers."""
+    folds = []
+    # North (+Y)
+    folds.append(_quad_ft(
+        (-lo / 2, wo / 2, z0), (lo / 2, wo / 2, z0),
+        (li / 2, wi / 2, z1), (-li / 2, wi / 2, z1), rgba))
+    # South (-Y)
+    folds.append(_quad_ft(
+        (lo / 2, -wo / 2, z0), (-lo / 2, -wo / 2, z0),
+        (-li / 2, -wi / 2, z1), (li / 2, -wi / 2, z1), rgba))
+    # East (+X)
+    folds.append(_quad_ft(
+        (lo / 2, -wo / 2, z0), (lo / 2, wo / 2, z0),
+        (li / 2, wi / 2, z1), (li / 2, -wi / 2, z1), rgba))
+    # West (-X)
+    folds.append(_quad_ft(
+        (-lo / 2, wo / 2, z0), (-lo / 2, -wo / 2, z0),
+        (-li / 2, -wi / 2, z1), (-li / 2, wi / 2, z1), rgba))
+    # Corner chamfers (folded-plane rhythm from reference sketch)
+    folds.append(_quad_ft(
+        (lo / 2, wo / 2, z0), (lo / 2, wi / 2, z1),
+        (li / 2, wi / 2, z1), (li / 2, wo / 2, z1), rgba))
+    folds.append(_quad_ft(
+        (-lo / 2, wo / 2, z0), (-li / 2, wo / 2, z1),
+        (-li / 2, wi / 2, z1), (-lo / 2, wi / 2, z1), rgba))
+    folds.append(_quad_ft(
+        (lo / 2, -wo / 2, z0), (li / 2, -wo / 2, z1),
+        (li / 2, -wi / 2, z1), (lo / 2, -wi / 2, z1), rgba))
+    folds.append(_quad_ft(
+        (-lo / 2, -wo / 2, z0), (-lo / 2, -wi / 2, z1),
+        (-li / 2, -wi / 2, z1), (-li / 2, -wo / 2, z1), rgba))
+    return folds
+
+
+def _crown_infill_slab(length: float, width: float, z: float,
+                       thickness: float = 2.5) -> trimesh.Trimesh:
+    return _paint(_box_ft(length, width, thickness, z - thickness), LAYER_CORE)
+
+
+def build_massing_3d() -> trimesh.Scene:
+    """Layered massing with folded crown facets and color-coded program volumes."""
+    scene = trimesh.Scene()
+    meshes: list[tuple[str, trimesh.Trimesh]] = []
+
+    def add(name: str, mesh: trimesh.Trimesh) -> None:
+        meshes.append((name, mesh))
+
+    glass_inset = 6.0
+    tower_l = BASE_LENGTH_FT - glass_inset
+    tower_w = BASE_WIDTH_FT - glass_inset
+    core_l = BASE_LENGTH_FT * 0.22
+    core_w = BASE_WIDTH_FT * 0.28
+
+    # Site pad + subsurface parking stratum (sketch: green / pink layers)
+    add("site_pad", _paint(
+        _box_ft(BASE_LENGTH_FT + 18, BASE_WIDTH_FT + 14, 8, -8), LAYER_SITE))
+    parking_depth = min(48, PODIUM_HEIGHT_FT * 0.85)
+    add("parking_substructure", _paint(
+        _box_ft(BASE_LENGTH_FT * 0.62, BASE_WIDTH_FT * 0.88, parking_depth,
+                -parking_depth, cx=-BASE_LENGTH_FT * 0.12), LAYER_PARKING))
+
+    # Limestone podium (site / foundation layer)
+    add("podium", _paint(_box_ft(BASE_LENGTH_FT, BASE_WIDTH_FT, PODIUM_HEIGHT_FT, 0), LAYER_SITE))
+
+    # Vertical core through podium + tower (purple infill)
+    add("core", _paint(
+        _box_ft(core_l, core_w, ROOF_HEIGHT_FT, 0), LAYER_CORE))
+
+    # Curtain-wall tower shaft with slight taper toward roof (blue envelope)
+    taper = 0.96
+    shaft_segments = 6
+    shaft_h = ROOF_HEIGHT_FT - PODIUM_HEIGHT_FT
+    for i in range(shaft_segments):
+        t0 = i / shaft_segments
+        t1 = (i + 1) / shaft_segments
+        seg_l = tower_l * (1 - (1 - taper) * t0)
+        seg_w = tower_w * (1 - (1 - taper) * t0)
+        seg_h = shaft_h / shaft_segments
+        z0 = PODIUM_HEIGHT_FT + shaft_h * t0
+        add(f"tower_glass_{i}", _paint(_box_ft(seg_l, seg_w, seg_h, z0), LAYER_GLASS))
+
+    # Crown: layered infill slabs + folded transition planes (orange facets)
+    schedule = list(CROWN_SETBACKS_FT)
+    for idx in range(1, len(schedule)):
+        z1, li, wi = schedule[idx]
+        z0, lo, wo = schedule[idx - 1][:3]
+        if z1 <= z0:
+            continue
+        add(f"crown_infill_{idx}", _crown_infill_slab(lo, wo, z0))
+        for j, fold in enumerate(_folded_step(lo, wo, li, wi, z0, z1, LAYER_CROWN)):
+            add(f"crown_fold_{idx}_{j}", fold)
+
+    # Square crown cap — glass infill volume at top
+    top_z, top_l, top_w = schedule[-1]
+    cap_h = TOTAL_HEIGHT_FT - top_z
+    if cap_h > 0:
+        add("crown_cap", _paint(_box_ft(top_l, top_w, cap_h, top_z), LAYER_GLASS))
+
+    for name, mesh in meshes:
+        scene.add_geometry(mesh, node_name=name)
+    return scene
 
 
 def main():
     render_site_plan()
     render_typical_floor()
     render_north_elevation()
-    mesh = build_massing_3d()
-    mesh.export(ROOT / "frost_tower_massing.glb")
-    mesh.export(ROOT / "frost_tower_massing.stl")
+    scene = build_massing_3d()
+    scene.export(ROOT / "frost_tower_massing.glb")
+    combined = trimesh.util.concatenate(list(scene.geometry.values()))
+    combined.export(ROOT / "frost_tower_massing.stl")
     print("Frost Bank Tower study generated.")
     print("  frost_site_plan.png")
     print("  frost_floor_plan.png")
