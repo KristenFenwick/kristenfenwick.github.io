@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=10">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
@@ -32,10 +32,12 @@
     </nav>
 
     <header class="hero">
+        <div class="hero-glow" aria-hidden="true"></div>
         <div class="hero-inner">
+            <p class="hero-eyebrow">Data Engineering · Computational Design</p>
             <h1 class="hero-name">Kristen Fenwick</h1>
             <div class="hero-rule" aria-hidden="true"></div>
-            <p class="hero-tagline">Data Engineering Student · Former NASA L'SPACE LEAP Intern · Team-oriented with a business foundation</p>
+            <p class="hero-tagline">Building systems at the intersection of engineering, data, and design.</p>
         </div>
     </header>
 
@@ -77,6 +79,7 @@
                 <h2 class="section-title">Experience</h2>
             </div>
             <ul class="experience-list">
+                <li><strong>Handshake AI Fellowship (2026–Present)</strong> AI Trainer — Visual Data Reasoning Expert — Evaluate multimodal models on charts, diagrams, and information-dense imagery.</li>
                 <li><strong>Austin ISD (2025–Present)</strong> Substitute Teacher — Provided K-12 classroom coverage across subjects, adapting to diverse student needs.</li>
                 <li><strong>NASA L'SPACE LEAP Intern (2025)</strong> Program Analyst Mentor — Guide multiple student teams in mission planning, aligning projects with NASA lifecycle milestones.</li>
                 <li><strong>Road Vantage (2024)</strong> Claims Adjudicator — Set service records and handled negotiations.</li>
@@ -164,160 +167,193 @@
             <div class="section-head">
                 <h2 class="section-title">CAD &amp; Design</h2>
             </div>
-            <p class="section-intro">Approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad — from 2D technical drawings and AEC floor plans to sculptural 3D assemblies and parametric mechanical design through NASA L'SPACE.</p>
+            <p class="section-intro">Approximately three years of CAD-related experience using Siemens NX, AutoCAD, SolidWorks, and Tinkercad — from 2D technical drawings and AEC floor plans to sculptural 3D assemblies and parametric mechanical design through NASA L'SPACE. Select a project to expand, or click any image to view full size.</p>
 
-            <div class="cad-gallery">
-                <article class="cad-item cad-item--featured cad-item--showcase">
-                    <div class="cad-viewer-wrap">
-                        <model-viewer
-                            src="cad-portfolio/vesper-deployment-pod/vesper-pod.glb"
-                            alt="Vesper Deployment Pod — interactive 3D model"
-                            camera-controls
-                            auto-rotate
-                            shadow-intensity="0.55"
-                            exposure="0.95"
-                            environment-image="neutral"
-                            loading="lazy">
-                        </model-viewer>
-                        <p class="cad-viewer-hint">Drag to rotate · scroll to zoom · no download required</p>
-                    </div>
-                    <div class="cad-images cad-images--triple">
-                        <img src="cad-portfolio/vesper-deployment-pod/vesper_hero.png" alt="Vesper Deployment Pod sculptural aerospace housing">
-                        <img src="cad-portfolio/vesper-deployment-pod/vesper_detail.png" alt="Helical cable raceway and toroidal drum detail">
-                        <img src="cad-portfolio/vesper-deployment-pod/vesper_side.png" alt="Sensor bay, release nozzle, and wall-mount arcs">
-                    </div>
-                    <div class="cad-caption">
-                        <h3>Vesper Deployment Pod — Sculptural Safety Housing</h3>
-                        <p>Organic aerospace-inspired form (~57k mesh faces) extending my ENGR 216 hollow-rim drum work and NASA A.N.D.E.R. mission thinking into a wall-mounted deployment object. Revolved seed-pod shell, helical cable raceway, toroidal drum chamber, locking collar with pin, sculptural grip loop, sensor bay, release nozzle, and flowing wall-mount arcs.</p>
-                        <ul class="mcsm-components">
-                            <li>Revolved shell</li>
-                            <li>Helical raceway</li>
-                            <li>Toroidal drum</li>
-                            <li>Locking collar</li>
-                            <li>Sculptural grip</li>
-                            <li>Sensor bay</li>
-                            <li>Release nozzle</li>
-                            <li>Wall-mount arcs</li>
-                        </ul>
-                        <p class="mcsm-future">Future iteration: sensor-based usage logging, load monitoring, or emergency deployment detection — connecting sculptural CAD to data engineering.</p>
-                        <div class="cad-links">
-                            <a href="cad-portfolio/vesper-deployment-pod/vesper-pod.glb" target="_blank">View 3D model</a>
-                            <a href="cad-portfolio/vesper-deployment-pod/vesper-pod.stl" download>Download STL</a>
+            <div class="cad-gallery" role="list">
+                <article class="cad-panel" data-cad="vesper" role="listitem">
+                    <button type="button" class="cad-panel-trigger" aria-expanded="false">
+                        <span class="cad-panel-thumb"><img src="cad-portfolio/vesper-deployment-pod/vesper_hero.png" alt="" loading="lazy"></span>
+                        <span class="cad-panel-meta">
+                            <span class="cad-panel-index">01</span>
+                            <span class="cad-panel-title">Vesper Deployment Pod</span>
+                            <span class="cad-panel-tag">Sculptural Safety Housing · Interactive 3D</span>
+                        </span>
+                        <span class="cad-panel-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="cad-panel-body" hidden>
+                        <div class="cad-showcase">
+                            <div class="cad-images cad-images--editorial">
+                                <figure class="cad-figure cad-figure--hero">
+                                    <img src="cad-portfolio/vesper-deployment-pod/vesper_hero.png" alt="Vesper Deployment Pod sculptural aerospace housing" data-caption="Vesper Deployment Pod — hero render" loading="lazy">
+                                </figure>
+                                <figure class="cad-figure">
+                                    <img src="cad-portfolio/vesper-deployment-pod/vesper_detail.png" alt="Helical cable raceway and toroidal drum detail" data-caption="Helical raceway detail" loading="lazy">
+                                </figure>
+                                <figure class="cad-figure">
+                                    <img src="cad-portfolio/vesper-deployment-pod/vesper_side.png" alt="Sensor bay, release nozzle, and wall-mount arcs" data-caption="Sensor bay and side profile" loading="lazy">
+                                </figure>
+                            </div>
+                            <div class="cad-caption cad-caption--editorial">
+                                <h3>Vesper Deployment Pod — Sculptural Safety Housing</h3>
+                                <p>Organic aerospace-inspired form (~57k mesh faces) extending my ENGR 216 hollow-rim drum work and NASA A.N.D.E.R. mission thinking into a wall-mounted deployment object. Revolved seed-pod shell, helical cable raceway, toroidal drum chamber, locking collar with pin, sculptural grip loop, sensor bay, release nozzle, and flowing wall-mount arcs.</p>
+                                <ul class="mcsm-components">
+                                    <li>Revolved shell</li><li>Helical raceway</li><li>Toroidal drum</li><li>Locking collar</li><li>Sensor bay</li><li>Release nozzle</li>
+                                </ul>
+                                <p class="mcsm-future">Future iteration: sensor-based usage logging, load monitoring, or emergency deployment detection — connecting sculptural CAD to data engineering.</p>
+                                <div class="cad-links">
+                                    <a href="cad-portfolio/vesper-deployment-pod/vesper-pod.glb" target="_blank">View 3D model</a>
+                                    <a href="cad-portfolio/vesper-deployment-pod/vesper-pod.stl" download>Download STL</a>
+                                </div>
+                            </div>
+                            <details class="cad-interactive">
+                                <summary>Interactive 3D model</summary>
+                                <div class="cad-viewer-wrap cad-viewer-wrap--compact">
+                                    <model-viewer src="cad-portfolio/vesper-deployment-pod/vesper-pod.glb" alt="Vesper Deployment Pod 3D model" camera-controls auto-rotate shadow-intensity="0.55" exposure="0.95" environment-image="neutral" loading="lazy"></model-viewer>
+                                    <p class="cad-viewer-hint">Drag to rotate · scroll to zoom</p>
+                                </div>
+                            </details>
                         </div>
                     </div>
                 </article>
 
-                <article class="cad-item cad-item--featured">
-                    <div class="cad-images">
-                        <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" alt="CAD model of iPhone-fit speaker enclosure with KLF engraving">
-                        <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" alt="3D printed iPhone speaker dock with phone inserted">
-                    </div>
-                    <div class="cad-caption">
-                        <h3>Custom iPhone Speaker — 3D Printed</h3>
-                        <p>Scaled and modified a speaker enclosure STL to precisely fit my iPhone, then 3D printed and tested a functional dock with storage compartments, ventilation openings, and custom KLF embossing (~140 × 90 × 40 mm).</p>
-                        <div class="cad-links">
-                            <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" target="_blank">Print photo</a>
-                            <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" target="_blank">CAD model</a>
-                            <a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_fenwick.stl" download>Download .stl</a>
+                <article class="cad-panel" data-cad="frost" role="listitem">
+                    <button type="button" class="cad-panel-trigger" aria-expanded="false">
+                        <span class="cad-panel-thumb"><img src="cad-portfolio/frost-bank-tower/frost_north_elevation.png?v=2" alt="" loading="lazy"></span>
+                        <span class="cad-panel-meta">
+                            <span class="cad-panel-index">02</span>
+                            <span class="cad-panel-title">Frost Bank Tower</span>
+                            <span class="cad-panel-tag">Architectural CAD Study · Austin</span>
+                        </span>
+                        <span class="cad-panel-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="cad-panel-body" hidden>
+                        <div class="cad-viewer-wrap cad-viewer-wrap--compact">
+                            <model-viewer src="cad-portfolio/frost-bank-tower/frost_tower_massing.glb?v=3" alt="Frost Bank Tower 3D massing" camera-controls auto-rotate shadow-intensity="0.5" exposure="0.95" environment-image="neutral" loading="lazy"></model-viewer>
+                            <p class="cad-viewer-hint">Drag to rotate · 3D massing with folded crown facets</p>
+                        </div>
+                        <dl class="cad-specs">
+                            <div><dt>Location</dt><dd>401 Congress Avenue, Austin TX</dd></div>
+                            <div><dt>Height</dt><dd>515 ft · 33 office floors</dd></div>
+                            <div><dt>Crown</dt><dd>99 ft glass crown · limestone podium</dd></div>
+                            <div><dt>Architects</dt><dd>Duda/Paine + HKS</dd></div>
+                            <div><dt>Deliverables</dt><dd>3D massing, elevations, site &amp; floor plans, drawing sheet</dd></div>
+                            <div><dt>Tools</dt><dd>AutoCAD 2025 (Mac) · parametric Python generator</dd></div>
+                        </dl>
+                        <div class="cad-caption">
+                            <p>Parametric AEC study of downtown Austin's Frost Bank Tower. Full-resolution drawings are in the linked files below — title blocks are omitted here because they don't scale legibly on the web.</p>
+                            <div class="cad-links">
+                                <a href="cad-portfolio/frost-bank-tower/methodology.html">Sources &amp; uncertainty</a>
+                                <a href="cad-portfolio/frost-bank-tower/frost_tower_study.dxf" target="_blank">AutoCAD DXF</a>
+                                <a href="cad-portfolio/frost-bank-tower/frost_drawing_sheet.png?v=1" target="_blank">Drawing sheet (full res)</a>
+                            </div>
                         </div>
                     </div>
                 </article>
 
-                <article class="cad-item">
-                    <div class="cad-images">
-                        <img src="cad-portfolio/openscad-parametric-bracket/mounting_bracket_preview.png" alt="Parametric mounting bracket 3D preview">
-                    </div>
-                    <div class="cad-caption">
-                        <h3>Parametric Mounting Bracket — OpenSCAD</h3>
-                        <p>Created a fully parametric mounting bracket with adjustable width, height, thickness, and hole radius — demonstrating reusable digital asset creation and efficient mechanical component modeling.</p>
-                        <div class="cad-links">
-                            <a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.scad" download>Download .scad</a>
-                            <a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.stl" download>Download .stl</a>
+                <article class="cad-panel" data-cad="mounting-plate" role="listitem">
+                    <button type="button" class="cad-panel-trigger" aria-expanded="false">
+                        <span class="cad-panel-thumb"><img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_3d.png?v=4" alt="" loading="lazy"></span>
+                        <span class="cad-panel-meta">
+                            <span class="cad-panel-index">03</span>
+                            <span class="cad-panel-title">Aurora Trunnion Mounting Plate</span>
+                            <span class="cad-panel-tag">Mechanical · 6061-T6 Aluminum</span>
+                        </span>
+                        <span class="cad-panel-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="cad-panel-body" hidden>
+                        <div class="cad-viewer-wrap cad-viewer-wrap--compact">
+                            <model-viewer src="cad-portfolio/mechanical-mounting-plate/mounting_plate.glb" alt="Aurora Trunnion Mounting Plate 3D model" camera-controls auto-rotate shadow-intensity="0.5" exposure="0.95" environment-image="neutral" loading="lazy"></model-viewer>
+                            <p class="cad-viewer-hint">Drag to rotate · scroll to zoom</p>
+                        </div>
+                        <div class="cad-images cad-images--pair">
+                            <figure class="cad-figure">
+                                <img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_3d.png?v=4" alt="Mounting plate isometric" data-caption="Aurora Trunnion Mounting Plate — isometric" loading="lazy">
+                                <figcaption>Isometric render</figcaption>
+                            </figure>
+                            <figure class="cad-figure">
+                                <img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.png?v=4" alt="Mounting plate drawing" data-caption="Aurora Trunnion Mounting Plate — technical drawing" loading="lazy">
+                                <figcaption>Technical drawing</figcaption>
+                            </figure>
+                        </div>
+                        <div class="cad-caption">
+                            <p>Curved aluminum bracket with counterbored holes, lightening pockets, keyhole slots, stiffening ribs, and Vesper-compatible interface recess.</p>
+                            <div class="cad-links"><a href="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.pdf" target="_blank">Drawing PDF</a><a href="cad-portfolio/mechanical-mounting-plate/mounting_plate.stl" download>Download STL</a></div>
                         </div>
                     </div>
                 </article>
 
-                <article class="cad-item cad-item--featured">
-                    <div class="cad-viewer-wrap">
-                        <model-viewer
-                            src="cad-portfolio/mechanical-mounting-plate/mounting_plate.glb"
-                            alt="Aurora Trunnion Mounting Plate — interactive 3D model"
-                            camera-controls
-                            auto-rotate
-                            shadow-intensity="0.5"
-                            exposure="0.95"
-                            environment-image="neutral"
-                            loading="lazy">
-                        </model-viewer>
-                        <p class="cad-viewer-hint">Drag to rotate · scroll to zoom</p>
-                    </div>
-                    <div class="cad-images">
-                        <img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_3d.png?v=4" alt="Aurora Trunnion Mounting Plate isometric view">
-                        <img src="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.png?v=4" alt="Aurora Trunnion Mounting Plate technical drawing with top view">
-                    </div>
-                    <div class="cad-caption">
-                        <h3>Aurora Trunnion Mounting Plate</h3>
-                        <p>Curved 6061-T6 aluminum bracket with counterbored corner holes, elliptical lightening pockets, keyhole adjustment slots, underside stiffening ribs, and a central interface recess compatible with the Vesper Deployment Pod. Includes top view, section A–A, and manufacturing notes.</p>
-                        <div class="cad-links">
-                            <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate_drawing.pdf" target="_blank">View drawing PDF</a>
-                            <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate.glb" target="_blank">View 3D model</a>
-                            <a href="cad-portfolio/mechanical-mounting-plate/mounting_plate.stl" download>Download STL</a>
+                <article class="cad-panel" data-cad="iphone-speaker" role="listitem">
+                    <button type="button" class="cad-panel-trigger" aria-expanded="false">
+                        <span class="cad-panel-thumb"><img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" alt="" loading="lazy"></span>
+                        <span class="cad-panel-meta">
+                            <span class="cad-panel-index">04</span>
+                            <span class="cad-panel-title">Custom iPhone Speaker</span>
+                            <span class="cad-panel-tag">3D Printed · Functional Prototype</span>
+                        </span>
+                        <span class="cad-panel-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="cad-panel-body" hidden>
+                        <div class="cad-images cad-images--pair">
+                            <figure class="cad-figure">
+                                <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_cad_render.jpg" alt="iPhone speaker CAD model" data-caption="Custom iPhone Speaker — CAD model" loading="lazy">
+                                <figcaption>CAD model</figcaption>
+                            </figure>
+                            <figure class="cad-figure">
+                                <img src="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_printed.jpg" alt="iPhone speaker 3D print" data-caption="Custom iPhone Speaker — 3D print" loading="lazy">
+                                <figcaption>3D print</figcaption>
+                            </figure>
+                        </div>
+                        <div class="cad-caption">
+                            <p>Scaled and modified an enclosure STL to fit my iPhone, then 3D printed a functional dock with ventilation and custom KLF embossing (~140 × 90 × 40 mm).</p>
+                            <div class="cad-links"><a href="cad-portfolio/iphone-speaker-3d-print/iphone_speaker_fenwick.stl" download>Download .stl</a></div>
                         </div>
                     </div>
                 </article>
 
-                <article class="cad-item cad-item--featured cad-item--showcase">
-                    <div class="cad-viewer-wrap">
-                        <model-viewer
-                            src="cad-portfolio/frost-bank-tower/frost_tower_massing.glb?v=3"
-                            alt="Frost Bank Tower Austin — 3D massing study"
-                            camera-controls
-                            auto-rotate
-                            shadow-intensity="0.5"
-                            exposure="0.95"
-                            environment-image="neutral"
-                            loading="lazy">
-                        </model-viewer>
-                        <p class="cad-viewer-hint">Drag to rotate · scroll to zoom · layered massing with folded crown facets</p>
-                    </div>
-                    <div class="cad-images cad-images--sheet">
-                        <img src="cad-portfolio/frost-bank-tower/frost_drawing_sheet.png?v=1" alt="Frost Bank Tower multi-view architectural drawing sheet — elevation, section, plan, isometric">
-                    </div>
-                    <div class="cad-images cad-images--triple">
-                        <img src="cad-portfolio/frost-bank-tower/frost_north_elevation.png?v=2" alt="Frost Bank Tower north elevation with stepped crown tiers">
-                        <img src="cad-portfolio/frost-bank-tower/frost_site_plan.png?v=2" alt="Frost Bank Tower site plan Congress Avenue">
-                        <img src="cad-portfolio/frost-bank-tower/frost_floor_plan.png?v=2" alt="Frost Bank Tower typical office floor plan">
-                    </div>
-                    <div class="cad-caption">
-                        <h3>Frost Bank Tower — Architectural CAD Study</h3>
-                        <p>Parametric AEC study of downtown Austin's Frost Bank Tower (Duda/Paine + HKS): 515 ft height, 33 floors, 99 ft glass crown, limestone podium, and Congress Avenue site context. Dimensions sourced from public records; crown setbacks and footprint flagged for survey verification.</p>
-                        <ul class="mcsm-components">
-                            <li>AutoCAD DWG (2025 Mac)</li>
-                            <li>Multi-view drawing sheet</li>
-                            <li>Section A–A</li>
-                            <li>3D massing</li>
-                            <li>Crown geometry</li>
-                            <li>Curtain-wall grid</li>
-                        </ul>
-                        <div class="cad-links">
-                            <a href="cad-portfolio/frost-bank-tower/methodology.html">Sources &amp; uncertainty</a>
-                            <a href="cad-portfolio/frost-bank-tower/frost_drawing_sheet.png" target="_blank">Drawing sheet</a>
-                            <a href="cad-portfolio/frost-bank-tower/frost_tower_study.dxf" target="_blank">AutoCAD DXF</a>
-                            <a href="cad-portfolio/frost-bank-tower/frost_tower_massing.glb" target="_blank">3D model</a>
+                <article class="cad-panel" data-cad="bracket" role="listitem">
+                    <button type="button" class="cad-panel-trigger" aria-expanded="false">
+                        <span class="cad-panel-thumb"><img src="cad-portfolio/openscad-parametric-bracket/mounting_bracket_preview.png" alt="" loading="lazy"></span>
+                        <span class="cad-panel-meta">
+                            <span class="cad-panel-index">05</span>
+                            <span class="cad-panel-title">Parametric Mounting Bracket</span>
+                            <span class="cad-panel-tag">OpenSCAD · Reusable Digital Asset</span>
+                        </span>
+                        <span class="cad-panel-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="cad-panel-body" hidden>
+                        <div class="cad-images cad-images--single">
+                            <figure class="cad-figure">
+                                <img src="cad-portfolio/openscad-parametric-bracket/mounting_bracket_preview.png" alt="Parametric mounting bracket" data-caption="Parametric Mounting Bracket — OpenSCAD" loading="lazy">
+                                <figcaption>OpenSCAD preview</figcaption>
+                            </figure>
+                        </div>
+                        <div class="cad-caption">
+                            <p>Fully parametric bracket with adjustable width, height, thickness, and hole radius — reusable mechanical component modeling.</p>
+                            <div class="cad-links"><a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.scad" download>Download .scad</a><a href="cad-portfolio/openscad-parametric-bracket/mounting_bracket.stl" download>Download .stl</a></div>
                         </div>
                     </div>
                 </article>
 
-                <article class="cad-item">
-                    <div class="cad-images">
-                        <img src="cad-portfolio/small-office-floor-plan/office_floor_plan.png" alt="Small office floor plan layout">
-                    </div>
-                    <div class="cad-caption">
-                        <h3>Small Office Layout — AEC Drafting</h3>
-                        <p>Scaled small office floor plan including walls, doors, windows, room labels, dimensions, and basic furniture blocking.</p>
-                        <div class="cad-links">
-                            <a href="cad-portfolio/small-office-floor-plan/office_floor_plan.pdf" target="_blank">View PDF</a>
-                            <a href="cad-portfolio/small-office-floor-plan/office_floor_plan.svg" target="_blank">View SVG</a>
+                <article class="cad-panel" data-cad="office" role="listitem">
+                    <button type="button" class="cad-panel-trigger" aria-expanded="false">
+                        <span class="cad-panel-thumb"><img src="cad-portfolio/small-office-floor-plan/office_floor_plan.png" alt="" loading="lazy"></span>
+                        <span class="cad-panel-meta">
+                            <span class="cad-panel-index">06</span>
+                            <span class="cad-panel-title">Small Office Layout</span>
+                            <span class="cad-panel-tag">AEC Drafting · Floor Plan</span>
+                        </span>
+                        <span class="cad-panel-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="cad-panel-body" hidden>
+                        <div class="cad-images cad-images--single">
+                            <figure class="cad-figure">
+                                <img src="cad-portfolio/small-office-floor-plan/office_floor_plan.png" alt="Small office floor plan" data-caption="Small Office Layout — AEC floor plan" loading="lazy">
+                                <figcaption>Floor plan</figcaption>
+                            </figure>
+                        </div>
+                        <div class="cad-caption">
+                            <p>Scaled office floor plan with walls, doors, windows, room labels, dimensions, and furniture blocking.</p>
+                            <div class="cad-links"><a href="cad-portfolio/small-office-floor-plan/office_floor_plan.pdf" target="_blank">View PDF</a><a href="cad-portfolio/small-office-floor-plan/office_floor_plan.svg" target="_blank">View SVG</a></div>
                         </div>
                     </div>
                 </article>
@@ -513,6 +549,15 @@ BLOC 860"></textarea>
         </div>
     </section>
 
+    <div id="gallery-modal" class="gallery-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image preview">
+        <div class="gallery-modal-backdrop"></div>
+        <div class="gallery-modal-inner">
+            <button type="button" class="gallery-modal-close" aria-label="Close preview">&times;</button>
+            <img id="gallery-modal-img" src="" alt="">
+            <p id="gallery-modal-caption" class="gallery-modal-caption"></p>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <div class="footer-resources">
             <h2 class="footer-resources-title">Resources &amp; Inspiration</h2>
@@ -530,6 +575,7 @@ BLOC 860"></textarea>
         <p class="footer-copy">&copy; 2025 Kristen Fenwick</p>
     </footer>
 
+    <script src="portfolio.js?v=3"></script>
     <script src="schedule-parser.js"></script>
     <script>
 function runPortfolioParser() {
