@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Particle Storm</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050508;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      color: #e8e8f0;
+    }
+
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    #canvas-wrap {
+      position: absolute;
+      inset: 0;
+    }
+
+    canvas#gl {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Hidden video for MediaPipe */
+    #video {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Optional mirrored webcam preview (corner) */
+    #preview-wrap {
+      position: absolute;
+      bottom: 88px;
+      right: 20px;
+      width: 180px;
+      height: 135px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 5;
+    }
+    #preview-wrap.on { opacity: 1; }
+    #preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    #hand-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transform: scaleX(-1);
+      pointer-events: none;
+    }
+
+    /* Top bar */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 28px;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      letter-spacing: 0.02em;
+      color: #f5f5f8;
+      text-shadow: 0 0 40px rgba(180, 160, 255, 0.35);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(20, 20, 28, 0.55);
+      backdrop-filter: blur(12px);
+      color: #eaeaf2;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .btn:hover {
+      background: rgba(40, 40, 55, 0.75);
+      border-color: rgba(255,255,255,0.35);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn.active {
+      background: rgba(120, 90, 255, 0.35);
+      border-color: rgba(180, 150, 255, 0.6);
+    }
+
+    /* Status pill */
+    #status {
+      position: absolute;
+      top: 78px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(12, 12, 18, 0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      color: #a8a8c0;
+      transition: color 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    #status.charging {
+      color: #ffd27a;
+      border-color: rgba(255, 200, 80, 0.45);
+      box-shadow: 0 0 24px rgba(255, 180, 40, 0.25);
+    }
+    #status.exploding {
+      color: #ff8a9a;
+      border-color: rgba(255, 100, 130, 0.5);
+      box-shadow: 0 0 28px rgba(255, 80, 120, 0.3);
+    }
+    #status.reforming {
+      color: #8affc8;
+      border-color: rgba(100, 255, 180, 0.45);
+      box-shadow: 0 0 24px rgba(80, 255, 160, 0.25);
+    }
+    #status.idle {
+      color: #b0b0d0;
+    }
+    #status.tracking {
+      color: #a8c8ff;
+      border-color: rgba(120, 160, 255, 0.4);
+    }
+
+    /* Charge ring (CSS overlay near center — actual ring drawn in WebGL too) */
+    #charge-label {
+      position: absolute;
+      left: 50%;
+      top: 55%;
+      transform: translate(-50%, 0);
+      z-index: 8;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 210, 120, 0.9);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      text-shadow: 0 0 12px rgba(255, 180, 40, 0.6);
+    }
+    #charge-label.show { opacity: 1; }
+
+    /* Bottom help */
+    footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 16px 24px 22px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 18px;
+      background: linear-gradient(to top, rgba(5,5,10,0.85), transparent);
+      pointer-events: none;
+    }
+
+    footer span {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(200, 200, 220, 0.55);
+    }
+    footer span strong {
+      color: rgba(230, 230, 245, 0.85);
+      font-weight: 600;
+    }
+
+    /* Center prompt */
+    #prompt {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    #prompt.hide { opacity: 0; }
+    #prompt p {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.04em;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    #prompt .hint {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      margin-top: 12px;
+      color: rgba(180,180,200,0.5);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: none;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
+
+    /* Loading */
+    #loading {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #050508;
+      transition: opacity 0.5s;
+    }
+    #loading.done {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loading h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+    #loading p {
+      font-size: 0.85rem;
+      color: #8888a0;
+      letter-spacing: 0.06em;
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: #a090ff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #error {
+      display: none;
+      max-width: 360px;
+      text-align: center;
+      color: #ff8a9a;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="loading">
+      <div class="spinner"></div>
+      <h2>Particle Storm</h2>
+      <p id="load-msg">Loading hand tracking…</p>
+      <p id="error"></p>
+    </div>
+
+    <div id="canvas-wrap">
+      <canvas id="gl"></canvas>
+    </div>
+
+    <video id="video" playsinline muted></video>
+
+    <div id="preview-wrap">
+      <video id="preview" playsinline muted></video>
+      <canvas id="hand-overlay"></canvas>
+    </div>
+
+    <header>
+      <h1>Particle Storm</h1>
+      <div class="top-actions">
+        <button class="btn" id="btn-camera" type="button">Camera</button>
+        <button class="btn" id="btn-audio" type="button">Audio</button>
+        <button class="btn" id="btn-reset" type="button">Reset</button>
+      </div>
+    </header>
+
+    <div id="status" class="idle">Idle</div>
+    <div id="charge-label">Charge</div>
+
+    <div id="prompt">
+      <p>Show your hand</p>
+      <p class="hint">Allow camera · Pinch to charge · Release to explode</p>
+    </div>
+
+    <footer>
+      <span><strong>Move hand</strong> — orbit</span>
+      <span><strong>Rotate</strong> sphere</span>
+      <span><strong>Pinch</strong> charge up</span>
+      <span><strong>Release</strong> explode</span>
+      <span><strong>Two hands</strong> pinch to scale</span>
+    </footer>
+  </div>
+
+  <!-- Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <!-- MediaPipe Hands -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+  <script>
+  (() => {
+    'use strict';
+
+    // ─── Config ───────────────────────────────────────────────
+    const PARTICLE_COUNT = 3000;
+    const SPHERE_RADIUS = 1.35;
+    const PINCH_THRESHOLD = 0.055;   // normalized distance tip-thumb
+    const CHARGE_RATE = 0.55;        // charge per second while pinching
+    const EXPLODE_DURATION = 1.35;
+    const REFORM_DURATION = 2.2;
+    const HAND_SMOOTH = 0.28;
+
+    // ─── DOM ──────────────────────────────────────────────────
+    const canvas = document.getElementById('gl');
+    const video = document.getElementById('video');
+    const preview = document.getElementById('preview');
+    const previewWrap = document.getElementById('preview-wrap');
+    const handOverlay = document.getElementById('hand-overlay');
+    const handCtx = handOverlay.getContext('2d');
+    const statusEl = document.getElementById('status');
+    const chargeLabel = document.getElementById('charge-label');
+    const promptEl = document.getElementById('prompt');
+    const loadingEl = document.getElementById('loading');
+    const loadMsg = document.getElementById('load-msg');
+    const errorEl = document.getElementById('error');
+    const btnCamera = document.getElementById('btn-camera');
+    const btnAudio = document.getElementById('btn-audio');
+    const btnReset = document.getElementById('btn-reset');
+
+    // ─── State machine ────────────────────────────────────────
+    // idle | tracking | charging | exploding | reforming
+    let mode = 'idle';
+    let charge = 0;
+    let modeT = 0;           // time in current mode
+    let cameraOn = false;
+    let audioOn = false;
+    let showPreview = true;
+    let handsSeen = 0;
+
+    // Smoothed hand data (world-ish units in our scene)
+    let handPos = new THREE.Vector3(0, 0, 0);
+    let handPosTarget = new THREE.Vector3(0, 0, 0);
+    let handScale = 1;
+    let handScaleTarget = 1;
+    let pinchActive = false;
+    let pinchDist = 1;
+    let wristScreen = { x: 0.5, y: 0.5 };
+    let landmarksList = []; // for overlay
+
+    // ─── Three.js scene ───────────────────────────────────────
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance',
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x050508, 1);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      50,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    );
+    camera.position.set(0, 0, 5.2);
+
+    // Soft ambient glow via fog
+    scene.fog = new THREE.FogExp2(0x050508, 0.045);
+
+    // ─── Particle geometry ────────────────────────────────────
+    const positions = new Float32Array(PARTICLE_COUNT * 3);
+    const basePositions = new Float32Array(PARTICLE_COUNT * 3);
+    const colors = new Float32Array(PARTICLE_COUNT * 3);
+    const baseColors = new Float32Array(PARTICLE_COUNT * 3);
+    const velocities = new Float32Array(PARTICLE_COUNT * 3);
+    const phases = new Float32Array(PARTICLE_COUNT); // for staggered burst / reform wave
+    const sizes = new Float32Array(PARTICLE_COUNT);
+
+    // Fibonacci sphere for even distribution
+    function fibSphere(i, n, r) {
+      const phi = Math.PI * (3 - Math.sqrt(5));
+      const y = 1 - (i / (n - 1)) * 2;
+      const radius = Math.sqrt(1 - y * y);
+      const theta = phi * i;
+      // slight noise so it feels organic
+      const jitter = 0.04 * (Math.sin(i * 12.9898) * 43758.5453 % 1);
+      const rr = r * (0.92 + jitter * 0.16);
+      return {
+        x: Math.cos(theta) * radius * rr,
+        y: y * rr,
+        z: Math.sin(theta) * radius * rr,
+      };
+    }
+
+    // Color palette: teal → cyan → violet (like the reel)
+    function particleColor(t) {
+      // t in [0,1]
+      const c1 = new THREE.Color(0x3dffd0);
+      const c2 = new THREE.Color(0x6a8cff);
+      const c3 = new THREE.Color(0xc46bff);
+      const c4 = new THREE.Color(0xff6bb5);
+      if (t < 0.33) return c1.clone().lerp(c2, t / 0.33);
+      if (t < 0.66) return c2.clone().lerp(c3, (t - 0.33) / 0.33);
+      return c3.clone().lerp(c4, (t - 0.66) / 0.34);
+    }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const p = fibSphere(i, PARTICLE_COUNT, SPHERE_RADIUS);
+      basePositions[i * 3] = p.x;
+      basePositions[i * 3 + 1] = p.y;
+      basePositions[i * 3 + 2] = p.z;
+      positions[i * 3] = p.x;
+      positions[i * 3 + 1] = p.y;
+      positions[i * 3 + 2] = p.z;
+
+      const col = particleColor(i / PARTICLE_COUNT);
+      baseColors[i * 3] = col.r;
+      baseColors[i * 3 + 1] = col.g;
+      baseColors[i * 3 + 2] = col.b;
+      colors[i * 3] = col.r;
+      colors[i * 3 + 1] = col.g;
+      colors[i * 3 + 2] = col.b;
+
+      phases[i] = Math.random();
+      sizes[i] = 0.8 + Math.random() * 1.4;
+      velocities[i * 3] = 0;
+      velocities[i * 3 + 1] = 0;
+      velocities[i * 3 + 2] = 0;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+
+    // Soft glowing points via custom shader
+    const material = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexColors: true,
+      uniforms: {
+        uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+        uScale: { value: 1 },
+        uTime: { value: 0 },
+        uCharge: { value: 0 },
+        uMode: { value: 0 }, // 0 idle 1 charge 2 explode 3 reform
+      },
+      vertexShader: `
+        attribute float aSize;
+        uniform float uPixelRatio;
+        uniform float uScale;
+        uniform float uTime;
+        uniform float uCharge;
+        varying vec3 vColor;
+        varying float vAlpha;
+        void main() {
+          vColor = color;
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          float distBoost = 1.0 + uCharge * 0.35;
+          gl_PointSize = aSize * uScale * uPixelRatio * distBoost * (180.0 / -mv.z);
+          gl_PointSize = clamp(gl_PointSize, 1.0, 48.0);
+          gl_Position = projectionMatrix * mv;
+          vAlpha = 0.55 + 0.45 * (0.5 + 0.5 * sin(uTime * 2.0 + position.x * 3.0));
+          vAlpha *= mix(1.0, 1.25, uCharge);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vColor;
+        varying float vAlpha;
+        void main() {
+          vec2 uv = gl_PointCoord - 0.5;
+          float d = length(uv);
+          if (d > 0.5) discard;
+          float soft = smoothstep(0.5, 0.08, d);
+          float core = smoothstep(0.22, 0.0, d);
+          vec3 col = vColor * (0.7 + core * 1.4);
+          gl_FragColor = vec4(col, soft * vAlpha);
+        }
+      `,
+    });
+
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
+
+    // Hand skeleton as line segments
+    const HAND_CONNECTIONS = [
+      [0,1],[1,2],[2,3],[3,4],
+      [0,5],[5,6],[6,7],[7,8],
+      [0,9],[9,10],[10,11],[11,12],
+      [0,13],[13,14],[14,15],[15,16],
+      [0,17],[17,18],[18,19],[19,20],
+      [5,9],[9,13],[13,17],
+    ];
+
+    function makeHandMesh() {
+      const maxLines = HAND_CONNECTIONS.length;
+      const pos = new Float32Array(maxLines * 2 * 3);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const mat = new THREE.LineBasicMaterial({
+        color: 0xb8d4ff,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const lines = new THREE.LineSegments(geo, mat);
+      lines.visible = false;
+      // joint dots
+      const jPos = new Float32Array(21 * 3);
+      const jGeo = new THREE.BufferGeometry();
+      jGeo.setAttribute('position', new THREE.BufferAttribute(jPos, 3));
+      const jMat = new THREE.PointsMaterial({
+        color: 0xe8f0ff,
+        size: 0.045,
+        transparent: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        sizeAttenuation: true,
+      });
+      const joints = new THREE.Points(jGeo, jMat);
+      joints.visible = false;
+      return { lines, joints, pos, jPos };
+    }
+
+    const handA = makeHandMesh();
+    const handB = makeHandMesh();
+    scene.add(handA.lines, handA.joints, handB.lines, handB.joints);
+
+    // Charge arc ring (around wrist / sphere)
+    const ringGeo = new THREE.RingGeometry(1.55, 1.68, 64, 1, 0, Math.PI * 2);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xffc060,
+      transparent: true,
+      opacity: 0,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const chargeRing = new THREE.Mesh(ringGeo, ringMat);
+    chargeRing.rotation.x = -0.35;
+    scene.add(chargeRing);
+
+    // Secondary glow arc using torus (partial via scale/opacity)
+    const torusGeo = new THREE.TorusGeometry(1.62, 0.018, 8, 64);
+    const torusMat = new THREE.MeshBasicMaterial({
+      color: 0xffe0a0,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const chargeTorus = new THREE.Mesh(torusGeo, torusMat);
+    chargeTorus.rotation.x = Math.PI / 2.4;
+    scene.add(chargeTorus);
+
+    // ─── Audio (simple Web Audio beeps / whoosh) ──────────────
+    let audioCtx = null;
+    let chargeOsc = null;
+    let chargeGain = null;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function startChargeTone() {
+      if (!audioOn) return;
+      const ctx = ensureAudio();
+      if (chargeOsc) return;
+      chargeOsc = ctx.createOscillator();
+      chargeGain = ctx.createGain();
+      chargeOsc.type = 'sine';
+      chargeOsc.frequency.value = 120;
+      chargeGain.gain.value = 0.0001;
+      chargeOsc.connect(chargeGain);
+      chargeGain.connect(ctx.destination);
+      chargeOsc.start();
+    }
+
+    function updateChargeTone(c) {
+      if (!chargeOsc || !audioOn) return;
+      chargeOsc.frequency.setTargetAtTime(120 + c * 480, audioCtx.currentTime, 0.05);
+      chargeGain.gain.setTargetAtTime(0.02 + c * 0.06, audioCtx.currentTime, 0.05);
+    }
+
+    function stopChargeTone() {
+      if (!chargeOsc) return;
+      try {
+        chargeGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
+        chargeOsc.stop(audioCtx.currentTime + 0.1);
+      } catch (_) {}
+      chargeOsc = null;
+      chargeGain = null;
+    }
+
+    function playExplodeSound() {
+      if (!audioOn) return;
+      const ctx = ensureAudio();
+      const dur = 0.6;
+      const bufferSize = ctx.sampleRate * dur;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const t = i / ctx.sampleRate;
+        const env = Math.exp(-t * 4.5);
+        data[i] = (Math.random() * 2 - 1) * env * 0.35;
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.value = 900;
+      const g = ctx.createGain();
+      g.gain.value = 0.4;
+      src.connect(filt);
+      filt.connect(g);
+      g.connect(ctx.destination);
+      src.start();
+
+      // sparkle tone
+      const osc = ctx.createOscillator();
+      const og = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.5);
+      og.gain.setValueAtTime(0.08, ctx.currentTime);
+      og.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+      osc.connect(og);
+      og.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.55);
+    }
+
+    function playReformSound() {
+      if (!audioOn) return;
+      const ctx = ensureAudio();
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.8);
+      g.gain.setValueAtTime(0.04, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.0);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.05);
+    }
+
+    // ─── Status UI ────────────────────────────────────────────
+    function setStatus(m) {
+      mode = m;
+      modeT = 0;
+      statusEl.className = m === 'tracking' ? 'tracking' : m;
+      const labels = {
+        idle: 'Idle',
+        tracking: 'Tracking',
+        charging: 'Charging',
+        exploding: 'Exploding',
+        reforming: 'Reforming',
+      };
+      statusEl.textContent = labels[m] || m;
+      material.uniforms.uMode.value =
+        m === 'charging' ? 1 : m === 'exploding' ? 2 : m === 'reforming' ? 3 : 0;
+    }
+
+    // ─── Landmark → scene coords ──────────────────────────────
+    // MediaPipe: x right, y down, z toward camera (negative is closer)
+    function lmToScene(lm, depthScale = 2.2) {
+      // mirrored so it feels natural (like looking in a mirror)
+      const x = (0.5 - lm.x) * 4.2;
+      const y = (0.5 - lm.y) * 3.2;
+      const z = -lm.z * depthScale;
+      return new THREE.Vector3(x, y, z);
+    }
+
+    function dist2d(a, b) {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return Math.hypot(dx, dy);
+    }
+
+    function updateHandMesh(mesh, landmarks) {
+      if (!landmarks) {
+        mesh.lines.visible = false;
+        mesh.joints.visible = false;
+        return;
+      }
+      mesh.lines.visible = true;
+      mesh.joints.visible = true;
+      const pos = mesh.pos;
+      const jPos = mesh.jPos;
+      for (let i = 0; i < 21; i++) {
+        const v = lmToScene(landmarks[i]);
+        jPos[i * 3] = v.x;
+        jPos[i * 3 + 1] = v.y;
+        jPos[i * 3 + 2] = v.z;
+      }
+      mesh.joints.geometry.attributes.position.needsUpdate = true;
+
+      let k = 0;
+      for (const [a, b] of HAND_CONNECTIONS) {
+        pos[k++] = jPos[a * 3];
+        pos[k++] = jPos[a * 3 + 1];
+        pos[k++] = jPos[a * 3 + 2];
+        pos[k++] = jPos[b * 3];
+        pos[k++] = jPos[b * 3 + 1];
+        pos[k++] = jPos[b * 3 + 2];
+      }
+      mesh.lines.geometry.attributes.position.needsUpdate = true;
+    }
+
+    function drawPreviewHands(results) {
+      const w = handOverlay.width;
+      const h = handOverlay.height;
+      handCtx.clearRect(0, 0, w, h);
+      if (!results.multiHandLandmarks) return;
+      for (const lms of results.multiHandLandmarks) {
+        // draw connections
+        handCtx.strokeStyle = 'rgba(160, 200, 255, 0.85)';
+        handCtx.lineWidth = 2;
+        for (const [a, b] of HAND_CONNECTIONS) {
+          handCtx.beginPath();
+          handCtx.moveTo(lms[a].x * w, lms[a].y * h);
+          handCtx.lineTo(lms[b].x * w, lms[b].y * h);
+          handCtx.stroke();
+        }
+        handCtx.fillStyle = 'rgba(255, 240, 220, 0.95)';
+        for (const lm of lms) {
+          handCtx.beginPath();
+          handCtx.arc(lm.x * w, lm.y * h, 3, 0, Math.PI * 2);
+          handCtx.fill();
+        }
+      }
+    }
+
+    // ─── Explode / reform particle logic ──────────────────────
+    function triggerExplode() {
+      stopChargeTone();
+      playExplodeSound();
+      setStatus('exploding');
+      chargeLabel.classList.remove('show');
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        // random outward direction with some bias from current pos
+        const bx = basePositions[i * 3];
+        const by = basePositions[i * 3 + 1];
+        const bz = basePositions[i * 3 + 2];
+        // mix radial + random
+        let dx = bx + (Math.random() - 0.5) * 2.5;
+        let dy = by + (Math.random() - 0.5) * 2.5;
+        let dz = bz + (Math.random() - 0.5) * 2.5;
+        const len = Math.hypot(dx, dy, dz) || 1;
+        const speed = 2.2 + Math.random() * 5.5 + charge * 3.5;
+        velocities[i * 3] = (dx / len) * speed;
+        velocities[i * 3 + 1] = (dy / len) * speed;
+        velocities[i * 3 + 2] = (dz / len) * speed;
+        // color shift toward hot pink / gold on explode
+        const hot = Math.random();
+        colors[i * 3] = Math.min(1, baseColors[i * 3] * 0.4 + 0.9);
+        colors[i * 3 + 1] = Math.min(1, baseColors[i * 3 + 1] * 0.3 + hot * 0.5);
+        colors[i * 3 + 2] = Math.min(1, baseColors[i * 3 + 2] * 0.5 + (1 - hot) * 0.4);
+      }
+      geometry.attributes.color.needsUpdate = true;
+      charge = 0;
+    }
+
+    function triggerReform() {
+      playReformSound();
+      setStatus('reforming');
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        velocities[i * 3] = 0;
+        velocities[i * 3 + 1] = 0;
+        velocities[i * 3 + 2] = 0;
+      }
+    }
+
+    function resetParticles() {
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        positions[i * 3] = basePositions[i * 3];
+        positions[i * 3 + 1] = basePositions[i * 3 + 1];
+        positions[i * 3 + 2] = basePositions[i * 3 + 2];
+        colors[i * 3] = baseColors[i * 3];
+        colors[i * 3 + 1] = baseColors[i * 3 + 1];
+        colors[i * 3 + 2] = baseColors[i * 3 + 2];
+        velocities[i * 3] = velocities[i * 3 + 1] = velocities[i * 3 + 2] = 0;
+      }
+      geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.color.needsUpdate = true;
+      charge = 0;
+      handScale = 1;
+      handScaleTarget = 1;
+      points.position.set(0, 0, 0);
+      points.rotation.set(0, 0, 0);
+      setStatus(handsSeen > 0 ? 'tracking' : 'idle');
+      chargeLabel.classList.remove('show');
+      stopChargeTone();
+    }
+
+    // ─── MediaPipe Hands ──────────────────────────────────────
+    let hands = null;
+    let mpCamera = null;
+
+    function onResults(results) {
+      landmarksList = results.multiHandLandmarks || [];
+      handsSeen = landmarksList.length;
+
+      if (showPreview && cameraOn) {
+        drawPreviewHands(results);
+      }
+
+      if (handsSeen === 0) {
+        updateHandMesh(handA, null);
+        updateHandMesh(handB, null);
+        pinchActive = false;
+        if (mode === 'charging') {
+          // release while charging → explode if charged enough, else cancel
+          if (charge > 0.25) triggerExplode();
+          else {
+            charge = 0;
+            stopChargeTone();
+            setStatus('idle');
+            chargeLabel.classList.remove('show');
+          }
+        } else if (mode === 'tracking') {
+          setStatus('idle');
+        }
+        promptEl.classList.remove('hide');
+        return;
+      }
+
+      promptEl.classList.add('hide');
+
+      // Primary hand
+      const lm0 = landmarksList[0];
+      updateHandMesh(handA, lm0);
+      updateHandMesh(handB, landmarksList[1] || null);
+
+      // Palm center ≈ average of wrist + middle MCP
+      const wrist = lm0[0];
+      const middle = lm0[9];
+      const palm = {
+        x: (wrist.x + middle.x) * 0.5,
+        y: (wrist.y + middle.y) * 0.5,
+        z: (wrist.z + middle.z) * 0.5,
+      };
+      handPosTarget.copy(lmToScene(palm, 1.8));
+      wristScreen = { x: 1 - wrist.x, y: wrist.y }; // mirrored for UI
+
+      // Pinch: thumb tip (4) vs index tip (8)
+      const thumb = lm0[4];
+      const index = lm0[8];
+      pinchDist = dist2d(thumb, index);
+      const isPinching = pinchDist < PINCH_THRESHOLD;
+
+      // Two-hand scale: distance between palms
+      if (landmarksList[1]) {
+        const lm1 = landmarksList[1];
+        const palm1 = {
+          x: (lm1[0].x + lm1[9].x) * 0.5,
+          y: (lm1[0].y + lm1[9].y) * 0.5,
+        };
+        const d = dist2d(palm, palm1);
+        // map hand separation to scale
+        handScaleTarget = THREE.MathUtils.clamp(0.45 + d * 2.8, 0.4, 2.4);
+      } else {
+        // single hand: open palm size as subtle scale
+        const open = dist2d(lm0[0], lm0[12]);
+        // don't fight pinch; only nudge when not pinching
+        if (!isPinching && mode !== 'charging') {
+          handScaleTarget = THREE.MathUtils.clamp(0.7 + open * 3.5, 0.55, 1.8);
+        }
+      }
+
+      // Pinch state machine (only when not mid explode/reform)
+      if (mode !== 'exploding' && mode !== 'reforming') {
+        if (isPinching) {
+          if (!pinchActive) {
+            pinchActive = true;
+            setStatus('charging');
+            startChargeTone();
+            chargeLabel.classList.add('show');
+          }
+        } else {
+          if (pinchActive) {
+            pinchActive = false;
+            if (charge > 0.22) {
+              triggerExplode();
+            } else {
+              charge = Math.max(0, charge - 0.1);
+              stopChargeTone();
+              setStatus('tracking');
+              chargeLabel.classList.remove('show');
+            }
+          } else if (mode !== 'charging') {
+            setStatus('tracking');
+          }
+        }
+      }
+    }
+
+    async function startCamera() {
+      loadMsg.textContent = 'Starting camera…';
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        });
+        video.srcObject = stream;
+        preview.srcObject = stream;
+        await video.play();
+        await preview.play();
+
+        handOverlay.width = 180;
+        handOverlay.height = 135;
+
+        mpCamera = new Camera(video, {
+          onFrame: async () => {
+            if (hands) await hands.send({ image: video });
+          },
+          width: 640,
+          height: 480,
+        });
+        await mpCamera.start();
+        cameraOn = true;
+        btnCamera.classList.add('active');
+        if (showPreview) previewWrap.classList.add('on');
+        loadMsg.textContent = 'Ready';
+        loadingEl.classList.add('done');
+      } catch (err) {
+        console.error(err);
+        errorEl.style.display = 'block';
+        errorEl.textContent =
+          'Camera permission denied or unavailable. Allow camera access and reload. You can still watch the idle sphere.';
+        loadMsg.textContent = 'Running without camera';
+        loadingEl.classList.add('done');
+        // idle animation still runs
+        animateIdleDemo();
+      }
+    }
+
+    async function initHands() {
+      loadMsg.textContent = 'Loading MediaPipe Hands…';
+      hands = new Hands({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+      });
+      hands.setOptions({
+        maxNumHands: 2,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.65,
+        minTrackingConfidence: 0.55,
+      });
+      hands.onResults(onResults);
+      await startCamera();
+    }
+
+    // Demo motion when no camera
+    let demoT = 0;
+    function animateIdleDemo() {
+      // gentle auto-orbit handled in tick via idle spin
+    }
+
+    // ─── Buttons ──────────────────────────────────────────────
+    btnCamera.addEventListener('click', async () => {
+      if (!cameraOn) {
+        await startCamera();
+        return;
+      }
+      showPreview = !showPreview;
+      previewWrap.classList.toggle('on', showPreview);
+      btnCamera.classList.toggle('active', showPreview);
+    });
+
+    btnAudio.addEventListener('click', () => {
+      audioOn = !audioOn;
+      btnAudio.classList.toggle('active', audioOn);
+      if (audioOn) ensureAudio();
+      else stopChargeTone();
+    });
+
+    btnReset.addEventListener('click', () => {
+      resetParticles();
+    });
+
+    // ─── Resize ───────────────────────────────────────────────
+    function onResize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      material.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+    }
+    window.addEventListener('resize', onResize);
+
+    // ─── Main loop ────────────────────────────────────────────
+    const clock = new THREE.Clock();
+    let autoSpin = 0;
+
+    function tick() {
+      requestAnimationFrame(tick);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.elapsedTime;
+      modeT += dt;
+      material.uniforms.uTime.value = t;
+
+      // Smooth hand follow
+      handPos.lerp(handPosTarget, HAND_SMOOTH);
+      handScale += (handScaleTarget - handScale) * 0.12;
+
+      // Sphere group transform
+      if (handsSeen > 0 && mode !== 'exploding') {
+        points.position.lerp(handPos, 0.15);
+      } else if (mode === 'idle' || handsSeen === 0) {
+        // gentle float back to center
+        points.position.lerp(new THREE.Vector3(0, Math.sin(t * 0.6) * 0.08, 0), 0.04);
+      }
+
+      // Auto rotation + hand-driven twist
+      autoSpin += dt * (mode === 'charging' ? 0.9 : 0.35);
+      points.rotation.y = autoSpin;
+      points.rotation.x = Math.sin(t * 0.25) * 0.15;
+      if (handsSeen > 0) {
+        points.rotation.z = handPos.x * 0.08;
+      }
+      points.scale.setScalar(handScale * (1 + charge * 0.12));
+
+      // Charge ring
+      if (mode === 'charging') {
+        charge = Math.min(1, charge + CHARGE_RATE * dt);
+        updateChargeTone(charge);
+        const pulse = 0.55 + 0.45 * Math.sin(t * 10);
+        ringMat.opacity = 0.15 + charge * 0.55 * pulse;
+        torusMat.opacity = 0.2 + charge * 0.7;
+        chargeRing.scale.setScalar(handScale);
+        chargeTorus.scale.setScalar(handScale);
+        chargeRing.position.copy(points.position);
+        chargeTorus.position.copy(points.position);
+        chargeTorus.rotation.z = t * 2.5;
+        // expand ring with charge
+        chargeRing.scale.setScalar(handScale * (1 + charge * 0.25));
+        chargeTorus.scale.setScalar(handScale * (1 + charge * 0.2));
+        chargeLabel.textContent = `Charge ${Math.round(charge * 100)}%`;
+
+        // full charge auto-explode
+        if (charge >= 1) {
+          triggerExplode();
+        }
+
+        // swell particles slightly outward while charging
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const bx = basePositions[i * 3];
+          const by = basePositions[i * 3 + 1];
+          const bz = basePositions[i * 3 + 2];
+          const swell = 1 + charge * 0.35 * (0.7 + 0.3 * Math.sin(t * 8 + phases[i] * 6));
+          positions[i * 3] = bx * swell;
+          positions[i * 3 + 1] = by * swell;
+          positions[i * 3 + 2] = bz * swell;
+          // warm up color
+          colors[i * 3] = THREE.MathUtils.lerp(baseColors[i * 3], 1.0, charge * 0.6);
+          colors[i * 3 + 1] = THREE.MathUtils.lerp(baseColors[i * 3 + 1], 0.75, charge * 0.4);
+          colors[i * 3 + 2] = THREE.MathUtils.lerp(baseColors[i * 3 + 2], 0.35, charge * 0.5);
+        }
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+      } else {
+        ringMat.opacity *= 0.9;
+        torusMat.opacity *= 0.9;
+      }
+      material.uniforms.uCharge.value = charge;
+
+      // Exploding: integrate velocity with drag + staggered start
+      if (mode === 'exploding') {
+        const progress = modeT / EXPLODE_DURATION;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          // stagger: particles with higher phase explode later
+          const delay = phases[i] * 0.35;
+          if (modeT < delay) continue;
+          const localT = modeT - delay;
+          const drag = Math.exp(-localT * 1.1);
+          positions[i * 3] += velocities[i * 3] * dt * drag;
+          positions[i * 3 + 1] += velocities[i * 3 + 1] * dt * drag;
+          positions[i * 3 + 2] += velocities[i * 3 + 2] * dt * drag;
+          // gravity-ish droop
+          velocities[i * 3 + 1] -= 0.8 * dt;
+        }
+        geometry.attributes.position.needsUpdate = true;
+
+        if (modeT >= EXPLODE_DURATION) {
+          triggerReform();
+        }
+      }
+
+      // Reforming: wave-like pull back to base sphere
+      if (mode === 'reforming') {
+        const progress = Math.min(1, modeT / REFORM_DURATION);
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          // wave delay by phase
+          const wave = THREE.MathUtils.clamp((progress - phases[i] * 0.45) / 0.55, 0, 1);
+          // smoothstep
+          const s = wave * wave * (3 - 2 * wave);
+          const bx = basePositions[i * 3];
+          const by = basePositions[i * 3 + 1];
+          const bz = basePositions[i * 3 + 2];
+          positions[i * 3] = THREE.MathUtils.lerp(positions[i * 3], bx, s * 0.2 + 0.05);
+          positions[i * 3 + 1] = THREE.MathUtils.lerp(positions[i * 3 + 1], by, s * 0.2 + 0.05);
+          positions[i * 3 + 2] = THREE.MathUtils.lerp(positions[i * 3 + 2], bz, s * 0.2 + 0.05);
+          // restore colors
+          colors[i * 3] = THREE.MathUtils.lerp(colors[i * 3], baseColors[i * 3], 0.08);
+          colors[i * 3 + 1] = THREE.MathUtils.lerp(colors[i * 3 + 1], baseColors[i * 3 + 1], 0.08);
+          colors[i * 3 + 2] = THREE.MathUtils.lerp(colors[i * 3 + 2], baseColors[i * 3 + 2], 0.08);
+        }
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+
+        // snap close enough / time up
+        if (progress >= 1) {
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            positions[i * 3] = basePositions[i * 3];
+            positions[i * 3 + 1] = basePositions[i * 3 + 1];
+            positions[i * 3 + 2] = basePositions[i * 3 + 2];
+            colors[i * 3] = baseColors[i * 3];
+            colors[i * 3 + 1] = baseColors[i * 3 + 1];
+            colors[i * 3 + 2] = baseColors[i * 3 + 2];
+          }
+          geometry.attributes.position.needsUpdate = true;
+          geometry.attributes.color.needsUpdate = true;
+          setStatus(handsSeen > 0 ? 'tracking' : 'idle');
+        }
+      }
+
+      // Idle / tracking subtle breathing
+      if (mode === 'idle' || mode === 'tracking') {
+        const breath = 1 + Math.sin(t * 1.4) * 0.02;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const bx = basePositions[i * 3];
+          const by = basePositions[i * 3 + 1];
+          const bz = basePositions[i * 3 + 2];
+          // only apply if close to base (don't fight residual)
+          const px = positions[i * 3];
+          const py = positions[i * 3 + 1];
+          const pz = positions[i * 3 + 2];
+          positions[i * 3] = THREE.MathUtils.lerp(px, bx * breath, 0.08);
+          positions[i * 3 + 1] = THREE.MathUtils.lerp(py, by * breath, 0.08);
+          positions[i * 3 + 2] = THREE.MathUtils.lerp(pz, bz * breath, 0.08);
+        }
+        geometry.attributes.position.needsUpdate = true;
+      }
+
+      material.uniforms.uScale.value = handScale;
+      renderer.render(scene, camera);
+    }
+
+    // ─── Boot ─────────────────────────────────────────────────
+    setStatus('idle');
+    tick();
+    initHands().catch((e) => {
+      console.error(e);
+      errorEl.style.display = 'block';
+      errorEl.textContent = 'Failed to load hand tracking. Check your network and reload.';
+      loadMsg.textContent = 'Error';
+      loadingEl.classList.add('done');
+    });
+  })();
+  </script>
+</body>
+</html>
