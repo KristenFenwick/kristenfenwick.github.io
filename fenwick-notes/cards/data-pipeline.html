@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What is a data pipeline? · Fenwick Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="study-card">
+  <a class="back-link" href="../index.html">← Fenwick Notes</a>
+  <article class="study-sheet">
+    <div class="sheet-top">
+      <p class="sheet-brand">Fenwick Notes</p>
+      <p class="sheet-series">Systems · 01</p>
+    </div>
+    <h1 class="sheet-title">What is a data pipeline?</h1>
+    <p class="sheet-sub">the plumbing behind every dashboard and model</p>
+
+    <div class="sheet-block">
+      <h3>Plain definition</h3>
+      <p>
+        A <strong>data pipeline</strong> is a repeatable path that moves data from where it’s created
+        to where it’s used — with steps to clean, transform, check, and deliver it on a schedule or in real time.
+      </p>
+    </div>
+
+    <div class="sheet-block">
+      <h3>Typical stages</h3>
+      <ol>
+        <li><strong>Ingest</strong> — pull from APIs, databases, files, sensors, logs.</li>
+        <li><strong>Validate</strong> — schema, nulls, ranges, duplicates (catch bad data early).</li>
+        <li><strong>Transform</strong> — joins, aggregates, business rules (ETL / ELT).</li>
+        <li><strong>Store</strong> — warehouse, lake, or serving DB.</li>
+        <li><strong>Serve</strong> — BI tool, app, ML feature store, report.</li>
+        <li><strong>Observe</strong> — freshness, row counts, failures, alerts.</li>
+      </ol>
+    </div>
+
+    <div class="two-col">
+      <div class="sheet-block">
+        <h3>ETL vs ELT</h3>
+        <p><strong>ETL:</strong> transform before load (classic warehouses).</p>
+        <p><strong>ELT:</strong> load raw first, transform in the warehouse (common with cloud scale).</p>
+        <p style="margin-top:0.65rem;color:var(--muted)">Neither is “always right.” Depends on volume, tools, and who owns transforms.</p>
+      </div>
+      <div class="sheet-block">
+        <h3>What good looks like</h3>
+        <ul>
+          <li>Idempotent runs (safe to re-run)</li>
+          <li>Clear ownership + docs</li>
+          <li>Tests on critical fields</li>
+          <li>Lineage: “where did this number come from?”</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sheet-block takeaway">
+      <h3>Interview one-liner</h3>
+      <p style="margin:0">
+        “A pipeline is automated data movement with quality checks — not just a script that worked once on my laptop.”
+      </p>
+    </div>
+
+    <div class="sheet-foot">
+      <span>Kristen Fenwick · Data Engineering</span>
+      <span>Systems series</span>
+    </div>
+  </article>
+</body>
+</html>

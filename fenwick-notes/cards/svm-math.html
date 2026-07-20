@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SVM mathematical sketch · Fenwick Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="study-card">
+  <a class="back-link" href="../index.html">← Fenwick Notes</a>
+  <article class="study-sheet">
+    <div class="sheet-top">
+      <p class="sheet-brand">Fenwick Notes</p>
+      <p class="sheet-series">Models · 02</p>
+    </div>
+    <h1 class="sheet-title">SVM · mathematical sketch</h1>
+    <p class="sheet-sub">just enough formality to read a paper or sklearn docs</p>
+
+    <div class="sheet-block">
+      <h3>1. Linearly separable case</h3>
+      <p>Data <em>(x<sub>i</sub>, y<sub>i</sub>)</em> with labels y<sub>i</sub> ∈ {−1, +1}. Hyperplane: <strong>wᵀx + b = 0</strong>.</p>
+      <p>Constraints (points on the correct side with margin):</p>
+      <div class="formula">y<sub>i</sub> (wᵀx<sub>i</sub> + b) ≥ 1  for all i</div>
+      <p>Margin width is proportional to <strong>2 / ||w||</strong>. So we minimize ||w|| (equivalently ½||w||²) subject to those constraints.</p>
+    </div>
+
+    <div class="sheet-block">
+      <h3>2. Soft margin (overlap allowed)</h3>
+      <p>Real data overlaps. Introduce slack ξ<sub>i</sub> ≥ 0 and a tradeoff <strong>C</strong>:</p>
+      <div class="formula">min  ½||w||² + C Σ ξ<sub>i</sub><br />
+s.t. y<sub>i</sub>(wᵀx<sub>i</sub> + b) ≥ 1 − ξ<sub>i</sub></div>
+      <p><strong>C large</strong> → fewer mistakes, tighter fit (risk: overfit).<br />
+      <strong>C small</strong> → wider margin, more mistakes allowed.</p>
+    </div>
+
+    <div class="sheet-block">
+      <h3>3. Kernel trick</h3>
+      <p>Map x → φ(x) in a higher-dimensional space <em>without building φ explicitly</em>. Work with kernel K(x, x′) = ⟨φ(x), φ(x′)⟩.</p>
+      <p>Common kernels:</p>
+      <ul>
+        <li><strong>Linear:</strong> K = xᵀx′</li>
+        <li><strong>Polynomial:</strong> K = (xᵀx′ + c)<sup>d</sup></li>
+        <li><strong>RBF (Gaussian):</strong> K = exp(−γ ||x − x′||²)</li>
+      </ul>
+    </div>
+
+    <div class="sheet-block">
+      <h3>4. Decision</h3>
+      <div class="formula">f(x) = sign( Σ α<sub>i</sub> y<sub>i</sub> K(x<sub>i</sub>, x) + b )</div>
+      <p>Only points with α<sub>i</sub> &gt; 0 are support vectors. Everyone else is along for the ride.</p>
+    </div>
+
+    <div class="sheet-block takeaway">
+      <h3>Lab checklist</h3>
+      <ul>
+        <li>Scale features (StandardScaler) before RBF / linear SVM — distances matter.</li>
+        <li>If accuracy is 1.00 on a huge “easy” dataset, check leakage &amp; class balance before celebrating.</li>
+        <li>Report precision / recall / F1, not only accuracy.</li>
+      </ul>
+    </div>
+
+    <div class="sheet-foot">
+      <span>Kristen Fenwick</span>
+      <span>Companion to Models · 01</span>
+    </div>
+  </article>
+</body>
+</html>

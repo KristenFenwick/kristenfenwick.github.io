@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Why we standardize features · Fenwick Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="study-card">
+  <a class="back-link" href="../index.html">← Fenwick Notes</a>
+  <article class="study-sheet">
+    <div class="sheet-top">
+      <p class="sheet-brand">Fenwick Notes</p>
+      <p class="sheet-series">Models · 03</p>
+    </div>
+    <h1 class="sheet-title">Standardize the features</h1>
+    <p class="sheet-sub">before distance-based models (SVM, k-NN, …)</p>
+
+    <div class="sheet-block">
+      <h3>The problem</h3>
+      <p>
+        Features live on different scales. Income might be 0–200,000; age 18–90; a binary flag 0/1.
+        Models that care about <strong>distance</strong> or <strong>magnitude of weights</strong> will obsess over the big-number features and ignore the rest.
+      </p>
+    </div>
+
+    <div class="sheet-block">
+      <h3>What StandardScaler does</h3>
+      <div class="formula">z = (x − mean) / std</div>
+      <p>Each feature ends up roughly mean 0, variance 1 (on the training set).</p>
+      <p><strong>Fit on train only.</strong> Then <code>transform</code> train and test. Fitting on all data leaks test information.</p>
+    </div>
+
+    <div class="two-col">
+      <div class="sheet-block">
+        <h3>Do scale for</h3>
+        <ul>
+          <li>SVM (especially RBF)</li>
+          <li>k-NN, k-means</li>
+          <li>PCA</li>
+          <li>Regularized linear models (often)</li>
+          <li>Neural nets (usually)</li>
+        </ul>
+      </div>
+      <div class="sheet-block">
+        <h3>Often skip / different for</h3>
+        <ul>
+          <li>Tree models (RF, XGBoost) — splits don’t need scaling</li>
+          <li>Already comparable counts in one unit</li>
+          <li>Sparse binary bags of words (sometimes different norms)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sheet-block">
+      <h3>sklearn pattern</h3>
+      <div class="formula">scaler = StandardScaler()<br />
+X_train_s = scaler.fit_transform(X_train)<br />
+X_test_s  = scaler.transform(X_test)</div>
+    </div>
+
+    <div class="sheet-block takeaway">
+      <h3>Honest note</h3>
+      <p style="margin:0">
+        Scaling won’t fix a bad target, leakage, or a toy dataset that scores 100% forever.
+        It’s hygiene — necessary, not magical.
+      </p>
+    </div>
+
+    <div class="sheet-foot">
+      <span>Kristen Fenwick</span>
+      <span>Pairs with svm-lab</span>
+    </div>
+  </article>
+</body>
+</html>

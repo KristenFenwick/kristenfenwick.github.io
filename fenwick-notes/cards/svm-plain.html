@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SVM in plain language · Fenwick Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="study-card">
+  <a class="back-link" href="../index.html">← Fenwick Notes</a>
+  <article class="study-sheet">
+    <div class="sheet-top">
+      <p class="sheet-brand">Fenwick Notes</p>
+      <p class="sheet-series">Models · 01</p>
+    </div>
+    <h1 class="sheet-title">Support Vector Machine</h1>
+    <p class="sheet-sub">in natural language</p>
+
+    <div class="sheet-block">
+      <h3>What is SVM?</h3>
+      <p>
+        A <strong>supervised</strong> algorithm for classification (and regression).
+        It finds the best separating boundary — a <strong>hyperplane</strong> —
+        so that points from different classes sit as far apart as possible from that boundary.
+      </p>
+    </div>
+
+    <div class="two-col">
+      <div class="sheet-block">
+        <h3>How it works</h3>
+        <ol>
+          <li>You have labeled points (class A vs class B).</li>
+          <li>SVM searches for a line (2D) or plane (higher-D) between them.</li>
+          <li>Among many options, it picks the one with the <strong>largest margin</strong>.</li>
+          <li>Points closest to the boundary are <strong>support vectors</strong> — they define the fence.</li>
+          <li>New points are classified by which side of the boundary they fall on.</li>
+        </ol>
+      </div>
+      <div class="sheet-block">
+        <h3>Picture it</h3>
+        <div class="diagram">
+          <p><strong>Margin</strong> = street width between two neighborhoods.</p>
+          <p><strong>Hyperplane</strong> = the painted center line.</p>
+          <p><strong>Support vectors</strong> = the houses right on the curb — they set the street width.</p>
+          <p style="margin-top:0.75rem">Wider street → usually more confident separation (when data allows it).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-block takeaway">
+      <h3>Key takeaways</h3>
+      <ul>
+        <li>SVM maximizes margin, not just “draws any line that works.”</li>
+        <li>Only support vectors really matter for the final boundary.</li>
+        <li>Nonlinear data? Use a <strong>kernel</strong> (e.g. RBF) instead of forcing a straight line in the original features.</li>
+      </ul>
+    </div>
+
+    <div class="sheet-block">
+      <h3>Where it’s used</h3>
+      <p>Text classification · image categories · bioinformatics · fraud / anomaly flags · medical risk scores — anywhere you need a sharp boundary with limited, well-labeled data.</p>
+    </div>
+
+    <div class="sheet-foot">
+      <span>Kristen Fenwick</span>
+      <span>Print → PDF · LinkedIn / IG</span>
+    </div>
+  </article>
+</body>
+</html>
