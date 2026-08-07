@@ -262,21 +262,20 @@
         Built for our MATH 2420 harvesting project.
       </p>
       <div class="hero-meta">
-        <span>Kristen Fenwick · design, figures, layout</span>
         <span>Amanda Ce · reframing, breakdown, interpretation</span>
-        <span>Juan Molina · math professor, slope-field connoisseur</span>
+        <span>Kristen Fenwick · design, figures, layout</span>
       </div>
 
       <div class="duo">
         <article class="series-card">
           <p class="series-num">01</p>
-          <h3>Kristen Fenwick</h3>
-          <p>Design, R figures, layout, this page: making the model visible.</p>
+          <h3>Amanda Ce</h3>
+          <p>Reframing, breakdown, structure, interpretation: making the model make sense.</p>
         </article>
         <article class="series-card">
           <p class="series-num">02</p>
-          <h3>Amanda Ce</h3>
-          <p>Reframing, breakdown, structure, interpretation: making the model make sense.</p>
+          <h3>Kristen Fenwick</h3>
+          <p>Design, R figures, layout, this page: making the model visible.</p>
         </article>
       </div>
     </section>
@@ -311,6 +310,7 @@
       <h2>Population over time</h2>
       <p class="section-note">
         dP/dt = r P (1 − P/K) − E P. Hit play. Change E and see whether trajectories settle or die out.
+        Population cannot go below zero: P = 0 is extinction, the floor of the model. No negative fish.
       </p>
       <div class="panel">
         <div class="controls">
@@ -369,10 +369,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>Harvesting · Kristen Fenwick &amp; Amanda Ce · MATH 2420</p>
-    <p style="margin-top:0.35rem">
-      Instructor Juan Molina · Professor of Mathematics · ACC · Senate President 2023-2024
-    </p>
+    <p>Harvesting · Amanda Ce &amp; Kristen Fenwick · MATH 2420</p>
     <p style="margin-top:0.5rem;opacity:0.85">
       Plots: Plotly.js · Static write-up figures also in R
     </p>
@@ -522,12 +519,12 @@
       document.getElementById("kAnimVal").textContent = "K = " + K;
       const viable = E < r;
       const y2 = viable ? K * (1 - E / r) : 0;
-      document.getElementById("y2Read").textContent = viable ? y2.toFixed(1) + " tons" : "0";
+      document.getElementById("y2Read").textContent = viable ? y2.toFixed(1) + " tons" : "0 (extinct)";
       document.getElementById("yRead").textContent = viable ? (E * y2).toFixed(2) + " t/yr" : "0";
-      document.getElementById("statusRead").textContent = viable ? "E < r · viable" : "E ≥ r · collapse";
+      document.getElementById("statusRead").textContent = viable ? "E < r · viable" : "E ≥ r · extinction";
       document.getElementById("warnMsg").textContent = viable
-        ? ""
-        : "Effort is at or above growth rate. Stock heads to zero.";
+        ? "Stock is floored at P = 0. You cannot go lower than extinction."
+        : "E ≥ r: every path is driven to P = 0 (extinction). No negative population.";
     }
 
     function resetHistories() {
@@ -551,17 +548,46 @@
         marker: { size: 8, color: trajColors, line: { width: 1, color: INK } },
         showlegend: false, hoverinfo: "skip",
       });
+      // extinction floor: P = 0 (cannot go lower)
+      traces.push({
+        x: [0, Tmax], y: [0, 0], mode: "lines",
+        line: { color: CLAY, width: 1.6, dash: "dot" },
+        name: "P = 0 extinction",
+        hovertemplate: "extinction (floor)<extra></extra>",
+      });
       if (y2 > 0) {
         traces.push({
           x: [0, Tmax], y: [y2, y2], mode: "lines",
           line: { color: ACCENT, width: 1.5, dash: "dash" },
           name: "y2 ≈ " + y2.toFixed(0),
         });
+      } else {
+        // only stable rest point is extinction
+        traces.push({
+          x: [Tmax * 0.72], y: [0],
+          mode: "markers+text",
+          marker: { size: 9, color: CLAY, line: { width: 1, color: INK } },
+          text: ["extinct"],
+          textposition: "top center",
+          textfont: { size: 11, color: CLAY },
+          showlegend: false,
+          hoverinfo: "skip",
+        });
       }
       Plotly.react("plotAnim", traces, Object.assign({}, layoutBase, {
-        title: { text: "P(t)", font: { size: 13, color: MUTED } },
+        title: {
+          text: "P(t) · population ≥ 0 (zero = extinction)",
+          font: { size: 13, color: MUTED },
+        },
         xaxis: { title: "t (years)", range: [0, Tmax], gridcolor: "#f0ebe3", color: MUTED },
-        yaxis: { title: "P (tons)", range: [0, Math.max(K * 1.05, 100)], gridcolor: "#f0ebe3", color: MUTED },
+        yaxis: {
+          title: "P (tons)",
+          range: [0, Math.max(K * 1.05, 100)],
+          gridcolor: "#f0ebe3",
+          color: MUTED,
+          rangemode: "nonnegative",
+          fixedrange: false,
+        },
         legend: { orientation: "h", y: -0.22, font: { size: 10, color: MUTED } },
         margin: { l: 55, r: 20, t: 40, b: 70 },
       }), { responsive: true, displayModeBar: false });
