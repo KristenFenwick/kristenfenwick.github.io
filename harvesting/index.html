@@ -255,11 +255,11 @@
 
   <main>
     <section class="hero">
-      <p class="eyebrow">Project companion · differential equations</p>
-      <h1>Harvest with a model,<br /><em>not just a hunch.</em></h1>
+      <p class="eyebrow">MATH 2420 · project companion</p>
+      <h1>Harvesting model<br /><em>interactive plots</em></h1>
       <p class="lede">
-        Same math as the write-up. Drag the sliders. Watch stock recover or collapse.
-        Built for our MATH 2420 harvesting project.
+        Graphs for the written project. Move the sliders and hit play if you want to
+        see how stock and yield change with effort.
       </p>
       <div class="hero-meta">
         <span>Amanda Ce · reframing, breakdown, interpretation</span>
@@ -270,12 +270,12 @@
         <article class="series-card">
           <p class="series-num">01</p>
           <h3>Amanda Ce</h3>
-          <p>Reframing, breakdown, structure, interpretation: making the model make sense.</p>
+          <p>Structure, analysis, equilibria and yield interpretation.</p>
         </article>
         <article class="series-card">
           <p class="series-num">02</p>
           <h3>Kristen Fenwick</h3>
-          <p>Design, R figures, layout, this page: making the model visible.</p>
+          <p>Figures, layout, and this page.</p>
         </article>
       </div>
     </section>
@@ -283,8 +283,8 @@
     <section id="yield3d" class="section">
       <h2>Yield surface</h2>
       <p class="section-note">
-        Y = K E (1 − E/r). Surface over effort E and growth r. The dark ridge is max sustainable yield.
-        Flat zero near E ≥ r is collapse.
+        Y = K E (1 − E/r) over effort E and growth r. The ridge is maximum sustainable yield
+        (E = r/2). When E ≥ r, Y drops to zero.
       </p>
       <div class="panel">
         <div class="controls">
@@ -300,8 +300,8 @@
         </div>
         <div id="plot3d" class="plot plot-tall"></div>
         <div class="readout">
-          <div><span>Ridge</span><strong>E* = r/2 · Ymax = Kr/4</strong></div>
-          <div><span>Practice</span><strong>Sit under the ridge, not on the cliff</strong></div>
+          <div><span>Max yield</span><strong>E* = r/2 · Ymax = Kr/4</strong></div>
+          <div><span>Domain</span><strong>Useful effort is 0 ≤ E &lt; r</strong></div>
         </div>
       </div>
     </section>
@@ -309,8 +309,8 @@
     <section id="motion" class="section">
       <h2>Population over time</h2>
       <p class="section-note">
-        dP/dt = r P (1 − P/K) − E P. Hit play. Change E and see whether trajectories settle or die out.
-        Population cannot go below zero: P = 0 is extinction, the floor of the model. No negative fish.
+        dP/dt = r P (1 − P/K) − E P. Play the animation and change E.
+        P stays ≥ 0; P = 0 means extinction.
       </p>
       <div class="panel">
         <div class="controls">
@@ -348,7 +348,8 @@
     <section id="phase" class="section">
       <h2>Phase view · f(y) vs y</h2>
       <p class="section-note">
-        Above zero, stock grows. Below, it shrinks. Crossings are equilibria. Move E and watch y2 slide.
+        f(y) = dy/dt. Where f &gt; 0 the stock grows; where f &lt; 0 it shrinks.
+        Roots are equilibria. Change E to move y₂.
       </p>
       <div class="panel">
         <div class="controls">
@@ -523,8 +524,8 @@
       document.getElementById("yRead").textContent = viable ? (E * y2).toFixed(2) + " t/yr" : "0";
       document.getElementById("statusRead").textContent = viable ? "E < r · viable" : "E ≥ r · extinction";
       document.getElementById("warnMsg").textContent = viable
-        ? "Stock is floored at P = 0. You cannot go lower than extinction."
-        : "E ≥ r: every path is driven to P = 0 (extinction). No negative population.";
+        ? ""
+        : "E ≥ r: paths go to P = 0 (extinction). Population stays non-negative.";
     }
 
     function resetHistories() {
