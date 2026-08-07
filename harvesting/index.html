@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Harvesting · Fenwick &amp; Ce · MATH 2420</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --bg-card: #fffcf7;
+      --ink: #2a2724;
+      --muted: #6f6a63;
+      --line: rgba(42, 39, 36, 0.1);
+      --accent: #6b7f93;
+      --accent-soft: rgba(107, 127, 147, 0.12);
+      --sand: #c4a882;
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "Inter", "Helvetica Neue", system-ui, sans-serif;
+      --max: 920px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      font-weight: 300;
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+    a { color: inherit; }
+
+    .site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.15rem clamp(1.25rem, 4vw, 2.5rem);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: rgba(247, 244, 239, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
+    .brand-mark {
+      width: 2.25rem; height: 2.25rem;
+      border: 1px solid var(--ink);
+      display: grid; place-items: center;
+      font-size: 0.62rem; letter-spacing: 0.1em; font-weight: 500;
+    }
+    .brand-name {
+      margin: 0; font-size: 0.72rem; letter-spacing: 0.16em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .brand-tag { margin: 0.15rem 0 0; font-size: 0.72rem; color: var(--muted); }
+    nav { display: flex; gap: 1.25rem; }
+    nav a {
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; color: var(--muted);
+    }
+    nav a:hover { color: var(--ink); }
+
+    main {
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      padding: 2.25rem clamp(1.25rem, 4vw, 2rem) 3.5rem;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2rem, 5vw, 2.85rem);
+      line-height: 1.15;
+      margin: 0.45rem 0 0.85rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .eyebrow {
+      margin: 0;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .lede {
+      color: var(--muted);
+      max-width: 48ch;
+      margin: 0 0 1.35rem;
+    }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 0.45rem 1rem;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .hero-meta span::before {
+      content: "·"; margin-right: 0.65rem; opacity: 0.4;
+    }
+    .hero-meta span:first-child::before { content: none; margin: 0; }
+
+    .duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 1.75rem;
+    }
+    @media (max-width: 640px) {
+      .duo { grid-template-columns: 1fr; }
+      nav { display: none; }
+    }
+    .series-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      padding: 1.15rem 1.15rem;
+    }
+    .series-num {
+      margin: 0 0 0.4rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+    }
+    .series-card h3 {
+      margin: 0 0 0.4rem;
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 1.15rem;
+    }
+    .series-card p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+
+    .section { margin-top: 3rem; }
+    .section h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 1.55rem;
+      margin: 0 0 0.45rem;
+    }
+    .section-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin: 0 0 1.1rem;
+      max-width: 52ch;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      padding: 1.1rem 1.1rem 0.65rem;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      align-items: flex-end;
+      margin-bottom: 0.65rem;
+    }
+    .ctrl label {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+    .ctrl input[type="range"] {
+      width: 150px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .ctrl .val {
+      font-size: 0.82rem;
+      margin-top: 0.15rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    button {
+      font-family: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      padding: 0.5rem 0.95rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    button:hover {
+      border-color: rgba(42, 39, 36, 0.3);
+      background: #fff;
+    }
+    button.primary {
+      background: var(--accent-soft);
+      border-color: rgba(107, 127, 147, 0.35);
+      color: var(--ink);
+    }
+
+    .plot { width: 100%; height: 460px; }
+    .plot-tall { height: 500px; }
+
+    .readout {
+      margin-top: 0.5rem;
+      padding: 0.85rem 0.25rem 0.35rem;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.65rem;
+      font-size: 0.85rem;
+    }
+    .readout span {
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: block;
+    }
+    .readout strong { font-weight: 500; font-variant-numeric: tabular-nums; }
+    .warn {
+      color: #8b6b5c;
+      font-size: 0.85rem;
+      min-height: 1.1em;
+      margin: 0.25rem 0 0.5rem;
+    }
+
+    .site-footer {
+      text-align: center;
+      padding: 2rem 1rem 3rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .site-footer a {
+      text-decoration: none;
+      border-bottom: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark">HV</span>
+      <div>
+        <p class="brand-name">Harvesting</p>
+        <p class="brand-tag">MATH 2420 · Fenwick &amp; Ce</p>
+      </div>
+    </div>
+    <nav>
+      <a href="#yield3d">Yield 3D</a>
+      <a href="#motion">P(t)</a>
+      <a href="#phase">Phase</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Project companion · differential equations</p>
+      <h1>Harvest with a model,<br /><em>not just a hunch.</em></h1>
+      <p class="lede">
+        Same math as the write-up. Drag the sliders. Watch stock recover or collapse.
+        Built for our MATH 2420 harvesting project.
+      </p>
+      <div class="hero-meta">
+        <span>Kristen Fenwick · design, figures, layout</span>
+        <span>Amanda Ce · reframing, breakdown, interpretation</span>
+        <span>Juan Molina · math professor, slope-field connoisseur</span>
+      </div>
+
+      <div class="duo">
+        <article class="series-card">
+          <p class="series-num">01</p>
+          <h3>Kristen Fenwick</h3>
+          <p>Design, R figures, layout, this page: making the model visible.</p>
+        </article>
+        <article class="series-card">
+          <p class="series-num">02</p>
+          <h3>Amanda Ce</h3>
+          <p>Reframing, breakdown, structure, interpretation: making the model make sense.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="yield3d" class="section">
+      <h2>Yield surface</h2>
+      <p class="section-note">
+        Y = K E (1 − E/r). Surface over effort E and growth r. The dark ridge is max sustainable yield.
+        Flat zero near E ≥ r is collapse.
+      </p>
+      <div class="panel">
+        <div class="controls">
+          <div class="ctrl">
+            <label>Carrying capacity K</label>
+            <input type="range" id="k3d" min="100" max="1000" step="25" value="500" />
+            <div class="val" id="k3dVal">K = 500 tons</div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="primary" id="spinBtn">Spin</button>
+            <button type="button" id="resetCam">Reset view</button>
+          </div>
+        </div>
+        <div id="plot3d" class="plot plot-tall"></div>
+        <div class="readout">
+          <div><span>Ridge</span><strong>E* = r/2 · Ymax = Kr/4</strong></div>
+          <div><span>Practice</span><strong>Sit under the ridge, not on the cliff</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="motion" class="section">
+      <h2>Population over time</h2>
+      <p class="section-note">
+        dP/dt = r P (1 − P/K) − E P. Hit play. Change E and see whether trajectories settle or die out.
+      </p>
+      <div class="panel">
+        <div class="controls">
+          <div class="ctrl">
+            <label>Growth r</label>
+            <input type="range" id="rAnim" min="0.02" max="0.25" step="0.005" value="0.10" />
+            <div class="val" id="rAnimVal">r = 0.100</div>
+          </div>
+          <div class="ctrl">
+            <label>Effort E</label>
+            <input type="range" id="eAnim" min="0" max="0.25" step="0.005" value="0.03" />
+            <div class="val" id="eAnimVal">E = 0.030</div>
+          </div>
+          <div class="ctrl">
+            <label>Capacity K</label>
+            <input type="range" id="kAnim" min="100" max="800" step="25" value="500" />
+            <div class="val" id="kAnimVal">K = 500</div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="primary" id="playBtn">Play</button>
+            <button type="button" id="pauseBtn">Pause</button>
+            <button type="button" id="resetAnim">Reset</button>
+          </div>
+        </div>
+        <div id="plotAnim" class="plot"></div>
+        <div class="readout">
+          <div><span>Stable stock y2</span><strong id="y2Read">·</strong></div>
+          <div><span>Yield Y</span><strong id="yRead">·</strong></div>
+          <div><span>Status</span><strong id="statusRead">·</strong></div>
+        </div>
+        <p class="warn" id="warnMsg"></p>
+      </div>
+    </section>
+
+    <section id="phase" class="section">
+      <h2>Phase view · f(y) vs y</h2>
+      <p class="section-note">
+        Above zero, stock grows. Below, it shrinks. Crossings are equilibria. Move E and watch y2 slide.
+      </p>
+      <div class="panel">
+        <div class="controls">
+          <div class="ctrl">
+            <label>Effort E</label>
+            <input type="range" id="ePhase" min="0" max="0.20" step="0.005" value="0.03" />
+            <div class="val" id="ePhaseVal">E = 0.030</div>
+          </div>
+          <div class="ctrl">
+            <label>Growth r</label>
+            <input type="range" id="rPhase" min="0.05" max="0.20" step="0.005" value="0.10" />
+            <div class="val" id="rPhaseVal">r = 0.100</div>
+          </div>
+        </div>
+        <div id="plotPhase" class="plot"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Harvesting · Kristen Fenwick &amp; Amanda Ce · MATH 2420</p>
+    <p style="margin-top:0.35rem">
+      Instructor Juan Molina · Professor of Mathematics · ACC · Senate President 2023-2024
+    </p>
+    <p style="margin-top:0.5rem;opacity:0.85">
+      Plots: Plotly.js · Static write-up figures also in R
+    </p>
+  </footer>
+
+  <script>
+    const INK = "#2a2724";
+    const MUTED = "#6f6a63";
+    const BEIGE = "#e5e0d8";
+    const ACCENT = "#6b7f93";
+    const SAGE = "#5a7164";
+    const CLAY = "#8b6b5c";
+    const PAPER = "#fffcf7";
+
+    const layoutBase = {
+      paper_bgcolor: PAPER,
+      plot_bgcolor: PAPER,
+      font: { family: "Inter, Helvetica, sans-serif", color: INK, size: 12 },
+      margin: { l: 55, r: 30, t: 36, b: 50 },
+      hoverlabel: { bgcolor: PAPER, bordercolor: BEIGE, font: { family: "Inter, sans-serif" } },
+    };
+
+    function buildYieldSurface(K) {
+      const rVals = [], eVals = [];
+      const nR = 35, nE = 40;
+      for (let i = 0; i < nR; i++) rVals.push(0.04 + 0.18 * i / (nR - 1));
+      for (let j = 0; j < nE; j++) eVals.push(0.22 * j / (nE - 1));
+
+      const Z = rVals.map((r) =>
+        eVals.map((E) => (E < r ? K * E * (1 - E / r) : 0))
+      );
+
+      const ridgeR = [], ridgeE = [], ridgeY = [];
+      rVals.forEach((r) => {
+        ridgeR.push(r);
+        ridgeE.push(r / 2);
+        ridgeY.push(K * r / 4);
+      });
+
+      const surface = {
+        type: "surface",
+        x: eVals, y: rVals, z: Z,
+        colorscale: [
+          [0, "#f0ebe3"],
+          [0.4, "#c5c0b4"],
+          [0.75, "#8a9aad"],
+          [1, "#6b7f93"],
+        ],
+        showscale: true,
+        colorbar: {
+          title: { text: "Y", font: { size: 11, color: MUTED } },
+          tickfont: { size: 10, color: MUTED },
+          thickness: 12, len: 0.55,
+        },
+        hovertemplate: "E=%{x:.3f}<br>r=%{y:.3f}<br>Y=%{z:.2f}<extra></extra>",
+      };
+
+      const ridge = {
+        type: "scatter3d",
+        mode: "lines",
+        x: ridgeE, y: ridgeR, z: ridgeY,
+        line: { color: INK, width: 5 },
+        name: "MSY ridge E = r/2",
+      };
+
+      Plotly.react("plot3d", [surface, ridge], Object.assign({}, layoutBase, {
+        title: { text: "Y(E, r) · fixed K", font: { size: 13, color: MUTED } },
+        scene: {
+          xaxis: { title: "Effort E", gridcolor: BEIGE, color: MUTED },
+          yaxis: { title: "Growth r", gridcolor: BEIGE, color: MUTED },
+          zaxis: { title: "Yield Y", gridcolor: BEIGE, color: MUTED },
+          bgcolor: PAPER,
+          camera: { eye: { x: 1.55, y: 1.55, z: 1.05 } },
+          aspectmode: "manual",
+          aspectratio: { x: 1.1, y: 1, z: 0.75 },
+        },
+        showlegend: true,
+        legend: { x: 0, y: 1.05, orientation: "h", font: { size: 11, color: MUTED } },
+        margin: { l: 0, r: 0, t: 44, b: 0 },
+      }), { responsive: true, displaylogo: false });
+    }
+
+    let spinning = false, spinAngle = 0, spinTimer = null;
+
+    document.getElementById("k3d").addEventListener("input", (e) => {
+      const K = +e.target.value;
+      document.getElementById("k3dVal").textContent = "K = " + K + " tons";
+      buildYieldSurface(K);
+    });
+
+    document.getElementById("spinBtn").addEventListener("click", () => {
+      spinning = !spinning;
+      document.getElementById("spinBtn").textContent = spinning ? "Stop" : "Spin";
+      if (spinning) {
+        spinTimer = setInterval(() => {
+          spinAngle += 0.015;
+          Plotly.relayout("plot3d", {
+            "scene.camera.eye": {
+              x: 1.55 * Math.cos(spinAngle),
+              y: 1.55 * Math.sin(spinAngle),
+              z: 1.05,
+            },
+          });
+        }, 40);
+      } else if (spinTimer) {
+        clearInterval(spinTimer);
+        spinTimer = null;
+      }
+    });
+
+    document.getElementById("resetCam").addEventListener("click", () => {
+      spinning = false;
+      document.getElementById("spinBtn").textContent = "Spin";
+      if (spinTimer) clearInterval(spinTimer);
+      spinAngle = 0;
+      Plotly.relayout("plot3d", { "scene.camera.eye": { x: 1.55, y: 1.55, z: 1.05 } });
+    });
+
+    buildYieldSurface(500);
+
+    /* animated trajectories */
+    const P0s = [40, 120, 250, 400, 480];
+    const trajColors = ["#a39e94", "#7a756c", "#5c564c", "#6b7f93", "#2a2724"];
+    let animT = 0, animPlaying = false, animId = null;
+    const Tmax = 80, dt = 0.15;
+    let histories = [];
+
+    function rk4Step(P, r, K, E, h) {
+      const f = (p) => r * p * (1 - p / K) - E * p;
+      const k1 = f(P), k2 = f(P + 0.5 * h * k1);
+      const k3 = f(P + 0.5 * h * k2), k4 = f(P + h * k3);
+      return P + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+    }
+
+    function getAnimParams() {
+      return {
+        r: +document.getElementById("rAnim").value,
+        E: +document.getElementById("eAnim").value,
+        K: +document.getElementById("kAnim").value,
+      };
+    }
+
+    function updateAnimLabels() {
+      const { r, E, K } = getAnimParams();
+      document.getElementById("rAnimVal").textContent = "r = " + r.toFixed(3);
+      document.getElementById("eAnimVal").textContent = "E = " + E.toFixed(3);
+      document.getElementById("kAnimVal").textContent = "K = " + K;
+      const viable = E < r;
+      const y2 = viable ? K * (1 - E / r) : 0;
+      document.getElementById("y2Read").textContent = viable ? y2.toFixed(1) + " tons" : "0";
+      document.getElementById("yRead").textContent = viable ? (E * y2).toFixed(2) + " t/yr" : "0";
+      document.getElementById("statusRead").textContent = viable ? "E < r · viable" : "E ≥ r · collapse";
+      document.getElementById("warnMsg").textContent = viable
+        ? ""
+        : "Effort is at or above growth rate. Stock heads to zero.";
+    }
+
+    function resetHistories() {
+      const { K } = getAnimParams();
+      histories = P0s.map((p0) => ({ t: [0], p: [Math.min(p0, K * 1.2)] }));
+      animT = 0;
+    }
+
+    function drawAnim() {
+      const { r, E, K } = getAnimParams();
+      const y2 = E < r ? K * (1 - E / r) : 0;
+      const traces = histories.map((h, i) => ({
+        x: h.t, y: h.p, mode: "lines",
+        line: { color: trajColors[i], width: 2.3 },
+        name: "P0 = " + P0s[i],
+      }));
+      traces.push({
+        x: histories.map((h) => h.t[h.t.length - 1]),
+        y: histories.map((h) => h.p[h.p.length - 1]),
+        mode: "markers",
+        marker: { size: 8, color: trajColors, line: { width: 1, color: INK } },
+        showlegend: false, hoverinfo: "skip",
+      });
+      if (y2 > 0) {
+        traces.push({
+          x: [0, Tmax], y: [y2, y2], mode: "lines",
+          line: { color: ACCENT, width: 1.5, dash: "dash" },
+          name: "y2 ≈ " + y2.toFixed(0),
+        });
+      }
+      Plotly.react("plotAnim", traces, Object.assign({}, layoutBase, {
+        title: { text: "P(t)", font: { size: 13, color: MUTED } },
+        xaxis: { title: "t (years)", range: [0, Tmax], gridcolor: "#f0ebe3", color: MUTED },
+        yaxis: { title: "P (tons)", range: [0, Math.max(K * 1.05, 100)], gridcolor: "#f0ebe3", color: MUTED },
+        legend: { orientation: "h", y: -0.22, font: { size: 10, color: MUTED } },
+        margin: { l: 55, r: 20, t: 40, b: 70 },
+      }), { responsive: true, displayModeBar: false });
+    }
+
+    function animTick() {
+      if (!animPlaying) return;
+      const { r, E, K } = getAnimParams();
+      if (animT >= Tmax) {
+        animPlaying = false;
+        document.getElementById("playBtn").textContent = "Play";
+        return;
+      }
+      animT += dt;
+      histories.forEach((h) => {
+        const prev = h.p[h.p.length - 1];
+        h.t.push(animT);
+        h.p.push(Math.max(0, rk4Step(prev, r, K, E, dt)));
+      });
+      drawAnim();
+      animId = requestAnimationFrame(animTick);
+    }
+
+    function restartAnimFromSliders() {
+      const was = animPlaying;
+      animPlaying = false;
+      if (animId) cancelAnimationFrame(animId);
+      resetHistories();
+      updateAnimLabels();
+      drawAnim();
+      if (was) {
+        animPlaying = true;
+        document.getElementById("playBtn").textContent = "…";
+        animId = requestAnimationFrame(animTick);
+      }
+    }
+
+    ["rAnim", "eAnim", "kAnim"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", restartAnimFromSliders);
+    });
+
+    document.getElementById("playBtn").addEventListener("click", () => {
+      if (animPlaying) return;
+      if (animT >= Tmax - 0.01) { resetHistories(); drawAnim(); }
+      animPlaying = true;
+      document.getElementById("playBtn").textContent = "…";
+      animId = requestAnimationFrame(animTick);
+    });
+    document.getElementById("pauseBtn").addEventListener("click", () => {
+      animPlaying = false;
+      document.getElementById("playBtn").textContent = "Play";
+      if (animId) cancelAnimationFrame(animId);
+    });
+    document.getElementById("resetAnim").addEventListener("click", () => {
+      animPlaying = false;
+      document.getElementById("playBtn").textContent = "Play";
+      if (animId) cancelAnimationFrame(animId);
+      resetHistories();
+      updateAnimLabels();
+      drawAnim();
+    });
+
+    resetHistories();
+    updateAnimLabels();
+    drawAnim();
+
+    function drawPhase() {
+      const r = +document.getElementById("rPhase").value;
+      const E = +document.getElementById("ePhase").value;
+      const K = 500;
+      document.getElementById("rPhaseVal").textContent = "r = " + r.toFixed(3);
+      document.getElementById("ePhaseVal").textContent = "E = " + E.toFixed(3);
+      const ys = [], fs = [];
+      for (let i = 0; i <= 200; i++) {
+        const y = (K * 1.05) * i / 200;
+        ys.push(y);
+        fs.push(r * y * (1 - y / K) - E * y);
+      }
+      const y2 = E < r ? K * (1 - E / r) : null;
+      const traces = [
+        { x: ys, y: fs, mode: "lines", line: { color: INK, width: 2.4 }, name: "f(y)" },
+        { x: [0, K * 1.05], y: [0, 0], mode: "lines", line: { color: MUTED, width: 1 }, showlegend: false },
+      ];
+      const eqX = [0], eqY = [0], eqC = [CLAY];
+      if (y2 && y2 > 0) { eqX.push(y2); eqY.push(0); eqC.push(ACCENT); }
+      traces.push({
+        x: eqX, y: eqY, mode: "markers",
+        marker: { size: 11, color: eqC, line: { width: 1.5, color: INK } },
+        name: "eq",
+      });
+      Plotly.react("plotPhase", traces, Object.assign({}, layoutBase, {
+        title: {
+          text: E < r ? "E < r · two equilibria" : "E ≥ r · extinction only",
+          font: { size: 13, color: MUTED },
+        },
+        xaxis: { title: "y", range: [0, K * 1.05], gridcolor: "#f0ebe3", color: MUTED },
+        yaxis: { title: "f(y) = dy/dt", gridcolor: "#f0ebe3", color: MUTED, zeroline: false },
+        showlegend: false,
+      }), { responsive: true, displayModeBar: false });
+    }
+
+    document.getElementById("ePhase").addEventListener("input", drawPhase);
+    document.getElementById("rPhase").addEventListener("input", drawPhase);
+    drawPhase();
+  </script>
+</body>
+</html>
