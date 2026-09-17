@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TV · Ms. Fenwick</title>
+  <link rel="stylesheet" href="css/tv.css">
+</head>
+<body>
+  <div class="bar" id="bar">
+    <span>TV</span>
+    <select id="pick"></select>
+    <button type="button" id="prev">Back</button>
+    <button type="button" id="next">Next</button>
+    <button type="button" id="full">Full screen</button>
+    <a href="me.html" style="color:#fff;margin-left:auto">Your notes</a>
+  </div>
+  <div class="stage" id="stage"></div>
+  <div class="foot" id="foot"></div>
+  <p class="hint">Click or → next · ← back · F full screen · Esc shows menu</p>
+
+  <script>
+    const DECKS = {
+      "ges-d1": { name: "Work skills · Day 1", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "Name and period on the site. I’m taking roll. I will not call every name." },
+        { k: "Work skills", h: "First shift at Matador Market", p: "You work in the school store today. I’m the boss." },
+        { k: "Do this first", h: "Open Work skills", p: "Classroom link → Work skills page. Type your name and period." },
+        { k: "Step 1", h: "Say hello. Clock in.", p: "Look at the person. Say your name. Good morning." },
+        { k: "Step 2", h: "Ready for work?", p: "Tap Ready or Not yet." },
+        { k: "Step 3", h: "Put 6 jobs in order.", p: "1 = do first." },
+        { k: "Before you leave", h: "Submit my work", p: "Then paste in the Classroom Question. Ctrl + V." }
+      ]},
+      "ges-d2": { name: "Work skills · Day 2", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "Clock in on the site. I’m taking roll from empty chairs." },
+        { k: "Work skills", h: "Same store. New problems.", p: "Same greeting as yesterday." },
+        { k: "Step 1", h: "Get a problem. Fix it.", p: "Stop. Say the goal. Give people jobs." },
+        { k: "Step 2", h: "Write a short email to the boss.", p: "What we finished. The problem. How we fixed it. What we need." },
+        { k: "Step 3", h: "45 seconds. Tell the boss.", p: "Stand up. No phone." },
+        { k: "Before you leave", h: "Submit my work", p: "Paste in the Classroom Question. Ctrl + V." }
+      ]},
+      "pae-d1": { name: "Engineering · Day 1", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "Teams of 3. Name and period on the site. I’m taking roll." },
+        { k: "Engineering", h: "Helper robot", p: "One real person. One job. Part of it has to move." },
+        { k: "Do this first", h: "Open Engineering", p: "Teams of 3. Name, period, team, robot name." },
+        { k: "On your table", h: "Cardboard, tape, pipe cleaners, a plastic lid", p: "The little cap from a bottle. Not a full water bottle." },
+        { k: "Today", list: ["Who is it for?", "Pick one job", "Score 3 ideas", "How it works", "Start the moving part"] },
+        { k: "If you’re stuck", h: "Two cardboard strips + a pipe cleaner twist.", p: "That’s tongs. Grab the lid. That’s enough." },
+        { k: "Before you leave", h: "Submit my work", p: "Paste in the Classroom Question. Ctrl + V." }
+      ]},
+      "pae-d2": { name: "Engineering · Day 2", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "I’m taking roll. Then we build." },
+        { k: "Engineering", h: "Build first. Pretty later.", p: "The moving part has to work." },
+        { k: "Build", h: "17 minutes", p: "Hands off when the timer ends." },
+        { k: "Test", h: "Try the job 5 times.", p: "Need 3 yeses. Bottle cap, eraser, or paper." },
+        { k: "Show us", h: "45 seconds", p: "Who it’s for. The job. Did it work?" },
+        { k: "Before you leave", h: "Submit my work. Paste in Classroom.", p: "I will look at the robot myself. Period 8: chairs at 3:45." }
+      ]},
+      "cce-d1": { name: "Careers · Day 1", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "Name and period on the site. I’m taking roll." },
+        { k: "Careers", h: "My career plan", p: "You are not picking a job forever." },
+        { k: "Do this first", h: "Open Careers", p: "English or Español at the top." },
+        { k: "Today", list: ["What sounds like you?", "Pick one job family", "Write 3 jobs"] },
+        { k: "Before you leave", h: "Submit my work", p: "Paste in the Classroom Question. Ctrl + V." }
+      ]},
+      "cce-d2": { name: "Careers · Day 2", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "I’m taking roll. Then we talk." },
+        { k: "Careers", h: "Where are you going?", p: "Still not a forever job." },
+        { k: "Step 1", h: "Which job looks strongest in Texas?", p: "Pay, openings, or training." },
+        { k: "Step 2", h: "One goal for this school year", p: "Something you can do in 7th or 8th grade." },
+        { k: "Step 3", h: "60-second talk", p: "Stand up. No phone." },
+        { k: "Before you leave", h: "Submit my work", p: "Paste in the Classroom Question. Ctrl + V." }
+      ]},
+      "web": { name: "Web Comm", slides: [
+        { k: "Start", h: "Sit in your seat.", p: "I’m taking roll from empty chairs. Then open Classroom." },
+        { k: "Web communications", h: "Open today’s Classroom assignment.", p: "This class is not the robot. It’s not Matador Market." }
+      ]},
+      "advisory": { name: "Advisory", slides: [
+        { k: "Start", h: "Sit. Bags down.", p: "I’m taking roll from seats. I will not call every name." },
+        { k: "Advisory", h: "Good morning, Matadors.", p: "We’re glad you’re here." }
+      ]}
+    };
+
+    const pick = document.getElementById("pick");
+    const stage = document.getElementById("stage");
+    const foot = document.getElementById("foot");
+    Object.keys(DECKS).forEach((id) => {
+      const o = document.createElement("option");
+      o.value = id; o.textContent = DECKS[id].name;
+      pick.appendChild(o);
+    });
+
+    let deckId = "ges-d1", n = 0;
+
+    function renderDeck() {
+      const d = DECKS[deckId];
+      stage.innerHTML = d.slides.map((s, i) => {
+        let body = s.p ? `<p class="big">${s.p}</p>` : "";
+        if (s.list) body = `<ol class="list">${s.list.map((x) => `<li>${x}</li>`).join("")}</ol>`;
+        return `<section class="slide${i === n ? " on" : ""}"><p class="k">${s.k || ""}</p><h1>${s.h || ""}</h1>${body}</section>`;
+      }).join("");
+      show();
+    }
+    function show() {
+      const slides = stage.querySelectorAll(".slide");
+      slides.forEach((el, i) => el.classList.toggle("on", i === n));
+      foot.innerHTML = `<span>${DECKS[deckId].name}</span><span>${n + 1} / ${slides.length}</span>`;
+    }
+    function go(dir) {
+      const max = DECKS[deckId].slides.length - 1;
+      n = Math.max(0, Math.min(max, n + dir));
+      show();
+    }
+    pick.onchange = () => { deckId = pick.value; n = 0; renderDeck(); };
+    document.getElementById("prev").onclick = () => go(-1);
+    document.getElementById("next").onclick = () => go(1);
+    document.getElementById("full").onclick = () => document.documentElement.requestFullscreen?.();
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".bar") || e.target.closest("a")) return;
+      go(e.clientX < window.innerWidth / 3 ? -1 : 1);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(1); }
+      if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(-1); }
+      if (e.key === "f" || e.key === "F") document.documentElement.requestFullscreen?.();
+      if (e.key === "Escape") document.getElementById("bar").classList.remove("hidden");
+      if (e.key === "h" || e.key === "H") document.getElementById("bar").classList.toggle("hidden");
+    });
+    renderDeck();
+  </script>
+</body>
+</html>

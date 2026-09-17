@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Do this · Ms. Fenwick</title>
+  <link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+  <p class="cheer">Read this. Do the numbered things. Then sleep.</p>
+  <header class="topbar">
+    <a class="brand" href="do-this.html"><span class="logo">M</span><span>Do this<small>Tonight + morning</small></span></a>
+  </header>
+  <main class="wrap">
+    <h1>This page is for you, not the kids.</h1>
+    <p class="lede">The numbered steps are your to-do list. The gray boxes are the messages you post — written as you talking to the class. Copy those into Classroom.</p>
+
+    <div class="card step">
+      <h2><span class="n">1</span> Put the website on GitHub</h2>
+      <ol>
+        <li>Open <strong>Safari</strong> (not Terminal).</li>
+        <li>Go to <strong>github.com</strong> and log in.</li>
+        <li>Open this page:<br>
+          <a href="https://github.com/kristenfenwick/kristenfenwick.github.io">https://github.com/kristenfenwick/kristenfenwick.github.io</a></li>
+        <li>Click the button that says <strong>Add file</strong>. Then click <strong>Upload files</strong>.</li>
+        <li>Open a Finder window. Go to <strong>Projects → kristenfenwick.github.io</strong>.</li>
+        <li>Drag the folder named <strong>class</strong> onto the GitHub page (the dotted box).</li>
+        <li>Scroll to the bottom. Click the green button <strong>Commit changes</strong>.</li>
+        <li>Wait one minute. On your phone open:<br>
+          <a href="https://kristenfenwick.github.io/class/">https://kristenfenwick.github.io/class/</a></li>
+      </ol>
+      <p>If you see the three class cards, it worked. If you see 404, wait two more minutes and refresh. If it still fails, do these same steps on the <strong>school computer</strong> at 7:30 (log into GitHub there, drag the folder from a USB or email the zip on your Desktop: <code>Fenwick-class-for-school.zip</code>).</p>
+    </div>
+
+    <div class="card step">
+      <h2><span class="n">2</span> Post these in Classroom (the kids read this)</h2>
+      <p>Classroom → the right class → <strong>+</strong> → <strong>Question</strong> → Short answer → students reply privately → Due today.</p>
+      <p>Copy the gray box. That is your voice. Do not post the to-do list above this.</p>
+
+      <p><strong>Work skills</strong> · title: First shift at Matador Market · periods 2, 3, 5</p>
+      <textarea id="ges" rows="14" readonly>Hi Matadors —
+
+Please open this on your Chromebook:
+https://kristenfenwick.github.io/class/ges.html
+
+Sit in your assigned seat and type your name and period at the top. I’ll take attendance from seats so we can start on time.
+
+Work through the page in order. When you finish, click Submit my work, paste into this question (Ctrl + V), and click Submit.
+
+This is Work Skills only — not Engineering and not Web Comm.
+
+Looking forward to a good first shift,
+Ms. Fenwick</textarea>
+      <p><button class="btn btn-ok" type="button" data-copy="ges">Copy Work skills message</button></p>
+
+      <p><strong>Engineering</strong> · title: Helper robot · periods 6 and 8</p>
+      <textarea id="pae" rows="16" readonly>Hi Matadors —
+
+Today we are building a small helper: cardboard tongs that can pick up a plastic bottle lid (the little cap, not a full bottle). Pipe cleaners make the joints. Please work in teams of three.
+
+Open this page:
+https://kristenfenwick.github.io/class/pae.html
+
+Sit, add your name and period, then follow the steps. When you are done, click Submit my work, paste your writing here, and click Submit. I will come around and look at your robot — please leave phones away.
+
+Period 8: we stop building at 3:35 so chairs can go up at 3:45.
+
+Let’s make something that actually moves,
+Ms. Fenwick</textarea>
+      <p><button class="btn btn-ok" type="button" data-copy="pae">Copy Engineering message</button></p>
+
+      <p><strong>Careers</strong> · title: My career plan · period 7</p>
+      <textarea id="cce" rows="14" readonly>Hi Matadors —
+
+Today we start a career plan. You are not choosing a job for the rest of your life — you are exploring what might fit.
+
+Please open this page (English or Español is at the top):
+https://kristenfenwick.github.io/class/cce.html
+
+Sit, add your name and period, and complete the boxes. When you finish, click Submit my work, paste here, and click Submit.
+
+Chromebooks only today — no building materials.
+
+Curious minds welcome,
+Ms. Fenwick</textarea>
+      <p><button class="btn btn-ok" type="button" data-copy="cce">Copy Careers message</button></p>
+    </div>
+
+    <div class="card step">
+      <h2><span class="n">3</span> How you see their work</h2>
+      <p>Open that class in Classroom. Tap the Question. You get a list of students and what they pasted. Period is on the first line of their paste, so you can tell 2nd from 3rd from 5th.</p>
+      <p>Engineering robots: walk the room with a roster. Check yes/no they made tongs that move. The paste is the writing. You do not need a photo.</p>
+    </div>
+
+    <div class="card">
+      <h2>Morning (school computer — not yours)</h2>
+      <ol>
+        <li><strong>7:00</strong> walk out of the house.</li>
+        <li><strong>7:30</strong> in the room. Log into the school computer.</li>
+        <li>Attendance site. Leave it open.</li>
+        <li>Chrome → Classroom.</li>
+        <li>Chrome → <a href="https://kristenfenwick.github.io/class/tv.html">https://kristenfenwick.github.io/class/tv.html</a> → HDMI → Full screen → Advisory.</li>
+        <li>Bin: cardboard, tape, scissors, pipe cleaners, plastic lids.</li>
+        <li>8:15 door. 8:20 roll from empty seats (2 minutes). Do not call names.</li>
+        <li>Lunch: walk back <strong>12:22</strong>. Log in again <strong>12:25</strong>. TV → Work skills.</li>
+      </ol>
+    </div>
+  </main>
+  <div class="toast"></div>
+  <script src="js/lab.js"></script>
+  <script>
+    document.querySelectorAll("[data-copy]").forEach((b) => {
+      b.onclick = () => Lab.copy(document.getElementById(b.dataset.copy).value);
+    });
+  </script>
+</body>
+</html>

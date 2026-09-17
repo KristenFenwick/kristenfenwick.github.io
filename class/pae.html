@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Helper robot · Engineering</title>
+  <link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+  <p class="cheer">Matadors make it happen.</p>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="logo">M</span>
+      <span>Ms. Fenwick<small>Engineering</small></span>
+    </a>
+    <nav>
+      <a class="nav" href="index.html">Home</a>
+      <a class="nav on" href="pae.html">Engineering</a>
+      <div class="lang">
+        <button type="button" data-lang="en" class="on">EN</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap" id="notebook">
+    <h1 data-en="Helper robot" data-es="Robot ayudante">Helper robot</h1>
+    <p class="lede" data-en="You are not building a real robot with motors. You are making a small cardboard helper that can pinch, push, or scoop a plastic bottle lid." data-es="No es un robot de verdad con motores. Es un ayudante de cartón que puede pellizcar, empujar o recoger la tapita de plástico de una botella.">You are not building a real robot with motors. You are making a small cardboard helper that can pinch, push, or scoop a plastic bottle lid.</p>
+
+    <div class="today">
+      <span data-en="What it looks like when you’re done" data-es="Así se ve cuando terminan">What it looks like when you’re done</span>
+      Two cardboard “fingers,” pipe cleaners for the bendy joints, a name on it. You squeeze or push — the fingers grab the <strong>lid</strong> (the little plastic cap), not a full water bottle.
+    </div>
+
+    <div class="card">
+      <h2 data-en="On your table" data-es="En la mesa">On your table</h2>
+      <p class="help" data-en="Cardboard, tape, scissors, pipe cleaners, a plastic bottle lid (the small cap). A cup if you want. Teams of 3. No rubber bands. No full water bottle." data-es="Cartón, cinta, tijeras, limpiapipas, una tapita de plástico. Un vaso si quieren. Equipos de 3. Sin ligas. Sin botella llena.">Cardboard, tape, scissors, pipe cleaners, a plastic bottle lid (the small cap). A cup if you want. Teams of 3. No rubber bands. No full water bottle.</p>
+    </div>
+
+    <div class="row">
+      <label class="field">Name<input data-key="name" type="text"></label>
+      <label class="field">Period<input data-key="period" type="text"></label>
+      <label class="field">Team<input data-key="team" type="text"></label>
+      <label class="field">Robot name<input data-key="robot" type="text"></label>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="on" data-tab="d1">Day 1 · Plan</button>
+      <button type="button" data-tab="d2">Day 2 · Build &amp; test</button>
+    </div>
+
+    <section id="d1">
+      <div class="card step">
+        <h2><span class="n">1</span> <span data-en="Who is this for?" data-es="¿Para quién es?">Who is this for?</span></h2>
+        <p class="help" data-en="A real person: classmate, teacher, sibling, or someone at home." data-es="Una persona real: compañero, maestro, hermano o alguien en casa.">A real person: classmate, teacher, sibling, or someone at home.</p>
+        <label class="field" data-en="Their name" data-es="Su nombre">Their name<input data-key="user" type="text"></label>
+        <label class="field" data-en="What is hard for them?" data-es="¿Qué se les hace difícil?">What is hard for them?<textarea data-key="need"></textarea></label>
+        <label class="field" data-en="How will we know it worked?" data-es="¿Cómo sabremos que funcionó?">How will we know it worked?<textarea data-key="success"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">2</span> <span data-en="Pick one job" data-es="Elige un trabajo">Pick one job</span></h2>
+        <div class="chips" id="jobs">
+          <button type="button" class="chip" data-job="Pinch and lift a bottle cap">Lift a bottle cap</button>
+          <button type="button" class="chip" data-job="Push a bottle cap to a tape line">Push a cap to a line</button>
+          <button type="button" class="chip" data-job="Scoop a crumpled paper into a cup">Scoop paper into a cup</button>
+          <button type="button" class="chip" data-job="Hold a phone up so someone can see it">Hold a phone</button>
+          <button type="button" class="chip" data-job="Knock over a standing sticky note">Knock over a sticky note</button>
+        </div>
+        <label class="field" data-en="Write the job in a sentence" data-es="Escribe el trabajo en una oración">Write the job in a sentence<input data-key="job" type="text"></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">3</span> <span data-en="Rules" data-es="Reglas">Rules</span></h2>
+        <div class="grid-2">
+          <label class="field" data-en="Must do (criteria)" data-es="Tiene que (criterios)">Must do (criteria)<textarea data-key="criteria" data-ph-en="Does the job. Fits on a desk. Moves." data-ph-es="Hace el trabajo. Cabe en el escritorio. Se mueve."></textarea></label>
+          <label class="field" data-en="Limits (constraints)" data-es="Límites (restricciones)">Limits (constraints)<textarea data-key="constraints" data-ph-en="Only classroom supplies. Done in two days." data-ph-es="Solo materiales del salón. Listo en dos días."></textarea></label>
+        </div>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">4</span> <span data-en="Score 3 ideas. Highest total wins." data-es="Califica 3 ideas. Gana el total más alto.">Score 3 ideas. Highest total wins.</span></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>Helps 1–5</th>
+              <th>We can build it 1–5</th>
+              <th>Fits on desk 1–5</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input data-key="a_name" type="text" placeholder="A"></td>
+              <td><input data-key="a1" type="number" min="1" max="5"></td>
+              <td><input data-key="a2" type="number" min="1" max="5"></td>
+              <td><input data-key="a3" type="number" min="1" max="5"></td>
+              <td class="total" id="ta">0</td>
+            </tr>
+            <tr>
+              <td><input data-key="b_name" type="text" placeholder="B"></td>
+              <td><input data-key="b1" type="number" min="1" max="5"></td>
+              <td><input data-key="b2" type="number" min="1" max="5"></td>
+              <td><input data-key="b3" type="number" min="1" max="5"></td>
+              <td class="total" id="tb">0</td>
+            </tr>
+            <tr>
+              <td><input data-key="c_name" type="text" placeholder="C"></td>
+              <td><input data-key="c1" type="number" min="1" max="5"></td>
+              <td><input data-key="c2" type="number" min="1" max="5"></td>
+              <td><input data-key="c3" type="number" min="1" max="5"></td>
+              <td class="total" id="tc">0</td>
+            </tr>
+          </tbody>
+        </table>
+        <label class="field" data-en="We pick this idea because" data-es="Elegimos esta idea porque">We pick this idea because<textarea data-key="winner"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">5</span> How it works</h2>
+        <p class="help" data-en="Sense = what it notices. Decide = if this, then that. Act = the part that moves." data-es="Sentir = qué nota. Decidir = si pasa esto, entonces. Actuar = la parte que se mueve.">Sense = what it notices. Decide = if this, then that. Act = the part that moves.</p>
+        <div class="grid-3">
+          <label class="field">Sense<textarea data-key="sense"></textarea></label>
+          <label class="field">Decide<textarea data-key="decide"></textarea></label>
+          <label class="field">Act<textarea data-key="act"></textarea></label>
+        </div>
+        <div class="choice" id="mech">
+          <label><input type="radio" name="mech" data-key="mech" value="lever"> Grabber — two cardboard fingers + a pipe cleaner hinge that pinches the lid</label>
+          <label><input type="radio" name="mech" data-key="mech" value="lift"> Lift — a cup or lid that goes up when you lift a pipe-cleaner arm</label>
+          <label><input type="radio" name="mech" data-key="mech" value="push"> Pusher — cardboard paddle that slides the lid to a tape line</label>
+        </div>
+        <p class="help" data-en="Stuck? Two cardboard strips. Twist a pipe cleaner around one end so they open and close like tongs. That is enough." data-es="¿Atascados? Dos tiras de cartón. Un limpiapipas torcido en un extremo para que abran y cierren. Eso basta.">Stuck? Two cardboard strips. Twist a pipe cleaner around one end so they open and close like tongs. That is enough.</p>
+      </div>
+    </section>
+
+    <section id="d2" hidden>
+      <div class="card step">
+        <h2><span class="n">1</span> <span data-en="Build until time is up" data-es="Construyan hasta que se acabe el tiempo">Build until time is up</span></h2>
+        <p class="help" data-en="Make the moving part first. Decorations last." data-es="Primero la parte que se mueve. Lo bonito al final.">Make the moving part first. Decorations last.</p>
+        <div class="row">
+          <span class="timer" id="clock">17:00</span>
+          <button class="btn btn-gold" type="button" id="startTimer">Start 17 min</button>
+          <button class="btn btn-ghost" type="button" id="resetTimer">Reset</button>
+        </div>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">2</span> <span data-en="Try the job 5 times" data-es="Prueben el trabajo 5 veces">Try the job 5 times</span></h2>
+        <p class="help" data-en="Use the plastic lid only. Need 3 yeses. If it fails, write why: grip, lean, joint, or missed." data-es="Usen solo la tapita. Necesitan 3 sí. Si falla, anoten por qué.">Use the plastic lid only. Need 3 yeses. If it fails, write why: grip, lean, joint, or missed.</p>
+        <table>
+          <thead><tr><th>#</th><th>Yes / No</th><th>If no, why?</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><select data-key="t1"><option value=""></option><option>Yes</option><option>No</option></select></td><td><input data-key="f1" type="text"></td></tr>
+            <tr><td>2</td><td><select data-key="t2"><option value=""></option><option>Yes</option><option>No</option></select></td><td><input data-key="f2" type="text"></td></tr>
+            <tr><td>3</td><td><select data-key="t3"><option value=""></option><option>Yes</option><option>No</option></select></td><td><input data-key="f3" type="text"></td></tr>
+            <tr><td>4</td><td><select data-key="t4"><option value=""></option><option>Yes</option><option>No</option></select></td><td><input data-key="f4" type="text"></td></tr>
+            <tr><td>5</td><td><select data-key="t5"><option value=""></option><option>Yes</option><option>No</option></select></td><td><input data-key="f5" type="text"></td></tr>
+          </tbody>
+        </table>
+        <p class="badge" id="scoreline">Score: 0 / 5</p>
+        <label class="field" data-en="One thing we changed" data-es="Una cosa que cambiamos">One thing we changed<textarea data-key="iterate"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">3</span> <span data-en="Show the class (45 seconds)" data-es="Muéstrenlo a la clase (45 segundos)">Show the class (45 seconds)</span></h2>
+        <textarea data-key="demo" rows="5"></textarea>
+        <button class="btn btn-ghost" type="button" id="fillDemo" data-en="Fill this from my boxes" data-es="Llenar con mis respuestas">Fill this from my boxes</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="card">
+    <h2 data-en="Turn in" data-es="Entregar">Turn in</h2>
+    <p class="help" data-en="Click Submit. Then paste in the Classroom Question. Ms. Fenwick will look at your robot in person." data-es="Pulsa Entregar. Luego pega en la Pregunta de Classroom. La maestra mira el robot en persona.">Click Submit. Then paste in the Classroom Question. Ms. Fenwick will look at your robot in person.</p>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-ok" type="button" id="copyBtn" data-en="Submit my work" data-es="Entregar mi trabajo">Submit my work</button>
+  </div>
+  <div class="toast"></div>
+  <footer class="site">Matadors make it happy.</footer>
+  <script src="js/lab.js"></script>
+  <script>
+    const root = document.getElementById("notebook");
+    Lab.autosave("fenwick-pae", root);
+
+    document.querySelectorAll(".tabs button").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
+        document.getElementById("d1").hidden = b.dataset.tab !== "d1";
+        document.getElementById("d2").hidden = b.dataset.tab !== "d2";
+      });
+    });
+
+    document.getElementById("jobs").addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      document.querySelectorAll("#jobs .chip").forEach((c) => c.classList.remove("on"));
+      btn.classList.add("on");
+      root.querySelector('[data-key="job"]').value = btn.dataset.job;
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    function sumRow(prefix) {
+      const n = (k) => Number(root.querySelector(`[data-key="${k}"]`).value) || 0;
+      return n(prefix + "1") + n(prefix + "2") + n(prefix + "3");
+    }
+    function totals() {
+      document.getElementById("ta").textContent = sumRow("a");
+      document.getElementById("tb").textContent = sumRow("b");
+      document.getElementById("tc").textContent = sumRow("c");
+      const ys = ["t1","t2","t3","t4","t5"].filter((k) => (root.querySelector(`[data-key="${k}"]`).value || "").toLowerCase().startsWith("y")).length;
+      document.getElementById("scoreline").textContent = "Score: " + ys + " / 5";
+    }
+    root.addEventListener("input", totals);
+    totals();
+
+    let t = null, left = 17 * 60;
+    const clock = document.getElementById("clock");
+    function show() {
+      clock.textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0");
+    }
+    document.getElementById("startTimer").onclick = () => {
+      if (t) return;
+      t = setInterval(() => {
+        left -= 1;
+        if (left <= 0) { left = 0; clearInterval(t); t = null; Lab.toast("Time!"); }
+        show();
+      }, 1000);
+    };
+    document.getElementById("resetTimer").onclick = () => { clearInterval(t); t = null; left = 17 * 60; show(); };
+
+    function notebookText() {
+      const d = Lab.collect(root);
+      const score = ["t1","t2","t3","t4","t5"].filter((k) => (d[k] || "").toLowerCase().startsWith("y")).length;
+      return [
+        "MS. FENWICK — HELPER ROBOT",
+        "Name: " + d.name + "  Period: " + d.period + "  Team: " + d.team,
+        "Robot: " + d.robot,
+        "User: " + d.user,
+        "Need: " + d.need,
+        "Success: " + d.success,
+        "Job: " + d.job,
+        "Must do: " + d.criteria,
+        "Limits: " + d.constraints,
+        "A " + d.a_name + " = " + sumRow("a"),
+        "B " + d.b_name + " = " + sumRow("b"),
+        "C " + d.c_name + " = " + sumRow("c"),
+        "We pick: " + d.winner,
+        "Sense: " + d.sense,
+        "Decide: " + d.decide,
+        "Act: " + d.act,
+        "Mechanism: " + d.mech,
+        "Trials: " + score + "/5",
+        "1 " + d.t1 + " " + d.f1,
+        "2 " + d.t2 + " " + d.f2,
+        "3 " + d.t3 + " " + d.f3,
+        "4 " + d.t4 + " " + d.f4,
+        "5 " + d.t5 + " " + d.f5,
+        "Change: " + d.iterate,
+        "Talk: " + d.demo
+      ].join("\n");
+    }
+
+    document.getElementById("fillDemo").onclick = () => {
+      const d = Lab.collect(root);
+      const score = ["t1","t2","t3","t4","t5"].filter((k) => (d[k] || "").toLowerCase().startsWith("y")).length;
+      root.querySelector('[data-key="demo"]').value =
+        "This is for " + (d.user || "___") + ". The job is " + (d.job || "___") +
+        ". It notices " + (d.sense || "___") + ", then " + (d.decide || "___") +
+        ", and moves by " + (d.act || "___") + ". Score: " + score + "/5.";
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    document.getElementById("copyBtn").onclick = () => {
+      const d = Lab.collect(root);
+      Lab.submit(notebookText(), d.name, d.period);
+    };
+  </script>
+</body>
+</html>

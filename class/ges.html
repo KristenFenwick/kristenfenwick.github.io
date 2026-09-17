@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>First shift · Work skills</title>
+  <link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+  <p class="cheer">Matadors make it happen.</p>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="logo">M</span>
+      <span>Ms. Fenwick<small>Work skills</small></span>
+    </a>
+    <nav>
+      <a class="nav" href="index.html">Home</a>
+      <a class="nav on" href="ges.html">Work skills</a>
+      <div class="lang">
+        <button type="button" data-lang="en" class="on">EN</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap" id="notebook">
+    <h1 data-en="First shift at Matador Market" data-es="Primer turno en Matador Market">First shift at Matador Market</h1>
+    <p class="lede" data-en="Today you work in a school store. Your boss is watching: on time, kind, and helpful." data-es="Hoy trabajas en la tienda de la escuela. Tu jefe te observa: a tiempo, amable y útil.">Today you work in a school store. Your boss is watching: on time, kind, and helpful.</p>
+
+    <div class="row">
+      <label class="field">Name<input data-key="name" type="text"></label>
+      <label class="field">Period<input data-key="period" type="text"></label>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="on" data-tab="d1">Day 1 · Clock in</button>
+      <button type="button" data-tab="d2">Day 2 · Team</button>
+    </div>
+
+    <section id="d1">
+      <div class="card step">
+        <h2><span class="n">1</span> <span data-en="How will you say hello?" data-es="¿Cómo vas a saludar?">How will you say hello?</span></h2>
+        <p class="help" data-en="Look at the person. Say your name. Good morning." data-es="Míralo a los ojos. Di tu nombre. Buenos días.">Look at the person. Say your name. Good morning.</p>
+        <label class="field"><input data-key="greeting" type="text" data-ph-en="Good morning, I’m ___." data-ph-es="Buenos días, soy ___."></label>
+        <button class="btn btn-primary" type="button" id="clockin" data-en="Clock in" data-es="Checar entrada">Clock in</button>
+        <p class="badge" id="clockstamp"></p>
+        <input type="hidden" data-key="clock">
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">2</span> <span data-en="Work words" data-es="Palabras del trabajo">Work words</span></h2>
+        <label class="field" data-en="What does it mean to be a good worker?" data-es="¿Qué significa ser un buen trabajador?">What does it mean to be a good worker?<textarea data-key="ethic"></textarea></label>
+        <label class="field" data-en="How is work different from hanging out at school?" data-es="¿En qué se diferencia el trabajo de estar en la escuela?">How is work different from hanging out at school?<textarea data-key="pro"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">3</span> <span data-en="Ready for work or not?" data-es="¿Listo para el trabajo o no?">Ready for work or not?</span></h2>
+        <div id="sort"></div>
+        <p class="badge" id="sortscore"></p>
+        <input type="hidden" data-key="sortjson">
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">4</span> <span data-en="Put these in order. 1 = do first." data-es="Ponlas en orden. 1 = primero.">Put these in order. 1 = do first.</span></h2>
+        <table>
+          <thead><tr><th>#</th><th data-en="Job" data-es="Tarea">Job</th></tr></thead>
+          <tbody>
+            <tr><td><input data-key="r1" type="number" min="1" max="6"></td><td data-en="Stock the shelf" data-es="Reponer el estante">Stock the shelf</td></tr>
+            <tr><td><input data-key="r2" type="number" min="1" max="6"></td><td data-en="Help a customer" data-es="Atender a un cliente">Help a customer</td></tr>
+            <tr><td><input data-key="r3" type="number" min="1" max="6"></td><td data-en="Fill out a form" data-es="Llenar un formulario">Fill out a form</td></tr>
+            <tr><td><input data-key="r4" type="number" min="1" max="6"></td><td data-en="Take out trash" data-es="Sacar la basura">Take out trash</td></tr>
+            <tr><td><input data-key="r5" type="number" min="1" max="6"></td><td data-en="Help a teammate" data-es="Ayudar a un compañero">Help a teammate</td></tr>
+            <tr><td><input data-key="r6" type="number" min="1" max="6"></td><td data-en="Check a delivery" data-es="Revisar una entrega">Check a delivery</td></tr>
+          </tbody>
+        </table>
+        <label class="field" data-en="Why is your #1 first?" data-es="¿Por qué tu 1 es primero?">Why is your #1 first?<textarea data-key="why1"></textarea></label>
+      </div>
+    </section>
+
+    <section id="d2" hidden>
+      <div class="card step">
+        <h2><span class="n">1</span> <span data-en="A problem shows up" data-es="Sale un problema">A problem shows up</span></h2>
+        <button class="btn btn-gold" type="button" id="draw" data-en="Get a problem" data-es="Sacar un problema">Get a problem</button>
+        <p id="conflictShow" class="lede"></p>
+        <input type="hidden" data-key="conflict">
+        <label class="field" data-en="How will we fix it?" data-es="¿Cómo lo arreglamos?">How will we fix it?<textarea data-key="fix" data-ph-en="Stop. Say the goal again. Give people jobs." data-ph-es="Parar. Decir la meta otra vez. Dar trabajos."></textarea></label>
+      </div>
+      <div class="card step">
+        <h2><span class="n">2</span> <span data-en="Short email to the boss" data-es="Correo corto al jefe">Short email to the boss</span></h2>
+        <p class="help" data-en="Hello. We finished ___. The problem was ___. We fixed it by ___. We need ___. Thank you." data-es="Hola. Terminamos ___. El problema fue ___. Lo arreglamos ___. Necesitamos ___. Gracias.">Hello. We finished ___. The problem was ___. We fixed it by ___. We need ___. Thank you.</p>
+        <label class="field">To<input data-key="eto" type="text"></label>
+        <label class="field">Subject<input data-key="esub" type="text"></label>
+        <label class="field">Email<textarea data-key="email" rows="6"></textarea></label>
+      </div>
+      <div class="card step">
+        <h2><span class="n">3</span> <span data-en="Tell the boss (45 seconds)" data-es="Dile al jefe (45 segundos)">Tell the boss (45 seconds)</span></h2>
+        <textarea data-key="standup" rows="4" data-ph-en="Hello. What we finished. The problem. How we fixed it." data-ph-es="Hola. Qué terminamos. El problema. Cómo lo arreglamos."></textarea>
+      </div>
+    </section>
+  </main>
+
+  <div class="card">
+    <h2 data-en="Turn in" data-es="Entregar">Turn in</h2>
+    <p class="help" data-en="Click Submit. Then paste in the Classroom Question." data-es="Pulsa Entregar. Luego pega en la Pregunta de Classroom.">Click Submit. Then paste in the Classroom Question.</p>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-ok" type="button" id="copyBtn" data-en="Submit my work" data-es="Entregar mi trabajo">Submit my work</button>
+  </div>
+  <div class="toast"></div>
+  <footer class="site">Matadors make it happy.</footer>
+  <script src="js/lab.js"></script>
+  <script>
+    const CARDS = [
+      { en: "Shows up 2 minutes early", es: "Llega 2 minutos antes", pro: true },
+      { en: "Shows up “almost on time”", es: "Llega “casi a tiempo”", pro: false },
+      { en: "Phone in pocket", es: "Celular en el bolsillo", pro: true },
+      { en: "Phone on the table", es: "Celular en la mesa", pro: false },
+      { en: "“Good morning, I’m ___”", es: "“Buenos días, soy ___”", pro: true },
+      { en: "“What’s up”", es: "“Qué onda”", pro: false },
+      { en: "Listens to the end", es: "Escucha hasta el final", pro: true },
+      { en: "Cuts people off", es: "Interrumpe", pro: false },
+      { en: "Asks a clear question", es: "Hace una pregunta clara", pro: true },
+      { en: "Stays quiet and does nothing", es: "Se queda callado y no hace nada", pro: false },
+      { en: "Fixes a mistake", es: "Corrige un error", pro: true },
+      { en: "Rolls eyes", es: "Pone rollos de ojos", pro: false }
+    ];
+    const CONFLICTS = [
+      { en: "One person is doing all the work.", es: "Una persona hace todo el trabajo." },
+      { en: "Two people want to be in charge.", es: "Dos personas quieren ser el jefe." },
+      { en: "Someone is on their phone.", es: "Alguien está en el celular." },
+      { en: "A piece is missing and nobody says so.", es: "Falta una pieza y nadie lo dice." },
+      { en: "People are laughing and miss the directions.", es: "Se ríen y no oyen las instrucciones." },
+      { en: "Someone wants to quit after two minutes.", es: "Alguien se quiere rendir a los 2 minutos." }
+    ];
+
+    const root = document.getElementById("notebook");
+    const sort = document.getElementById("sort");
+    CARDS.forEach((c, i) => {
+      const row = document.createElement("div");
+      row.className = "qrow";
+      row.innerHTML = `<div data-en="${c.en}" data-es="${c.es}">${c.en}</div>
+        <div class="chips">
+          <button type="button" class="chip" data-i="${i}" data-v="pro" data-en="Ready" data-es="Listo">Ready</button>
+          <button type="button" class="chip" data-i="${i}" data-v="not" data-en="Not yet" data-es="Aún no">Not yet</button>
+        </div>`;
+      sort.appendChild(row);
+    });
+
+    Lab.autosave("fenwick-ges", root);
+    let picks = {};
+    try { picks = JSON.parse(root.querySelector('[data-key="sortjson"]').value || "{}"); } catch { picks = {}; }
+    function paintSort() {
+      let right = 0, n = 0;
+      CARDS.forEach((c, i) => {
+        const row = sort.children[i];
+        row.querySelectorAll(".chip").forEach((b) => b.classList.toggle("on", picks[i] === b.dataset.v));
+        if (picks[i]) {
+          n += 1;
+          if ((picks[i] === "pro") === c.pro) right += 1;
+        }
+      });
+      document.getElementById("sortscore").textContent = n ? (right + " / " + n + " right") : "";
+      root.querySelector('[data-key="sortjson"]').value = JSON.stringify(picks);
+    }
+    paintSort();
+    sort.addEventListener("click", (e) => {
+      const b = e.target.closest(".chip");
+      if (!b) return;
+      picks[b.dataset.i] = b.dataset.v;
+      paintSort();
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    document.getElementById("clockin").onclick = () => {
+      const stamp = new Date().toLocaleString();
+      root.querySelector('[data-key="clock"]').value = stamp;
+      document.getElementById("clockstamp").textContent = stamp;
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+      Lab.toast(Lab.lang === "es" ? "Listo" : "Clocked in");
+    };
+    if (root.querySelector('[data-key="clock"]').value) {
+      document.getElementById("clockstamp").textContent = root.querySelector('[data-key="clock"]').value;
+    }
+
+    document.getElementById("draw").onclick = () => {
+      const c = CONFLICTS[Math.floor(Math.random() * CONFLICTS.length)];
+      const t = Lab.lang === "es" ? c.es : c.en;
+      root.querySelector('[data-key="conflict"]').value = t;
+      document.getElementById("conflictShow").textContent = t;
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    document.getElementById("conflictShow").textContent = root.querySelector('[data-key="conflict"]').value;
+
+    document.querySelectorAll(".tabs button").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
+        document.getElementById("d1").hidden = b.dataset.tab !== "d1";
+        document.getElementById("d2").hidden = b.dataset.tab !== "d2";
+      });
+    });
+    Lab.applyLang(Lab.lang);
+
+    function text() {
+      const d = Lab.collect(root);
+      return [
+        "MS. FENWICK — MATADOR MARKET",
+        "Name: " + d.name + "  Period: " + d.period,
+        "Clock-in: " + d.clock,
+        "Hello: " + d.greeting,
+        "Good worker: " + d.ethic,
+        "Work vs school: " + d.pro,
+        "Order: shelf " + d.r1 + ", customer " + d.r2 + ", form " + d.r3 + ", trash " + d.r4 + ", teammate " + d.r5 + ", delivery " + d.r6,
+        "Why #1: " + d.why1,
+        "Problem: " + d.conflict,
+        "Fix: " + d.fix,
+        "Email: " + d.eto + " / " + d.esub,
+        d.email,
+        "Talk: " + d.standup
+      ].join("\n");
+    }
+    document.getElementById("copyBtn").onclick = () => {
+      const d = Lab.collect(root);
+      Lab.submit(text(), d.name, d.period);
+    };
+  </script>
+</body>
+</html>

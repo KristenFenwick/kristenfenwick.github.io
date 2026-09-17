@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My career plan · Careers</title>
+  <link rel="stylesheet" href="css/lab.css">
+</head>
+<body>
+  <p class="cheer">Matadors make it happen.</p>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="logo">M</span>
+      <span>Ms. Fenwick<small>Careers</small></span>
+    </a>
+    <nav>
+      <a class="nav" href="index.html">Home</a>
+      <a class="nav on" href="cce.html">Careers</a>
+      <div class="lang">
+        <button type="button" data-lang="en" class="on">EN</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap" id="notebook">
+    <h1 data-en="My career plan" data-es="Mi plan de carrera">My career plan</h1>
+    <p class="lede" data-en="You are not picking a job forever. You are finding a direction." data-es="No estás eligiendo un trabajo para siempre. Estás buscando una dirección.">You are not picking a job forever. You are finding a direction.</p>
+
+    <div class="row">
+      <label class="field">Name<input data-key="name" type="text"></label>
+      <label class="field">Period<input data-key="period" type="text"></label>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="on" data-tab="d1">Day 1 · Who am I?</button>
+      <button type="button" data-tab="d2">Day 2 · Where am I going?</button>
+    </div>
+
+    <section id="d1">
+      <div class="card step">
+        <h2><span class="n">1</span> <span data-en="What sounds like you?" data-es="¿Qué te suena a ti?">What sounds like you?</span></h2>
+        <p class="help"><span data-en="Or take the longer quiz:" data-es="O haz el cuestionario largo:"></span> <a href="https://texascareercheck.com/ExploreCareer/InterestProfiler" target="_blank" rel="noopener">Texas Career Check</a></p>
+        <div id="riasec"></div>
+        <div class="scorebar" id="bars"></div>
+        <p class="badge" id="letters"></p>
+        <input type="hidden" data-key="riasec_top">
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">2</span> <span data-en="Pick one job family" data-es="Elige una familia de trabajos">Pick one job family</span></h2>
+        <div class="cluster" id="clusters"></div>
+        <input type="hidden" data-key="cluster">
+        <label class="field" data-en="Why this one?" data-es="¿Por qué esta?">Why this one?<textarea data-key="cluster_why"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">3</span> <span data-en="Three jobs in that family" data-es="Tres trabajos de esa familia">Three jobs in that family</span></h2>
+        <p class="help"><a href="https://texascareercheck.com/" target="_blank" rel="noopener">Look up jobs on Texas Career Check</a></p>
+        <label class="field">Job 1<input data-key="o1" type="text"></label>
+        <label class="field" data-en="What they do" data-es="Qué hacen">What they do<input data-key="d1" type="text"></label>
+        <label class="field" data-en="School after high school" data-es="Estudios después de la prepa">School after high school
+          <select data-key="e1">
+            <option value=""></option>
+            <option>None</option>
+            <option>Certificate</option>
+            <option>2-year college</option>
+            <option>4-year college</option>
+            <option>Military</option>
+          </select>
+        </label>
+        <label class="field" data-en="A class that helps" data-es="Una clase que ayuda">A class that helps<input data-key="s1" type="text"></label>
+        <hr style="border:0;border-top:2px solid var(--line);margin:16px 0">
+        <label class="field">Job 2<input data-key="o2" type="text"></label>
+        <label class="field" data-en="What they do" data-es="Qué hacen">What they do<input data-key="d2" type="text"></label>
+        <label class="field" data-en="School after high school" data-es="Estudios después de la prepa">School after high school
+          <select data-key="e2">
+            <option value=""></option>
+            <option>None</option>
+            <option>Certificate</option>
+            <option>2-year college</option>
+            <option>4-year college</option>
+            <option>Military</option>
+          </select>
+        </label>
+        <label class="field" data-en="A class that helps" data-es="Una clase que ayuda">A class that helps<input data-key="s2" type="text"></label>
+        <hr style="border:0;border-top:2px solid var(--line);margin:16px 0">
+        <label class="field">Job 3<input data-key="o3" type="text"></label>
+        <label class="field" data-en="What they do" data-es="Qué hacen">What they do<input data-key="d3" type="text"></label>
+        <label class="field" data-en="School after high school" data-es="Estudios después de la prepa">School after high school
+          <select data-key="e3">
+            <option value=""></option>
+            <option>None</option>
+            <option>Certificate</option>
+            <option>2-year college</option>
+            <option>4-year college</option>
+            <option>Military</option>
+          </select>
+        </label>
+        <label class="field" data-en="A class that helps" data-es="Una clase que ayuda">A class that helps<input data-key="s3" type="text"></label>
+      </div>
+    </section>
+
+    <section id="d2" hidden>
+      <div class="card step">
+        <h2><span class="n">1</span> <span data-en="Which job looks strongest in Texas?" data-es="¿Cuál se ve más fuerte en Texas?">Which job looks strongest in Texas?</span></h2>
+        <label class="field" data-en="I pick" data-es="Elijo">I pick<input data-key="star" type="text"></label>
+        <label class="field" data-en="Why? (pay, openings, or training)" data-es="¿Por qué? (sueldo, vacantes o estudios)">Why? (pay, openings, or training)<textarea data-key="evidence"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">2</span> <span data-en="One goal for this school year" data-es="Una meta para este año escolar">One goal for this school year</span></h2>
+        <p class="help" data-en="Make it something you can do in 7th or 8th grade this year." data-es="Que sea algo que puedas hacer este año en 7.º u 8.º.">Make it something you can do in 7th or 8th grade this year.</p>
+        <label class="field" data-en="What will I do?" data-es="¿Qué voy a hacer?">What will I do?<input data-key="sp" type="text" data-ph-en="raise my math grade this six weeks" data-ph-es="subir mi calificación de mates este seis semanas"></label>
+        <label class="field" data-en="How will I know?" data-es="¿Cómo lo sabré?">How will I know?<input data-key="me" type="text" data-ph-en="80% or higher" data-ph-es="80% o más"></label>
+        <label class="field" data-en="By when?" data-es="¿Para cuándo?">By when?<input data-key="by" type="text" data-ph-en="the end of this six weeks" data-ph-es="al final de estas seis semanas"></label>
+        <label class="field" data-en="Write it as one sentence" data-es="Escríbela en una oración">Write it as one sentence<textarea data-key="smart"></textarea></label>
+      </div>
+
+      <div class="card step">
+        <h2><span class="n">3</span> <span data-en="60-second talk. Stand up. No phone." data-es="Charla de 60 segundos. De pie. Sin teléfono.">60-second talk. Stand up. No phone.</span></h2>
+        <textarea data-key="talk" rows="5"></textarea>
+        <button class="btn btn-ghost" type="button" id="fillTalk" data-en="Fill this from my boxes" data-es="Llenar con mis respuestas">Fill this from my boxes</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="card">
+    <h2 data-en="Turn in" data-es="Entregar">Turn in</h2>
+    <p class="help" data-en="Click Submit. Then paste in the Classroom Question." data-es="Pulsa Entregar. Luego pega en la Pregunta de Classroom.">Click Submit. Then paste in the Classroom Question.</p>
+  </div>
+  <div class="sticky-actions">
+    <button class="btn btn-ok" type="button" id="copyBtn" data-en="Submit my work" data-es="Entregar mi trabajo">Submit my work</button>
+  </div>
+  <div class="toast"></div>
+  <footer class="site">Matadors make it happy.</footer>
+  <script src="js/lab.js"></script>
+  <script>
+    const Q = [
+      { letter: "R", en: "Build something with tools", es: "Construir con herramientas" },
+      { letter: "R", en: "Work with my hands or outdoors", es: "Trabajar con las manos o afuera" },
+      { letter: "I", en: "Figure out how things work", es: "Descubrir cómo funcionan las cosas" },
+      { letter: "I", en: "Solve puzzles or do labs", es: "Resolver acertijos o hacer labs" },
+      { letter: "A", en: "Draw, design, or make videos", es: "Dibujar, diseñar o hacer videos" },
+      { letter: "A", en: "Write stories or create something new", es: "Escribir o crear algo nuevo" },
+      { letter: "S", en: "Help someone learn", es: "Ayudar a alguien a aprender" },
+      { letter: "S", en: "Take care of people or animals", es: "Cuidar personas o animales" },
+      { letter: "E", en: "Lead a group", es: "Liderar un grupo" },
+      { letter: "E", en: "Sell an idea or start something", es: "Vender una idea o empezar algo" },
+      { letter: "C", en: "Organize files or numbers", es: "Organizar archivos o números" },
+      { letter: "C", en: "Follow a list and get details right", es: "Seguir una lista y cuidar detalles" }
+    ];
+    const CLUSTERS = [
+      "Agriculture, Food, and Natural Resources",
+      "Architecture and Construction",
+      "Arts, A/V, and Communications",
+      "Business, Marketing, and Finance",
+      "Education and Training",
+      "Energy",
+      "Health Science",
+      "Hospitality and Tourism",
+      "Human Services",
+      "Information Technology",
+      "Law and Public Service",
+      "Manufacturing",
+      "Engineering",
+      "Transportation"
+    ];
+    const LETTERS = ["R","I","A","S","E","C"];
+    const NAMES = { R: "hands-on", I: "figuring things out", A: "creating", S: "helping", E: "leading", C: "organizing" };
+
+    const root = document.getElementById("notebook");
+    const box = document.getElementById("riasec");
+    Q.forEach((q, i) => {
+      const wrap = document.createElement("div");
+      wrap.className = "qrow";
+      wrap.innerHTML = `<div data-en="${q.en}" data-es="${q.es}">${q.en}</div>
+        <select data-key="q${i}">
+          <option value="">—</option>
+          <option value="0">No</option>
+          <option value="1">Sort of</option>
+          <option value="2">Yes</option>
+        </select>`;
+      box.appendChild(wrap);
+    });
+    const bars = document.getElementById("bars");
+    LETTERS.forEach((L) => {
+      const row = document.createElement("div");
+      row.className = "item";
+      row.innerHTML = `<strong>${L}</strong><div class="bar"><span id="bar${L}"></span></div><span id="n${L}">0</span>`;
+      bars.appendChild(row);
+    });
+    const cl = document.getElementById("clusters");
+    CLUSTERS.forEach((name) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = name;
+      b.onclick = () => {
+        cl.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
+        b.classList.add("on");
+        root.querySelector('[data-key="cluster"]').value = name;
+        root.dispatchEvent(new Event("input", { bubbles: true }));
+      };
+      cl.appendChild(b);
+    });
+
+    Lab.autosave("fenwick-cce", root);
+    const savedCluster = root.querySelector('[data-key="cluster"]').value;
+    if (savedCluster) {
+      [...cl.children].forEach((b) => b.classList.toggle("on", b.textContent === savedCluster));
+    }
+
+    function score() {
+      const totals = { R:0,I:0,A:0,S:0,E:0,C:0 };
+      Q.forEach((q, i) => { totals[q.letter] += Number(root.querySelector(`[data-key="q${i}"]`).value) || 0; });
+      LETTERS.forEach((L) => {
+        document.getElementById("n" + L).textContent = totals[L];
+        document.getElementById("bar" + L).style.width = (totals[L] / 4 * 100) + "%";
+      });
+      const top = LETTERS.slice().sort((a,b) => totals[b]-totals[a]).slice(0,2);
+      root.querySelector('[data-key="riasec_top"]').value = top.join("");
+      document.getElementById("letters").textContent = "You scored highest in: " + top.map((L) => NAMES[L]).join(" and ");
+    }
+    root.addEventListener("input", score);
+    score();
+    Lab.applyLang(Lab.lang);
+
+    document.querySelectorAll(".tabs button").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
+        document.getElementById("d1").hidden = b.dataset.tab !== "d1";
+        document.getElementById("d2").hidden = b.dataset.tab !== "d2";
+      });
+    });
+
+    document.getElementById("fillTalk").onclick = () => {
+      const d = Lab.collect(root);
+      root.querySelector('[data-key="talk"]').value = Lab.lang === "es"
+        ? `Me gusta ${d.riasec_top || "___"}. El grupo de trabajos que exploro es ${d.cluster || "___"}. Un trabajo es ${d.star || d.o1 || "___"}. Después de la prepa se necesita ${d.e1 || "___"}. Este año yo voy a ${d.smart || "___"}.`
+        : `I like ${d.riasec_top || "___"} work. I looked at ${d.cluster || "___"}. One job is ${d.star || d.o1 || "___"}. After high school you need ${d.e1 || "___"}. This year I will ${d.smart || "___"}.`;
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+
+    function text() {
+      const d = Lab.collect(root);
+      return [
+        "MS. FENWICK — CAREER PLAN",
+        "Name: " + d.name + "  Period: " + d.period,
+        "Top letters: " + d.riasec_top,
+        "Job family: " + d.cluster,
+        "Why: " + d.cluster_why,
+        "1. " + d.o1 + " | " + d.d1 + " | " + d.e1 + " | " + d.s1,
+        "2. " + d.o2 + " | " + d.d2 + " | " + d.e2 + " | " + d.s2,
+        "3. " + d.o3 + " | " + d.d3 + " | " + d.e3 + " | " + d.s3,
+        "Strongest in Texas: " + d.star,
+        "Why: " + d.evidence,
+        "Goal: " + d.smart,
+        "Talk: " + d.talk
+      ].join("\n");
+    }
+    document.getElementById("copyBtn").onclick = () => {
+      const d = Lab.collect(root);
+      Lab.submit(text(), d.name, d.period);
+    };
+  </script>
+</body>
+</html>
