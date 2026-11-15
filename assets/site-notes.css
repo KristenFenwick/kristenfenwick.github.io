@@ -1,0 +1,6 @@
+.rail-toggle{display:none}
+@media (width>=768px){
+  .rail-toggle{display:inline-flex;margin:1.4rem 0 .35rem;padding:0;border:0;background:transparent;color:var(--color-graphite);font:inherit;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+  .frame.rail-off{grid-template-columns:4.5rem minmax(0,1fr)}
+}
+a.ledger p{margin:.25rem 0 0;color:var(--color-graphite)}
