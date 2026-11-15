@@ -4,3 +4,5 @@
   .frame.rail-off{grid-template-columns:4.5rem minmax(0,1fr)}
 }
 a.ledger p{margin:.25rem 0 0;color:var(--color-graphite)}
+.line-row strong,.line-row em{display:block}
+.line-row em{margin-top:.2rem}
